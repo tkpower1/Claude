@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AfterSol - Emergency Sunburn Relief Kit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            color: #ffffff;
+            font-size: clamp(32px, 6vw, 52px);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .hero .subheadline {
+            color: #a0aec0;
+            font-size: clamp(18px, 3vw, 22px);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: #ff6b35;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 18px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.4);
+        }
+
+        /* PROBLEM SECTION */
+        .problem {
+            background: #ffffff;
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 5vw, 36px);
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .problem-text {
+            font-size: 18px;
+            color: #4a5568;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .problem-text p {
+            margin-bottom: 16px;
+        }
+
+        /* SOLUTION SECTION */
+        .solution {
+            background: #f7fafc;
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .solution-text {
+            font-size: 20px;
+            color: #2d3748;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .solution-text strong {
+            color: #1a1a1a;
+        }
+
+        /* HOW IT WORKS */
+        .how-it-works {
+            background: #ffffff;
+            padding: 80px 24px;
+        }
+
+        .how-it-works .section-title {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            background: #f7fafc;
+            padding: 32px;
+            border-radius: 12px;
+            border-left: 4px solid #ff6b35;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #ff6b35;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .step p {
+            color: #4a5568;
+            font-size: 16px;
+        }
+
+        /* WHAT YOU GET */
+        .what-you-get {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .what-you-get .section-title {
+            color: #ffffff;
+        }
+
+        .features-list {
+            list-style: none;
+            max-width: 500px;
+            margin: 0 auto 32px;
+            text-align: left;
+        }
+
+        .features-list li {
+            color: #e2e8f0;
+            font-size: 18px;
+            padding: 12px 0;
+            border-bottom: 1px solid #3d3d3d;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .check {
+            color: #48bb78;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .price-highlight {
+            font-size: 28px;
+            color: #ff6b35;
+            font-weight: 700;
+            margin-top: 24px;
+        }
+
+        .price-subtext {
+            color: #a0aec0;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        /* SOCIAL PROOF */
+        .social-proof {
+            background: #ffffff;
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .video-container {
+            max-width: 600px;
+            margin: 32px auto;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-placeholder {
+            background: #e2e8f0;
+            padding: 80px 40px;
+            border-radius: 12px;
+            max-width: 600px;
+            margin: 32px auto;
+            color: #718096;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 700px;
+            margin: 32px auto 0;
+        }
+
+        .photo-placeholder {
+            background: #e2e8f0;
+            padding: 120px 40px;
+            border-radius: 12px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* GUARANTEE */
+        .guarantee {
+            background: #f7fafc;
+            padding: 60px 24px;
+            text-align: center;
+        }
+
+        .guarantee-badge {
+            display: inline-block;
+            background: #48bb78;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .guarantee h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .guarantee p {
+            color: #4a5568;
+            font-size: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* FINAL CTA */
+        .final-cta {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .final-cta .section-title {
+            color: #ffffff;
+            margin-bottom: 32px;
+        }
+
+        .final-cta .subtext {
+            color: #a0aec0;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: #1a1a1a;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .footer p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #a0aec0;
+            text-decoration: none;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 600px) {
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .problem, .solution, .how-it-works, .what-you-get, .social-proof, .final-cta {
+                padding: 60px 20px;
+            }
+
+            .btn-primary {
+                padding: 16px 32px;
+                font-size: 16px;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .features-list li {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <h1>Got Sunburned? Tonight Is Going to Be Miserable.</h1>
+            <p class="subheadline">Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night.</p>
+            <!-- REPLACE_STRIPE_LINK_1 -->
+            <a href="https://buy.stripe.com/REPLACE_WITH_YOUR_LINK" class="btn-primary">Pre-Order Now — $44</a>
+        </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="problem">
+        <div class="container">
+            <h2 class="section-title">You Know What's Coming</h2>
+            <div class="problem-text">
+                <p>The throbbing. The heat radiating off your skin. The way every shirt, sheet, and breeze feels like sandpaper.</p>
+                <p>You'll try aloe. It'll help for 10 minutes, then evaporate. You'll take Advil. It won't touch the surface pain.</p>
+                <p>Tonight, you'll lie in bed unable to sleep. Tomorrow, you'll be exhausted AND still burned.</p>
+                <p><strong>Your vacation? Ruined. Your week? Shot. All because of one afternoon in the sun.</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION SECTION -->
+    <section class="solution">
+        <div class="container">
+            <h2 class="section-title">AfterSol Stops the Cycle</h2>
+            <p class="solution-text">
+                AfterSol is a <strong>two-step emergency relief system</strong> designed for exactly this moment.<br><br>
+                Not a lotion. Not a spray. A clinical-grade cooling system that actually works.
+            </p>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Two Steps. One Night. Done.</h2>
+            <div class="steps">
+                <div class="step">
+                    <span class="step-number">STEP 1</span>
+                    <h3>Cooling Hydrogel Sheet</h3>
+                    <p>Apply to burned skin. Intense cooling starts immediately. Pain drops fast. Remove after 30 minutes — serum absorbs into skin.</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">STEP 2</span>
+                    <h3>Recovery Sheet (Overnight)</h3>
+                    <p>Apply before bed. Sustained cooling keeps you comfortable all night. Wake up recovered, not wrecked.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHAT YOU GET -->
+    <section class="what-you-get">
+        <div class="container">
+            <h2 class="section-title">The AfterSol Emergency Relief Kit</h2>
+            <ul class="features-list">
+                <li><span class="check">✓</span> 4 Hydrogel Cooling Sheets (immediate relief)</li>
+                <li><span class="check">✓</span> 4 Recovery Fiber Sheets (overnight comfort)</li>
+                <li><span class="check">✓</span> 4 complete treatments per kit</li>
+                <li><span class="check">✓</span> Works on arms, legs, shoulders, back</li>
+            </ul>
+            <p class="price-highlight">$44</p>
+            <p class="price-subtext">That's $11 per treatment to actually sleep through a sunburn.</p>
+        </div>
+    </section>
+
+    <!-- SOCIAL PROOF -->
+    <section class="social-proof">
+        <div class="container">
+            <h2 class="section-title">Real Relief</h2>
+
+            <!-- VIDEO: Replace the placeholder below with your YouTube embed -->
+            <!-- To get embed code: YouTube video → Share → Embed → Copy the iframe code -->
+
+            <!-- OPTION 1: If you have a YouTube video, uncomment this and replace VIDEO_ID -->
+            <!--
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            -->
+
+            <!-- OPTION 2: Placeholder (delete this when you add your video) -->
+            <div class="video-placeholder">
+                [YOUR UGC TESTIMONIAL VIDEO HERE]<br><br>
+                <small>Replace this with your YouTube embed code</small>
+            </div>
+
+            <!-- PHOTOS: Replace placeholders with your actual application photos -->
+            <div class="photos-grid">
+                <!-- Replace src with your actual image URLs or file paths -->
+                <div class="photo-placeholder">[APPLICATION PHOTO 1]</div>
+                <div class="photo-placeholder">[APPLICATION PHOTO 2]</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GUARANTEE -->
+    <section class="guarantee">
+        <div class="container">
+            <span class="guarantee-badge">RISK FREE</span>
+            <h2>100% Money-Back Guarantee</h2>
+            <p>If AfterSol doesn't stop your sunburn pain, we'll refund every penny. No questions asked.</p>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final-cta" id="order">
+        <div class="container">
+            <h2 class="section-title">Don't Suffer Tonight</h2>
+            <!-- REPLACE_STRIPE_LINK_2 -->
+            <a href="https://buy.stripe.com/REPLACE_WITH_YOUR_LINK" class="btn-primary">Pre-Order Now — $44</a>
+            <p class="subtext">Ships in 2-3 weeks. Limited early-release batch.</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Questions? <a href="mailto:REPLACE_WITH_YOUR_EMAIL">Contact Us</a></p>
+        <p style="margin-top: 8px;">© 2025 AfterSol. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
