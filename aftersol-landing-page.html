@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AfterSol - Emergency Sunburn Relief Kit</title>
+    <meta name="description" content="Stop sunburn pain in 30 minutes. AfterSol's two-step emergency relief system uses clinical-grade cooling sheets so you can actually sleep through the night.">
+    <meta property="og:title" content="Got Sunburned? Tonight Is Going to Be Miserable.">
+    <meta property="og:description" content="Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night. Two-step emergency relief system — $44.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://i.imgur.com/s8oQuEz.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AfterSol - Emergency Sunburn Relief Kit">
+    <meta name="twitter:description" content="Stop sunburn pain in 30 minutes. Sleep through the night. Clinical-grade cooling system that actually works.">
+    <meta name="twitter:image" content="https://i.imgur.com/s8oQuEz.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,10 +23,60 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: #1a1a1a;
+        }
+
+        /* STICKY NAV */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 27, 42, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-brand {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-brand span {
+            color: #ff6b35;
+        }
+
+        .btn-nav {
+            display: inline-block;
+            background: #ff6b35;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-nav:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
         }
 
         .container {
@@ -29,7 +88,7 @@
         /* HERO SECTION */
         .hero {
             background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
-            padding: 80px 24px;
+            padding: 120px 24px 80px;
             text-align: center;
         }
 
@@ -233,29 +292,12 @@
             height: 100%;
         }
 
-        .video-placeholder {
-            background: #e2e8f0;
-            padding: 80px 40px;
-            border-radius: 12px;
-            max-width: 600px;
-            margin: 32px auto;
-            color: #718096;
-        }
-
         .photos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 24px;
             max-width: 700px;
             margin: 32px auto 0;
-        }
-
-        .photo-placeholder {
-            background: #e2e8f0;
-            padding: 120px 40px;
-            border-radius: 12px;
-            color: #718096;
-            font-size: 14px;
         }
 
         /* GUARANTEE */
@@ -286,6 +328,70 @@
             font-size: 16px;
             max-width: 500px;
             margin: 0 auto;
+        }
+
+        /* FAQ */
+        .faq {
+            background: #ffffff;
+            padding: 80px 24px;
+        }
+
+        .faq .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .faq-list {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 20px 0;
+            font-family: inherit;
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .faq-question:hover {
+            color: #ff6b35;
+        }
+
+        .faq-icon {
+            font-size: 20px;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding: 0 0 20px;
+            color: #4a5568;
+            font-size: 16px;
+            line-height: 1.7;
         }
 
         /* FINAL CTA */
@@ -323,13 +429,25 @@
             text-decoration: none;
         }
 
+        /* FADE-IN ANIMATION */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* MOBILE RESPONSIVE */
         @media (max-width: 600px) {
             .hero {
-                padding: 60px 20px;
+                padding: 100px 20px 60px;
             }
 
-            .problem, .solution, .how-it-works, .what-you-get, .social-proof, .final-cta {
+            .problem, .solution, .how-it-works, .what-you-get, .social-proof, .faq, .final-cta {
                 padding: 60px 20px;
             }
 
@@ -343,23 +461,45 @@
             .features-list li {
                 font-size: 16px;
             }
+
+            .nav {
+                padding: 10px 16px;
+            }
+
+            .nav-brand {
+                font-size: 18px;
+            }
+
+            .btn-nav {
+                font-size: 13px;
+                padding: 8px 16px;
+            }
+
+            .faq-question {
+                font-size: 15px;
+            }
         }
     </style>
 </head>
 <body>
+
+    <!-- STICKY NAV -->
+    <nav class="nav">
+        <a href="#" class="nav-brand">After<span>Sol</span></a>
+        <a href="#order" class="btn-nav">Pre-Order — $44</a>
+    </nav>
 
     <!-- HERO SECTION -->
     <section class="hero">
         <div class="container">
             <h1>Got Sunburned? Tonight Is Going to Be Miserable.</h1>
             <p class="subheadline">Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night.</p>
-            <!-- REPLACE_STRIPE_LINK_1 -->
             <a href="https://buy.stripe.com/test_fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Pre-Order Now — $44</a>
         </div>
     </section>
 
     <!-- PROBLEM SECTION -->
-    <section class="problem">
+    <section class="problem fade-in">
         <div class="container">
             <h2 class="section-title">You Know What's Coming</h2>
             <div class="problem-text">
@@ -372,7 +512,7 @@
     </section>
 
     <!-- SOLUTION SECTION -->
-    <section class="solution">
+    <section class="solution fade-in">
         <div class="container">
             <h2 class="section-title">AfterSol Stops the Cycle</h2>
             <p class="solution-text">
@@ -383,7 +523,7 @@
     </section>
 
     <!-- HOW IT WORKS -->
-    <section class="how-it-works">
+    <section class="how-it-works fade-in">
         <div class="container">
             <h2 class="section-title">Two Steps. One Night. Done.</h2>
             <div class="steps">
@@ -402,7 +542,7 @@
     </section>
 
     <!-- WHAT YOU GET -->
-    <section class="what-you-get">
+    <section class="what-you-get fade-in">
         <div class="container">
             <h2 class="section-title">The AfterSol Emergency Relief Kit</h2>
             <ul class="features-list">
@@ -417,7 +557,7 @@
     </section>
 
     <!-- SOCIAL PROOF -->
-    <section class="social-proof">
+    <section class="social-proof fade-in">
         <div class="container">
             <h2 class="section-title">Real Relief</h2>
 
@@ -426,16 +566,16 @@
             </div>
 
             <div class="photos-grid">
-                <img src="https://i.imgur.com/s8oQuEz.jpg" alt="AfterSol application on skin" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <img src="https://i.imgur.com/R5Y7m5R.jpg" alt="AfterSol cooling sheet" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <img src="https://i.imgur.com/vR3p4FY.jpg" alt="AfterSol relief treatment" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <img src="https://i.imgur.com/1bjv4Cm.jpg" alt="AfterSol product application" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <img src="https://i.imgur.com/s8oQuEz.jpg" alt="AfterSol application on skin" loading="lazy" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <img src="https://i.imgur.com/R5Y7m5R.jpg" alt="AfterSol cooling sheet" loading="lazy" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <img src="https://i.imgur.com/vR3p4FY.jpg" alt="AfterSol relief treatment" loading="lazy" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <img src="https://i.imgur.com/1bjv4Cm.jpg" alt="AfterSol product application" loading="lazy" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             </div>
         </div>
     </section>
 
     <!-- GUARANTEE -->
-    <section class="guarantee">
+    <section class="guarantee fade-in">
         <div class="container">
             <span class="guarantee-badge">RISK FREE</span>
             <h2>100% Money-Back Guarantee</h2>
@@ -443,11 +583,39 @@
         </div>
     </section>
 
+    <!-- FAQ -->
+    <section class="faq fade-in">
+        <div class="container">
+            <h2 class="section-title">Common Questions</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">How fast does it actually work? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>The cooling hydrogel sheet starts working on contact. Most people feel significant pain reduction within 30 minutes. The overnight recovery sheet keeps you comfortable through the night.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">How is this different from aloe vera? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>Aloe evaporates in minutes and only provides temporary surface relief. AfterSol's hydrogel sheets maintain sustained cooling and deliver active ingredients directly into your skin over hours — not seconds.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">What body areas can I use it on? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>AfterSol sheets work on arms, legs, shoulders, back, and chest — anywhere you get burned. Each sheet covers a generous area and conforms to your body's shape.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">When will my order ship? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>We're currently in our early-release batch. Orders ship within 2-3 weeks. You'll receive a tracking number by email as soon as your kit ships.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">What if it doesn't work for me? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>We offer a 100% money-back guarantee. If AfterSol doesn't relieve your sunburn pain, email us and we'll refund every penny — no questions asked.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FINAL CTA -->
     <section class="final-cta" id="order">
         <div class="container">
             <h2 class="section-title">Don't Suffer Tonight</h2>
-            <!-- REPLACE_STRIPE_LINK_2 -->
             <a href="https://buy.stripe.com/test_fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Pre-Order Now — $44</a>
             <p class="subtext">Ships in 2-3 weeks. Limited early-release batch.</p>
         </div>
@@ -456,8 +624,44 @@
     <!-- FOOTER -->
     <footer class="footer">
         <p>Questions? <a href="mailto:aftersolcare@gmail.com">Contact Us</a></p>
-        <p style="margin-top: 8px;">© 2025 AfterSol. All rights reserved.</p>
+        <p style="margin-top: 8px;">© 2026 AfterSol. All rights reserved.</p>
     </footer>
 
+    <script>
+        // Fade-in on scroll
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(function(el) {
+            observer.observe(el);
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var item = btn.parentElement;
+                var answer = item.querySelector('.faq-answer');
+                var isOpen = item.classList.contains('open');
+
+                // Close all
+                document.querySelectorAll('.faq-item').forEach(function(i) {
+                    i.classList.remove('open');
+                    i.querySelector('.faq-answer').style.maxHeight = null;
+                });
+
+                // Open clicked (if it was closed)
+                if (!isOpen) {
+                    item.classList.add('open');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
