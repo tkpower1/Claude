@@ -88,7 +88,7 @@
         /* HERO SECTION */
         .hero {
             background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
-            padding: 120px 24px 80px;
+            padding: 120px 24px 60px;
             text-align: center;
         }
 
@@ -104,7 +104,65 @@
             color: #a0aec0;
             font-size: clamp(18px, 3vw, 22px);
             max-width: 600px;
-            margin: 0 auto 32px;
+            margin: 0 auto 40px;
+        }
+
+        /* HERO BEFORE/AFTER */
+        .hero-before-after {
+            display: flex;
+            gap: 0;
+            max-width: 560px;
+            margin: 0 auto 12px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+        }
+
+        .hero-ba-item {
+            flex: 1;
+            position: relative;
+        }
+
+        .hero-ba-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-ba-label {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 24px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero-ba-label-before {
+            background: rgba(220, 53, 53, 0.85);
+            color: #fff;
+        }
+
+        .hero-ba-label-after {
+            background: rgba(72, 187, 120, 0.85);
+            color: #fff;
+        }
+
+        .hero-ba-divider {
+            width: 4px;
+            background: rgba(255,255,255,0.9);
+            flex-shrink: 0;
+        }
+
+        .hero-ba-caption {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 32px;
         }
 
         .btn-primary {
@@ -521,6 +579,17 @@
             .faq-question {
                 font-size: 15px;
             }
+
+            .hero-before-after {
+                max-width: 100%;
+                border-radius: 12px;
+            }
+
+            .hero-ba-label {
+                font-size: 12px;
+                padding: 6px 14px;
+                bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -537,6 +606,18 @@
         <div class="container">
             <h1>Got Sunburned? Tonight Is Going to Be Miserable.</h1>
             <p class="subheadline">Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night.</p>
+            <div class="hero-before-after">
+                <div class="hero-ba-item">
+                    <img src="https://i.imgur.com/wiCkThC.jpg" alt="Sunburned skin before AfterSol">
+                    <span class="hero-ba-label hero-ba-label-before">Before</span>
+                </div>
+                <div class="hero-ba-divider"></div>
+                <div class="hero-ba-item">
+                    <img src="https://i.imgur.com/zaev3B6.jpg" alt="Healed skin after AfterSol">
+                    <span class="hero-ba-label hero-ba-label-after">After</span>
+                </div>
+            </div>
+            <p class="hero-ba-caption">One night with AfterSol</p>
             <a href="https://buy.stripe.com/test_fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Pre-Order Now — $44</a>
         </div>
     </section>
@@ -606,18 +687,6 @@
 
             <div class="video-container">
                 <iframe src="https://www.youtube.com/embed/naahPzd8CY0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-
-            <div class="before-after">
-                <div class="before-after-item">
-                    <img src="https://i.imgur.com/wiCkThC.jpg" alt="Sunburned skin on arm before AfterSol treatment" loading="lazy">
-                    <span class="before-after-label">Before</span>
-                </div>
-                <div class="before-after-divider"></div>
-                <div class="before-after-item">
-                    <img src="https://i.imgur.com/zaev3B6.jpg" alt="Healed skin on arm after AfterSol treatment" loading="lazy">
-                    <span class="before-after-label">After</span>
-                </div>
             </div>
 
             <div class="photos-grid">
