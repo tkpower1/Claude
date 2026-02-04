@@ -273,6 +273,25 @@
             text-align: center;
         }
 
+        .video-container {
+            max-width: 340px;
+            margin: 32px auto;
+            position: relative;
+            padding-bottom: 177.78%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         .before-after {
             display: flex;
             gap: 0;
@@ -584,6 +603,10 @@
     <section class="social-proof fade-in">
         <div class="container">
             <h2 class="section-title">Real Relief</h2>
+
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/naahPzd8CY0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
 
             <div class="before-after">
                 <div class="before-after-item">
