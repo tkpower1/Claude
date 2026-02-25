@@ -216,6 +216,52 @@
             box-shadow: 0 12px 32px rgba(232, 93, 42, 0.3);
         }
 
+        /* URGENCY & TRUST */
+        .urgency-text {
+            color: #c53030;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .urgency-dot {
+            width: 8px;
+            height: 8px;
+            background: #c53030;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .trust-signals {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666666;
+            font-size: 13px;
+        }
+
+        .trust-icon {
+            color: #22964f;
+            font-weight: bold;
+        }
+
         /* SECTIONS */
         section {
             padding: 64px 32px;
@@ -671,7 +717,13 @@
                 </div>
             </div>
             <p class="hero-ba-caption">One night with AfterSol</p>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Pre-Order Now — $44</a>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
+            <p class="urgency-text"><span class="urgency-dot"></span> Only 23 kits left in stock — Ships tomorrow</p>
+            <div class="trust-signals">
+                <span class="trust-item"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
+                <span class="trust-item"><span class="trust-icon">&#128274;</span> Secure Checkout</span>
+                <span class="trust-item"><span class="trust-icon">&#10003;</span> Free Shipping</span>
+            </div>
         </div>
     </section>
 
@@ -721,6 +773,10 @@
                     <h3>Recovery Sheet (Overnight)</h3>
                     <p>Apply before bed. Sustained cooling keeps you comfortable all night. Wake up recovered, not wrecked.</p>
                 </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Your Kit — $44</a>
+                <p class="urgency-text"><span class="urgency-dot"></span> Limited stock available</p>
             </div>
         </div>
     </section>
@@ -799,8 +855,12 @@
     <section class="final-cta" id="order">
         <div class="container">
             <h2 class="section-title">Don't Suffer Tonight</h2>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Pre-Order Now — $44</a>
-            <p class="subtext">Ships in 2-3 weeks. Limited early-release batch.</p>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
+            <p class="subtext" style="color: #ffcc00; margin-top: 16px;">Only 23 kits left — Ships tomorrow</p>
+            <div class="trust-signals" style="margin-top: 16px;">
+                <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
+                <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> Free Shipping</span>
+            </div>
         </div>
     </section>
 
