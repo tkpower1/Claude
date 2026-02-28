@@ -39,7 +39,10 @@
     <meta name="twitter:image" content="https://i.imgur.com/wiCkThC.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Preload critical images -->
+    <link rel="preload" as="image" href="https://i.imgur.com/wiCkThCl.jpg">
+    <link rel="preload" as="image" href="https://i.imgur.com/zaev3B6l.jpg">
     <style>
         * {
             margin: 0;
@@ -633,61 +636,111 @@
         /* MOBILE */
         @media (max-width: 768px) {
             .hero {
-                padding: 80px 24px 48px;
+                padding: 70px 16px 32px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+                margin-bottom: 12px;
+            }
+
+            .hero .subheadline {
+                font-size: 15px;
+                margin-bottom: 20px;
+            }
+
+            .hero-ba-caption {
+                margin-bottom: 16px;
             }
 
             section {
-                padding: 48px 24px;
+                padding: 40px 16px;
             }
 
             .nav {
-                padding: 12px 20px;
+                padding: 10px 16px;
             }
 
             .nav-brand {
-                font-size: 19px;
+                font-size: 18px;
             }
 
             .btn-nav {
-                font-size: 13px;
-                padding: 8px 18px;
+                font-size: 12px;
+                padding: 8px 16px;
             }
 
             .btn-primary {
-                padding: 16px 36px;
+                padding: 14px 32px;
                 font-size: 15px;
+                width: 100%;
+                max-width: 300px;
             }
 
             .hero-before-after {
                 max-width: 100%;
-                border-radius: 16px;
+                border-radius: 12px;
+                margin-bottom: 8px;
+            }
+
+            .hero-ba-item img {
+                aspect-ratio: 3 / 4;
             }
 
             .hero-ba-label {
+                font-size: 10px;
+                padding: 5px 12px;
+                bottom: 8px;
+            }
+
+            .urgency-text {
+                font-size: 12px;
+                margin-top: 12px;
+            }
+
+            .trust-signals {
+                gap: 12px;
+                margin-top: 12px;
+            }
+
+            .trust-item {
                 font-size: 11px;
-                padding: 6px 16px;
-                bottom: 12px;
             }
 
             .steps {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 16px;
+            }
+
+            .step {
+                padding: 24px 20px;
             }
 
             .photos-grid {
                 grid-template-columns: 1fr 1fr;
+                gap: 8px;
             }
 
             .features-list li {
-                font-size: 15px;
+                font-size: 14px;
+                padding: 12px 0;
             }
 
             .faq-question {
-                font-size: 15px;
+                font-size: 14px;
+                padding: 18px 0;
             }
 
             .container {
-                padding: 0 24px;
+                padding: 0 16px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .video-container {
+                margin-top: 20px;
             }
         }
     </style>
@@ -707,12 +760,12 @@
             <p class="subheadline">Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night.</p>
             <div class="hero-before-after">
                 <div class="hero-ba-item">
-                    <img src="https://i.imgur.com/wiCkThC.jpg" alt="Sunburned skin before AfterSol">
+                    <img src="https://i.imgur.com/wiCkThCl.jpg" alt="Sunburned skin before AfterSol">
                     <span class="hero-ba-label hero-ba-label-before">Before</span>
                 </div>
                 <div class="hero-ba-divider"></div>
                 <div class="hero-ba-item">
-                    <img src="https://i.imgur.com/zaev3B6.jpg" alt="Healed skin after AfterSol">
+                    <img src="https://i.imgur.com/zaev3B6l.jpg" alt="Healed skin after AfterSol">
                     <span class="hero-ba-label hero-ba-label-after">After</span>
                 </div>
             </div>
@@ -751,8 +804,11 @@
                 Not a lotion. Not a spray. A clinical-grade cooling system that actually works.
             </p>
 
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/naahPzd8CY0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="video-container" id="video-placeholder" style="cursor: pointer; background: #000;">
+                <img src="https://img.youtube.com/vi/naahPzd8CY0/hqdefault.jpg" alt="Watch video" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px; background: #e85d2a; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 0; height: 0; border-left: 18px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 4px;"></div>
+                </div>
             </div>
         </div>
     </section>
@@ -804,10 +860,10 @@
             <h2 class="section-title">Real Relief</h2>
 
             <div class="photos-grid">
-                <img src="https://i.imgur.com/s8oQuEz.jpg" alt="AfterSol application on skin" loading="lazy">
-                <img src="https://i.imgur.com/R5Y7m5R.jpg" alt="AfterSol cooling sheet" loading="lazy">
-                <img src="https://i.imgur.com/vR3p4FY.jpg" alt="AfterSol relief treatment" loading="lazy">
-                <img src="https://i.imgur.com/1bjv4Cm.jpg" alt="AfterSol product application" loading="lazy">
+                <img src="https://i.imgur.com/s8oQuEzm.jpg" alt="AfterSol application on skin" loading="lazy">
+                <img src="https://i.imgur.com/R5Y7m5Rm.jpg" alt="AfterSol cooling sheet" loading="lazy">
+                <img src="https://i.imgur.com/vR3p4FYm.jpg" alt="AfterSol relief treatment" loading="lazy">
+                <img src="https://i.imgur.com/1bjv4Cmm.jpg" alt="AfterSol product application" loading="lazy">
             </div>
         </div>
     </section>
@@ -883,6 +939,11 @@
 
         document.querySelectorAll('.fade-in').forEach(function(el) {
             observer.observe(el);
+        });
+
+        // Lazy load YouTube video
+        document.getElementById('video-placeholder').addEventListener('click', function() {
+            this.innerHTML = '<iframe src="https://www.youtube.com/embed/naahPzd8CY0?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>';
         });
 
         // FAQ accordion
