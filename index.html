@@ -929,20 +929,24 @@
     <script>
         // Track CTA clicks with delay to ensure events send before navigation
         function trackCheckoutClick(buttonLocation, targetUrl) {
-            // Google Analytics - use transport beacon to ensure delivery
-            gtag('event', 'begin_checkout', {
-                'event_category': 'ecommerce',
-                'event_label': buttonLocation,
-                'value': 44,
-                'transport_type': 'beacon'
-            });
-            // Meta Pixel
-            fbq('track', 'InitiateCheckout', {
-                content_name: 'AfterSol Emergency Kit',
-                content_category: 'Sunburn Relief',
-                value: 44.00,
-                currency: 'USD'
-            });
+            // Meta Pixel - fire FIRST (most important for ad attribution)
+            if (typeof fbq === 'function') {
+                fbq('track', 'InitiateCheckout', {
+                    content_name: 'AfterSol Emergency Kit',
+                    content_category: 'Sunburn Relief',
+                    value: 44.00,
+                    currency: 'USD'
+                });
+            }
+            // Google Analytics
+            if (typeof gtag === 'function') {
+                gtag('event', 'begin_checkout', {
+                    'event_category': 'ecommerce',
+                    'event_label': buttonLocation,
+                    'value': 44,
+                    'transport_type': 'beacon'
+                });
+            }
             // Small delay to ensure tracking completes, then redirect
             setTimeout(function() {
                 window.location.href = targetUrl;
