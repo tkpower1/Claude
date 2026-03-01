@@ -771,7 +771,7 @@
             </div>
             <p class="hero-ba-caption">One night with AfterSol</p>
             <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
-            <p class="urgency-text"><span class="urgency-dot"></span> Only 23 kits left in stock — Ships tomorrow</p>
+            <p class="urgency-text"><span class="urgency-dot"></span> Only 23 kits left in stock — Ships in 2-3 weeks</p>
             <div class="trust-signals">
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
                 <span class="trust-item"><span class="trust-icon">&#128274;</span> Secure Checkout</span>
@@ -912,7 +912,7 @@
         <div class="container">
             <h2 class="section-title">Don't Suffer Tonight</h2>
             <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
-            <p class="subtext" style="color: #ffcc00; margin-top: 16px;">Only 23 kits left — Ships tomorrow</p>
+            <p class="subtext" style="color: #ffcc00; margin-top: 16px;">Only 23 kits left — Pre-order now</p>
             <div class="trust-signals" style="margin-top: 16px;">
                 <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
                 <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> Free Shipping</span>
@@ -980,8 +980,31 @@
             observer.observe(el);
         });
 
-        // Lazy load YouTube video
+        // Track scroll depth milestones
+        var scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
+        window.addEventListener('scroll', function() {
+            var scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+            [25, 50, 75, 100].forEach(function(milestone) {
+                if (scrollPercent >= milestone && !scrollMilestones[milestone]) {
+                    scrollMilestones[milestone] = true;
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'scroll_depth', { percent: milestone });
+                    }
+                    if (typeof fbq === 'function') {
+                        fbq('trackCustom', 'ScrollDepth', { percent: milestone });
+                    }
+                }
+            });
+        });
+
+        // Lazy load YouTube video with tracking
         document.getElementById('video-placeholder').addEventListener('click', function() {
+            if (typeof gtag === 'function') {
+                gtag('event', 'video_start', { video_title: 'AfterSol Demo' });
+            }
+            if (typeof fbq === 'function') {
+                fbq('trackCustom', 'VideoPlay');
+            }
             this.innerHTML = '<iframe src="https://www.youtube.com/embed/naahPzd8CY0?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>';
         });
 
