@@ -927,6 +927,31 @@
     </footer>
 
     <script>
+        // Track CTA clicks
+        function trackCheckoutClick(buttonLocation) {
+            // Google Analytics
+            gtag('event', 'begin_checkout', {
+                'event_category': 'ecommerce',
+                'event_label': buttonLocation,
+                'value': 44
+            });
+            // Meta Pixel
+            fbq('track', 'InitiateCheckout', {
+                content_name: 'AfterSol Emergency Kit',
+                content_category: 'Sunburn Relief',
+                value: 44.00,
+                currency: 'USD'
+            });
+        }
+
+        // Add click tracking to all CTA buttons
+        document.querySelectorAll('a[href*="buy.stripe.com"]').forEach(function(btn, index) {
+            btn.addEventListener('click', function() {
+                var locations = ['nav', 'hero', 'how-it-works', 'final-cta'];
+                trackCheckoutClick(locations[index] || 'unknown');
+            });
+        });
+
         // Fade-in on scroll
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
