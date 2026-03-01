@@ -1,0 +1,114 @@
+{% comment %}
+  AfterSol Social Proof Section (Photo Grid)
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-social-proof">
+  <div class="aftersol-container">
+    <p class="aftersol-section-subtitle">{{ section.settings.subtitle | default: 'See It In Action' }}</p>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'Real Relief' }}</h2>
+
+    <div class="aftersol-photos-grid">
+      {% for block in section.blocks %}
+        {% if block.settings.image %}
+          <img
+            src="{{ block.settings.image | image_url: width: 400 }}"
+            alt="{{ block.settings.image_alt | default: 'AfterSol product in action' }}"
+            loading="lazy"
+          >
+        {% else %}
+          <img
+            src="{{ block.settings.image_url }}"
+            alt="{{ block.settings.image_alt | default: 'AfterSol product in action' }}"
+            loading="lazy"
+          >
+        {% endif %}
+      {% else %}
+        <img src="https://i.imgur.com/s8oQuEzm.jpg" alt="AfterSol application on skin" loading="lazy">
+        <img src="https://i.imgur.com/R5Y7m5Rm.jpg" alt="AfterSol cooling sheet" loading="lazy">
+        <img src="https://i.imgur.com/vR3p4FYm.jpg" alt="AfterSol relief treatment" loading="lazy">
+        <img src="https://i.imgur.com/1bjv4Cmm.jpg" alt="AfterSol product application" loading="lazy">
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "AfterSol Social Proof",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "See It In Action"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Real Relief"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Photo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "Image URL (if not uploading)",
+          "default": "https://i.imgur.com/s8oQuEzm.jpg"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image Alt Text",
+          "default": "AfterSol product in action"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Social Proof",
+      "blocks": [
+        {
+          "type": "photo",
+          "settings": {
+            "image_url": "https://i.imgur.com/s8oQuEzm.jpg",
+            "image_alt": "AfterSol application on skin"
+          }
+        },
+        {
+          "type": "photo",
+          "settings": {
+            "image_url": "https://i.imgur.com/R5Y7m5Rm.jpg",
+            "image_alt": "AfterSol cooling sheet"
+          }
+        },
+        {
+          "type": "photo",
+          "settings": {
+            "image_url": "https://i.imgur.com/vR3p4FYm.jpg",
+            "image_alt": "AfterSol relief treatment"
+          }
+        },
+        {
+          "type": "photo",
+          "settings": {
+            "image_url": "https://i.imgur.com/1bjv4Cmm.jpg",
+            "image_alt": "AfterSol product application"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -581,6 +581,46 @@
             line-height: 1.8;
         }
 
+        /* REVIEWS */
+        .reviews {
+            background: #0a0a0a;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .review-card {
+            background: #151515;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 28px;
+        }
+
+        .review-stars {
+            color: #f5a623;
+            font-size: 18px;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .review-text {
+            color: #cccccc;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        .review-author {
+            color: #888888;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
         /* FINAL CTA */
         .final-cta {
             background: #111111;
@@ -771,7 +811,7 @@
             </div>
             <p class="hero-ba-caption">One night with AfterSol</p>
             <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
-            <p class="urgency-text"><span class="urgency-dot"></span> Only 23 kits left in stock — Ships tomorrow</p>
+            <p class="urgency-text"><span class="urgency-dot"></span> Only 23 kits left in stock — Ships in 2-3 weeks</p>
             <div class="trust-signals">
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
                 <span class="trust-item"><span class="trust-icon">&#128274;</span> Secure Checkout</span>
@@ -868,6 +908,41 @@
         </div>
     </section>
 
+    <!-- REVIEWS -->
+    <section class="reviews fade-in">
+        <div class="container">
+            <p class="section-subtitle">What People Are Saying</p>
+            <h2 class="section-title">Real Results</h2>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="review-text">"I got absolutely fried at the lake on Saturday. By Sunday night I was dreading sleep. Put on the hydrogel sheet and honestly within 20 minutes the throbbing stopped. Actually slept through the night. This stuff is legit."</p>
+                    <p class="review-author">— Marcus T., Austin TX</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="review-text">"My daughter got burned at soccer camp and was in tears. We'd tried aloe, cold towels, everything. The AfterSol sheet calmed her down in like 15 minutes and she slept fine. Ordering more to keep in the house."</p>
+                    <p class="review-author">— Jennifer M., San Diego CA</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="review-text">"Skeptical at first because I've tried everything for sunburns. But this actually works different - it stays cool for hours, not minutes. Used it on my shoulders after a beach day and woke up feeling way better than I expected."</p>
+                    <p class="review-author">— David R., Miami FL</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+                    <p class="review-text">"Works great, only complaint is I wish the sheets were a little bigger for covering my whole back. But for arms and shoulders it's perfect. Way better than any aloe gel I've used."</p>
+                    <p class="review-author">— Rachel K., Phoenix AZ</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="review-text">"Brought this on our Cabo trip 'just in case' and thank god I did. My husband turned into a lobster day 2. This saved the rest of our vacation. He was back at the pool by day 4."</p>
+                    <p class="review-author">— Christina L., Denver CO</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- GUARANTEE -->
     <section class="guarantee fade-in">
         <div class="container">
@@ -912,7 +987,7 @@
         <div class="container">
             <h2 class="section-title">Don't Suffer Tonight</h2>
             <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
-            <p class="subtext" style="color: #ffcc00; margin-top: 16px;">Only 23 kits left — Ships tomorrow</p>
+            <p class="subtext" style="color: #ffcc00; margin-top: 16px;">Only 23 kits left — Pre-order now</p>
             <div class="trust-signals" style="margin-top: 16px;">
                 <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
                 <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> Free Shipping</span>
@@ -922,7 +997,7 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        <p>Questions? <a href="mailto:aftersolcare@gmail.com">Contact Us</a></p>
+        <p>Questions? <a href="mailto:support@aftersol.co">Contact Us</a></p>
         <p style="margin-top: 8px;">&copy; 2026 AfterSol. All rights reserved.</p>
     </footer>
 
@@ -978,6 +1053,33 @@
 
         document.querySelectorAll('.fade-in').forEach(function(el) {
             observer.observe(el);
+        });
+
+        // Track scroll depth milestones
+        var scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
+        window.addEventListener('scroll', function() {
+            var scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+            [25, 50, 75, 100].forEach(function(milestone) {
+                if (scrollPercent >= milestone && !scrollMilestones[milestone]) {
+                    scrollMilestones[milestone] = true;
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'scroll_depth', { percent: milestone });
+                    }
+                    if (typeof fbq === 'function') {
+                        fbq('trackCustom', 'ScrollDepth', { percent: milestone });
+                    }
+                }
+            });
+        });
+
+        // Track video plays
+        document.getElementById('video-placeholder').addEventListener('click', function() {
+            if (typeof gtag === 'function') {
+                gtag('event', 'video_start', { video_title: 'AfterSol Demo' });
+            }
+            if (typeof fbq === 'function') {
+                fbq('trackCustom', 'VideoPlay');
+            }
         });
 
         // Lazy load YouTube video

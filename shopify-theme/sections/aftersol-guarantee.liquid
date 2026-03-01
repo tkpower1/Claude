@@ -1,0 +1,43 @@
+{% comment %}
+  AfterSol Guarantee Section
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-guarantee">
+  <div class="aftersol-container">
+    <span class="aftersol-guarantee-badge">{{ section.settings.badge_text | default: 'Risk Free' }}</span>
+    <h2>{{ section.settings.title | default: '100% Money-Back Guarantee' }}</h2>
+    <p>{{ section.settings.description | default: 'If AfterSol doesn\'t stop your sunburn pain, we\'ll refund every penny. No questions asked.' }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "AfterSol Guarantee",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Risk Free"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "100% Money-Back Guarantee"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "If AfterSol doesn't stop your sunburn pain, we'll refund every penny. No questions asked."
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Guarantee"
+    }
+  ]
+}
+{% endschema %}

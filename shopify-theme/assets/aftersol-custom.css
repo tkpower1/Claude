@@ -1,0 +1,745 @@
+/* AfterSol Custom Styles for Shopify
+ * Add this file to your theme's assets folder
+ * Then include in theme.liquid: {{ 'aftersol-custom.css' | asset_url | stylesheet_tag }}
+ */
+
+/* ============================================
+   BASE STYLES & VARIABLES
+   ============================================ */
+:root {
+  --aftersol-primary: #e85d2a;
+  --aftersol-primary-dark: #d14f1f;
+  --aftersol-dark: #1a1a1a;
+  --aftersol-black: #111111;
+  --aftersol-gray-dark: #555555;
+  --aftersol-gray: #666666;
+  --aftersol-gray-light: #888888;
+  --aftersol-gray-lighter: #999999;
+  --aftersol-gray-lightest: #cccccc;
+  --aftersol-white: #ffffff;
+  --aftersol-off-white: #fafafa;
+  --aftersol-success: #22964f;
+  --aftersol-success-light: #48bb78;
+  --aftersol-error: #c53030;
+  --aftersol-star: #f5a623;
+}
+
+.aftersol-section {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.aftersol-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+.aftersol-section-subtitle {
+  color: var(--aftersol-primary);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.aftersol-section-title {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+  color: var(--aftersol-dark);
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.aftersol-btn-primary {
+  display: inline-block;
+  background: var(--aftersol-primary);
+  color: var(--aftersol-white);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 18px 48px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.24s ease-in-out;
+  letter-spacing: 0.2px;
+  border: none;
+  cursor: pointer;
+}
+
+.aftersol-btn-primary:hover {
+  background: var(--aftersol-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(232, 93, 42, 0.3);
+  color: var(--aftersol-white);
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.aftersol-hero {
+  padding: 100px 32px 60px;
+  text-align: center;
+  background: var(--aftersol-off-white);
+}
+
+.aftersol-hero h1 {
+  font-size: clamp(36px, 5.5vw, 56px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+  color: var(--aftersol-black);
+}
+
+.aftersol-hero .subheadline {
+  color: var(--aftersol-gray);
+  font-size: clamp(17px, 2.5vw, 20px);
+  font-weight: 400;
+  max-width: 520px;
+  margin: 0 auto 32px;
+  line-height: 1.5;
+}
+
+/* Before/After Images */
+.aftersol-before-after {
+  display: flex;
+  max-width: 860px;
+  margin: 0 auto 12px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+
+.aftersol-ba-item {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.aftersol-ba-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  aspect-ratio: 4 / 5;
+}
+
+.aftersol-ba-label {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 24px;
+  border-radius: 100px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.aftersol-ba-label--before {
+  background: rgba(200, 40, 40, 0.9);
+  color: var(--aftersol-white);
+}
+
+.aftersol-ba-label--after {
+  background: rgba(34, 150, 83, 0.9);
+  color: var(--aftersol-white);
+}
+
+.aftersol-ba-divider {
+  width: 3px;
+  background: var(--aftersol-white);
+  flex-shrink: 0;
+}
+
+.aftersol-ba-caption {
+  color: var(--aftersol-gray-lighter);
+  font-size: 15px;
+  font-weight: 400;
+  margin-bottom: 24px;
+  letter-spacing: 0.3px;
+}
+
+/* Urgency */
+.aftersol-urgency {
+  color: var(--aftersol-error);
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.aftersol-urgency-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--aftersol-error);
+  border-radius: 50%;
+  animation: aftersol-pulse 1.5s infinite;
+}
+
+@keyframes aftersol-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Trust Signals */
+.aftersol-trust-signals {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.aftersol-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--aftersol-gray);
+  font-size: 13px;
+}
+
+.aftersol-trust-icon {
+  color: var(--aftersol-success);
+  font-weight: bold;
+}
+
+/* ============================================
+   PROBLEM SECTION
+   ============================================ */
+.aftersol-problem {
+  background: var(--aftersol-white);
+  text-align: center;
+  padding: 64px 32px;
+}
+
+.aftersol-problem-text {
+  font-size: 18px;
+  color: var(--aftersol-gray-dark);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.9;
+}
+
+.aftersol-problem-text p {
+  margin-bottom: 16px;
+}
+
+.aftersol-problem-text strong {
+  color: var(--aftersol-dark);
+}
+
+/* ============================================
+   SOLUTION SECTION
+   ============================================ */
+.aftersol-solution {
+  background: var(--aftersol-off-white);
+  text-align: center;
+  padding: 64px 32px;
+}
+
+.aftersol-solution-text {
+  font-size: 20px;
+  color: #444444;
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.aftersol-solution-text strong {
+  color: var(--aftersol-dark);
+}
+
+/* Video Container */
+.aftersol-video-container {
+  max-width: 600px;
+  margin: 32px auto 0;
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+  cursor: pointer;
+  background: #000;
+}
+
+.aftersol-video-container iframe,
+.aftersol-video-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aftersol-video-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 48px;
+  background: var(--aftersol-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.aftersol-video-play-btn::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 18px solid var(--aftersol-white);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  margin-left: 4px;
+}
+
+/* ============================================
+   HOW IT WORKS SECTION
+   ============================================ */
+.aftersol-how-it-works {
+  background: var(--aftersol-white);
+  padding: 64px 32px;
+}
+
+.aftersol-how-it-works .aftersol-section-title,
+.aftersol-how-it-works .aftersol-section-subtitle {
+  text-align: center;
+}
+
+.aftersol-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 720px;
+  margin: 32px auto 0;
+}
+
+.aftersol-step {
+  background: var(--aftersol-off-white);
+  padding: 40px 32px;
+  border-radius: 20px;
+  text-align: left;
+}
+
+.aftersol-step-number {
+  display: inline-block;
+  background: var(--aftersol-primary);
+  color: var(--aftersol-white);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.aftersol-step h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--aftersol-dark);
+  letter-spacing: -0.3px;
+}
+
+.aftersol-step p {
+  color: var(--aftersol-gray);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ============================================
+   WHAT YOU GET SECTION
+   ============================================ */
+.aftersol-what-you-get {
+  background: var(--aftersol-black);
+  text-align: center;
+  padding: 64px 32px;
+}
+
+.aftersol-what-you-get .aftersol-section-title {
+  color: var(--aftersol-white);
+}
+
+.aftersol-features-list {
+  list-style: none;
+  max-width: 440px;
+  margin: 28px auto;
+  padding: 0;
+  text-align: left;
+}
+
+.aftersol-features-list li {
+  color: var(--aftersol-gray-lightest);
+  font-size: 17px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.aftersol-features-list li:last-child {
+  border-bottom: none;
+}
+
+.aftersol-check {
+  color: var(--aftersol-success-light);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.aftersol-price-highlight {
+  font-size: 36px;
+  color: var(--aftersol-primary);
+  font-weight: 700;
+  margin-top: 32px;
+  letter-spacing: -1px;
+}
+
+.aftersol-price-subtext {
+  color: var(--aftersol-gray-light);
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+/* ============================================
+   SOCIAL PROOF SECTION
+   ============================================ */
+.aftersol-social-proof {
+  background: var(--aftersol-off-white);
+  text-align: center;
+  padding: 64px 32px;
+}
+
+.aftersol-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 720px;
+  margin: 24px auto 0;
+}
+
+.aftersol-photos-grid img {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+/* ============================================
+   REVIEWS SECTION
+   ============================================ */
+.aftersol-reviews {
+  background: #0a0a0a;
+  padding: 64px 32px;
+}
+
+.aftersol-reviews .aftersol-section-title {
+  color: var(--aftersol-white);
+  text-align: center;
+}
+
+.aftersol-reviews .aftersol-section-subtitle {
+  text-align: center;
+}
+
+.aftersol-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.aftersol-review-card {
+  background: #151515;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.aftersol-review-stars {
+  color: var(--aftersol-star);
+  font-size: 18px;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.aftersol-review-text {
+  color: var(--aftersol-gray-lightest);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.aftersol-review-author {
+  color: var(--aftersol-gray-light);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ============================================
+   GUARANTEE SECTION
+   ============================================ */
+.aftersol-guarantee {
+  background: var(--aftersol-white);
+  text-align: center;
+  padding: 56px 32px;
+}
+
+.aftersol-guarantee-badge {
+  display: inline-block;
+  background: var(--aftersol-success);
+  color: var(--aftersol-white);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 18px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.aftersol-guarantee h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+  color: var(--aftersol-dark);
+}
+
+.aftersol-guarantee p {
+  color: var(--aftersol-gray);
+  font-size: 16px;
+  max-width: 460px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ============================================
+   FAQ SECTION
+   ============================================ */
+.aftersol-faq {
+  background: var(--aftersol-off-white);
+  padding: 64px 32px;
+}
+
+.aftersol-faq .aftersol-section-title,
+.aftersol-faq .aftersol-section-subtitle {
+  text-align: center;
+}
+
+.aftersol-faq-list {
+  max-width: 600px;
+  margin: 28px auto 0;
+}
+
+.aftersol-faq-item {
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.aftersol-faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 24px 0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--aftersol-dark);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  transition: color 0.24s ease;
+}
+
+.aftersol-faq-question:hover {
+  color: var(--aftersol-primary);
+}
+
+.aftersol-faq-icon {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  color: var(--aftersol-gray-lighter);
+}
+
+.aftersol-faq-item.open .aftersol-faq-icon {
+  transform: rotate(45deg);
+}
+
+.aftersol-faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.aftersol-faq-answer p {
+  padding: 0 0 24px;
+  color: var(--aftersol-gray);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* ============================================
+   FINAL CTA SECTION
+   ============================================ */
+.aftersol-final-cta {
+  background: var(--aftersol-black);
+  text-align: center;
+  padding: 64px 32px;
+}
+
+.aftersol-final-cta .aftersol-section-title {
+  color: var(--aftersol-white);
+  margin-bottom: 36px;
+}
+
+.aftersol-final-cta .subtext {
+  color: #ffcc00;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.aftersol-final-cta .aftersol-trust-signals {
+  margin-top: 16px;
+}
+
+.aftersol-final-cta .aftersol-trust-item {
+  color: #aaa;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .aftersol-hero {
+    padding: 70px 16px 32px;
+  }
+
+  .aftersol-hero h1 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .aftersol-hero .subheadline {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  .aftersol-ba-caption {
+    margin-bottom: 16px;
+  }
+
+  .aftersol-section,
+  .aftersol-problem,
+  .aftersol-solution,
+  .aftersol-how-it-works,
+  .aftersol-what-you-get,
+  .aftersol-social-proof,
+  .aftersol-reviews,
+  .aftersol-faq,
+  .aftersol-final-cta {
+    padding: 40px 16px;
+  }
+
+  .aftersol-container {
+    padding: 0 16px;
+  }
+
+  .aftersol-btn-primary {
+    padding: 14px 32px;
+    font-size: 15px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .aftersol-before-after {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .aftersol-ba-item img {
+    aspect-ratio: 3 / 4;
+  }
+
+  .aftersol-ba-label {
+    font-size: 10px;
+    padding: 5px 12px;
+    bottom: 8px;
+  }
+
+  .aftersol-urgency {
+    font-size: 12px;
+    margin-top: 12px;
+  }
+
+  .aftersol-trust-signals {
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .aftersol-trust-item {
+    font-size: 11px;
+  }
+
+  .aftersol-steps {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .aftersol-step {
+    padding: 24px 20px;
+  }
+
+  .aftersol-photos-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .aftersol-features-list li {
+    font-size: 14px;
+    padding: 12px 0;
+  }
+
+  .aftersol-faq-question {
+    font-size: 14px;
+    padding: 18px 0;
+  }
+
+  .aftersol-section-title {
+    font-size: 24px;
+  }
+
+  .aftersol-video-container {
+    margin-top: 20px;
+  }
+
+  .aftersol-reviews-grid {
+    grid-template-columns: 1fr;
+  }
+}

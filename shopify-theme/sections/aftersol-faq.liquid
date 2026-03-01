@@ -1,0 +1,178 @@
+{% comment %}
+  AfterSol FAQ Section with Accordion
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-faq">
+  <div class="aftersol-container">
+    <p class="aftersol-section-subtitle">{{ section.settings.subtitle | default: 'FAQ' }}</p>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'Common Questions' }}</h2>
+
+    <div class="aftersol-faq-list">
+      {% for block in section.blocks %}
+        <div class="aftersol-faq-item">
+          <button class="aftersol-faq-question">
+            {{ block.settings.question }}
+            <span class="aftersol-faq-icon">+</span>
+          </button>
+          <div class="aftersol-faq-answer">
+            <p>{{ block.settings.answer }}</p>
+          </div>
+        </div>
+      {% else %}
+        <!-- Default FAQs if no blocks added -->
+        <div class="aftersol-faq-item">
+          <button class="aftersol-faq-question">
+            How fast does it actually work?
+            <span class="aftersol-faq-icon">+</span>
+          </button>
+          <div class="aftersol-faq-answer">
+            <p>The cooling hydrogel sheet starts working on contact. Most people feel significant pain reduction within 30 minutes. The overnight recovery sheet keeps you comfortable through the night.</p>
+          </div>
+        </div>
+        <div class="aftersol-faq-item">
+          <button class="aftersol-faq-question">
+            How is this different from aloe vera?
+            <span class="aftersol-faq-icon">+</span>
+          </button>
+          <div class="aftersol-faq-answer">
+            <p>Aloe evaporates in minutes and only provides temporary surface relief. AfterSol's hydrogel sheets maintain sustained cooling and deliver active ingredients directly into your skin over hours — not seconds.</p>
+          </div>
+        </div>
+        <div class="aftersol-faq-item">
+          <button class="aftersol-faq-question">
+            What body areas can I use it on?
+            <span class="aftersol-faq-icon">+</span>
+          </button>
+          <div class="aftersol-faq-answer">
+            <p>AfterSol sheets work on arms, legs, shoulders, back, and chest — anywhere you get burned. Each sheet covers a generous area and conforms to your body's shape.</p>
+          </div>
+        </div>
+        <div class="aftersol-faq-item">
+          <button class="aftersol-faq-question">
+            When will my order ship?
+            <span class="aftersol-faq-icon">+</span>
+          </button>
+          <div class="aftersol-faq-answer">
+            <p>We're currently in our early-release batch. Orders ship within 2-3 weeks. You'll receive a tracking number by email as soon as your kit ships.</p>
+          </div>
+        </div>
+        <div class="aftersol-faq-item">
+          <button class="aftersol-faq-question">
+            What if it doesn't work for me?
+            <span class="aftersol-faq-icon">+</span>
+          </button>
+          <div class="aftersol-faq-answer">
+            <p>We offer a 100% money-back guarantee. If AfterSol doesn't relieve your sunburn pain, email us and we'll refund every penny — no questions asked.</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.aftersol-faq-question').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = btn.parentElement;
+        var answer = item.querySelector('.aftersol-faq-answer');
+        var isOpen = item.classList.contains('open');
+
+        // Close all other items
+        document.querySelectorAll('.aftersol-faq-item').forEach(function(i) {
+          i.classList.remove('open');
+          i.querySelector('.aftersol-faq-answer').style.maxHeight = null;
+        });
+
+        // Open this item if it wasn't already open
+        if (!isOpen) {
+          item.classList.add('open');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "AfterSol FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Common Questions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How fast does it work?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "The cooling hydrogel sheet starts working on contact. Most people feel significant pain reduction within 30 minutes."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol FAQ",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How fast does it actually work?",
+            "answer": "The cooling hydrogel sheet starts working on contact. Most people feel significant pain reduction within 30 minutes. The overnight recovery sheet keeps you comfortable through the night."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How is this different from aloe vera?",
+            "answer": "Aloe evaporates in minutes and only provides temporary surface relief. AfterSol's hydrogel sheets maintain sustained cooling and deliver active ingredients directly into your skin over hours — not seconds."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What body areas can I use it on?",
+            "answer": "AfterSol sheets work on arms, legs, shoulders, back, and chest — anywhere you get burned. Each sheet covers a generous area and conforms to your body's shape."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "When will my order ship?",
+            "answer": "We're currently in our early-release batch. Orders ship within 2-3 weeks. You'll receive a tracking number by email as soon as your kit ships."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What if it doesn't work for me?",
+            "answer": "We offer a 100% money-back guarantee. If AfterSol doesn't relieve your sunburn pain, email us and we'll refund every penny — no questions asked."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

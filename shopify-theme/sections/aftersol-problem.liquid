@@ -1,0 +1,86 @@
+{% comment %}
+  AfterSol Problem Section
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-problem">
+  <div class="aftersol-container">
+    <p class="aftersol-section-subtitle">{{ section.settings.subtitle | default: 'The Problem' }}</p>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'You Know What\'s Coming' }}</h2>
+
+    <div class="aftersol-problem-text">
+      {% if section.settings.paragraph_1 != blank %}
+        <p>{{ section.settings.paragraph_1 }}</p>
+      {% else %}
+        <p>The throbbing. The heat radiating off your skin. The way every shirt, sheet, and breeze feels like sandpaper.</p>
+      {% endif %}
+
+      {% if section.settings.paragraph_2 != blank %}
+        <p>{{ section.settings.paragraph_2 }}</p>
+      {% else %}
+        <p>You'll try aloe. It'll help for 10 minutes, then evaporate. You'll take Advil. It won't touch the surface pain.</p>
+      {% endif %}
+
+      {% if section.settings.paragraph_3 != blank %}
+        <p>{{ section.settings.paragraph_3 }}</p>
+      {% else %}
+        <p>Tonight, you'll lie in bed unable to sleep. Tomorrow, you'll be exhausted AND still burned.</p>
+      {% endif %}
+
+      {% if section.settings.paragraph_4 != blank %}
+        <p><strong>{{ section.settings.paragraph_4 }}</strong></p>
+      {% else %}
+        <p><strong>Your vacation? Ruined. Your week? Shot. All because of one afternoon in the sun.</strong></p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "AfterSol Problem",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "The Problem"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "You Know What's Coming"
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_1",
+      "label": "Paragraph 1",
+      "default": "The throbbing. The heat radiating off your skin. The way every shirt, sheet, and breeze feels like sandpaper."
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_2",
+      "label": "Paragraph 2",
+      "default": "You'll try aloe. It'll help for 10 minutes, then evaporate. You'll take Advil. It won't touch the surface pain."
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_3",
+      "label": "Paragraph 3",
+      "default": "Tonight, you'll lie in bed unable to sleep. Tomorrow, you'll be exhausted AND still burned."
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_4",
+      "label": "Paragraph 4 (Bold)",
+      "default": "Your vacation? Ruined. Your week? Shot. All because of one afternoon in the sun."
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Problem"
+    }
+  ]
+}
+{% endschema %}
