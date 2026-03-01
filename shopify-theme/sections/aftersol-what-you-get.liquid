@@ -1,0 +1,105 @@
+{% comment %}
+  AfterSol What You Get Section
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-what-you-get">
+  <div class="aftersol-container">
+    <p class="aftersol-section-subtitle">{{ section.settings.subtitle | default: 'What\'s Included' }}</p>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'The AfterSol Emergency Relief Kit' }}</h2>
+
+    <ul class="aftersol-features-list">
+      {% for block in section.blocks %}
+        <li>
+          <span class="aftersol-check">&#10003;</span>
+          {{ block.settings.feature_text }}
+        </li>
+      {% else %}
+        <li><span class="aftersol-check">&#10003;</span> 4 Hydrogel Cooling Sheets (immediate relief)</li>
+        <li><span class="aftersol-check">&#10003;</span> 4 Recovery Fiber Sheets (overnight comfort)</li>
+        <li><span class="aftersol-check">&#10003;</span> 4 complete treatments per kit</li>
+        <li><span class="aftersol-check">&#10003;</span> Works on arms, legs, shoulders, back</li>
+      {% endfor %}
+    </ul>
+
+    <p class="aftersol-price-highlight">{{ section.settings.price | default: '$44' }}</p>
+    <p class="aftersol-price-subtext">{{ section.settings.price_subtext | default: 'That\'s $11 per treatment to actually sleep through a sunburn.' }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "AfterSol What You Get",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "What's Included"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "The AfterSol Emergency Relief Kit"
+    },
+    {
+      "type": "text",
+      "id": "price",
+      "label": "Price Display",
+      "default": "$44"
+    },
+    {
+      "type": "text",
+      "id": "price_subtext",
+      "label": "Price Subtext",
+      "default": "That's $11 per treatment to actually sleep through a sunburn."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "feature_text",
+          "label": "Feature Text",
+          "default": "4 Hydrogel Cooling Sheets (immediate relief)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol What You Get",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "4 Hydrogel Cooling Sheets (immediate relief)"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "4 Recovery Fiber Sheets (overnight comfort)"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "4 complete treatments per kit"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Works on arms, legs, shoulders, back"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

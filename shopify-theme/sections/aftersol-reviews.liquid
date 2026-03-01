@@ -1,0 +1,168 @@
+{% comment %}
+  AfterSol Reviews Section
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-reviews">
+  <div class="aftersol-container">
+    <p class="aftersol-section-subtitle">{{ section.settings.subtitle | default: 'What People Are Saying' }}</p>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'Real Results' }}</h2>
+
+    <div class="aftersol-reviews-grid">
+      {% for block in section.blocks %}
+        <div class="aftersol-review-card">
+          <div class="aftersol-review-stars">
+            {% case block.settings.stars %}
+              {% when '5' %}
+                &#9733;&#9733;&#9733;&#9733;&#9733;
+              {% when '4' %}
+                &#9733;&#9733;&#9733;&#9733;&#9734;
+              {% when '3' %}
+                &#9733;&#9733;&#9733;&#9734;&#9734;
+              {% else %}
+                &#9733;&#9733;&#9733;&#9733;&#9733;
+            {% endcase %}
+          </div>
+          <p class="aftersol-review-text">"{{ block.settings.review_text }}"</p>
+          <p class="aftersol-review-author">— {{ block.settings.author_name }}{% if block.settings.author_location %}, {{ block.settings.author_location }}{% endif %}</p>
+        </div>
+      {% else %}
+        <!-- Default reviews if no blocks added -->
+        <div class="aftersol-review-card">
+          <div class="aftersol-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="aftersol-review-text">"I got absolutely fried at the lake on Saturday. By Sunday night I was dreading sleep. Put on the hydrogel sheet and honestly within 20 minutes the throbbing stopped. Actually slept through the night. This stuff is legit."</p>
+          <p class="aftersol-review-author">— Marcus T., Austin TX</p>
+        </div>
+        <div class="aftersol-review-card">
+          <div class="aftersol-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="aftersol-review-text">"My daughter got burned at soccer camp and was in tears. We'd tried aloe, cold towels, everything. The AfterSol sheet calmed her down in like 15 minutes and she slept fine. Ordering more to keep in the house."</p>
+          <p class="aftersol-review-author">— Jennifer M., San Diego CA</p>
+        </div>
+        <div class="aftersol-review-card">
+          <div class="aftersol-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="aftersol-review-text">"Skeptical at first because I've tried everything for sunburns. But this actually works different - it stays cool for hours, not minutes. Used it on my shoulders after a beach day and woke up feeling way better than I expected."</p>
+          <p class="aftersol-review-author">— David R., Miami FL</p>
+        </div>
+        <div class="aftersol-review-card">
+          <div class="aftersol-review-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+          <p class="aftersol-review-text">"Works great, only complaint is I wish the sheets were a little bigger for covering my whole back. But for arms and shoulders it's perfect. Way better than any aloe gel I've used."</p>
+          <p class="aftersol-review-author">— Rachel K., Phoenix AZ</p>
+        </div>
+        <div class="aftersol-review-card">
+          <div class="aftersol-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="aftersol-review-text">"Brought this on our Cabo trip 'just in case' and thank god I did. My husband turned into a lobster day 2. This saved the rest of our vacation. He was back at the pool by day 4."</p>
+          <p class="aftersol-review-author">— Christina L., Denver CO</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "AfterSol Reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "What People Are Saying"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Real Results"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "select",
+          "id": "stars",
+          "label": "Star Rating",
+          "options": [
+            { "value": "5", "label": "5 Stars" },
+            { "value": "4", "label": "4 Stars" },
+            { "value": "3", "label": "3 Stars" }
+          ],
+          "default": "5"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text",
+          "default": "This product is amazing and really helped with my sunburn!"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author Name",
+          "default": "John D."
+        },
+        {
+          "type": "text",
+          "id": "author_location",
+          "label": "Author Location",
+          "default": "Los Angeles CA"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "stars": "5",
+            "review_text": "I got absolutely fried at the lake on Saturday. By Sunday night I was dreading sleep. Put on the hydrogel sheet and honestly within 20 minutes the throbbing stopped. Actually slept through the night. This stuff is legit.",
+            "author_name": "Marcus T.",
+            "author_location": "Austin TX"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "stars": "5",
+            "review_text": "My daughter got burned at soccer camp and was in tears. We'd tried aloe, cold towels, everything. The AfterSol sheet calmed her down in like 15 minutes and she slept fine. Ordering more to keep in the house.",
+            "author_name": "Jennifer M.",
+            "author_location": "San Diego CA"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "stars": "5",
+            "review_text": "Skeptical at first because I've tried everything for sunburns. But this actually works different - it stays cool for hours, not minutes. Used it on my shoulders after a beach day and woke up feeling way better than I expected.",
+            "author_name": "David R.",
+            "author_location": "Miami FL"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "stars": "4",
+            "review_text": "Works great, only complaint is I wish the sheets were a little bigger for covering my whole back. But for arms and shoulders it's perfect. Way better than any aloe gel I've used.",
+            "author_name": "Rachel K.",
+            "author_location": "Phoenix AZ"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "stars": "5",
+            "review_text": "Brought this on our Cabo trip 'just in case' and thank god I did. My husband turned into a lobster day 2. This saved the rest of our vacation. He was back at the pool by day 4.",
+            "author_name": "Christina L.",
+            "author_location": "Denver CO"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

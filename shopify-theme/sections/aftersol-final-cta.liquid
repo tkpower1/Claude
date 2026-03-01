@@ -1,0 +1,77 @@
+{% comment %}
+  AfterSol Final CTA Section
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-final-cta" id="order">
+  <div class="aftersol-container">
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'Don\'t Suffer Tonight' }}</h2>
+
+    <a href="{{ section.settings.button_link | default: '/products/aftersol-kit' }}" class="aftersol-btn-primary">
+      {{ section.settings.button_text | default: 'Get Relief Tonight — $44' }}
+    </a>
+
+    {% if section.settings.show_urgency %}
+    <p class="subtext">{{ section.settings.urgency_text | default: 'Only 23 kits left — Pre-order now' }}</p>
+    {% endif %}
+
+    {% if section.settings.show_trust_signals %}
+    <div class="aftersol-trust-signals">
+      <span class="aftersol-trust-item">
+        <span class="aftersol-trust-icon">&#10003;</span> 100% Money-Back Guarantee
+      </span>
+      <span class="aftersol-trust-item">
+        <span class="aftersol-trust-icon">&#10003;</span> Free Shipping
+      </span>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "AfterSol Final CTA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Don't Suffer Tonight"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Get Relief Tonight — $44"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_urgency",
+      "label": "Show Urgency Text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "urgency_text",
+      "label": "Urgency Text",
+      "default": "Only 23 kits left — Pre-order now"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_signals",
+      "label": "Show Trust Signals",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Final CTA"
+    }
+  ]
+}
+{% endschema %}

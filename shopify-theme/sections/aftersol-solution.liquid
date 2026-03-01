@@ -1,0 +1,87 @@
+{% comment %}
+  AfterSol Solution Section with Video
+  Add this to: Online Store > Themes > Edit code > Sections > Add new section
+{% endcomment %}
+
+<section class="aftersol-section aftersol-solution">
+  <div class="aftersol-container">
+    <p class="aftersol-section-subtitle">{{ section.settings.subtitle | default: 'The Solution' }}</p>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'AfterSol Stops the Cycle' }}</h2>
+
+    <p class="aftersol-solution-text">
+      {% if section.settings.description != blank %}
+        {{ section.settings.description }}
+      {% else %}
+        AfterSol is a <strong>two-step emergency relief system</strong> designed for exactly this moment.<br><br>
+        Not a lotion. Not a spray. A clinical-grade cooling system that actually works.
+      {% endif %}
+    </p>
+
+    {% if section.settings.show_video %}
+    <div class="aftersol-video-container" id="aftersol-video-placeholder">
+      <img
+        src="{{ section.settings.video_thumbnail | default: 'https://img.youtube.com/vi/naahPzd8CY0/hqdefault.jpg' }}"
+        alt="Watch AfterSol video"
+        loading="lazy"
+      >
+      <div class="aftersol-video-play-btn"></div>
+    </div>
+
+    <script>
+      document.getElementById('aftersol-video-placeholder').addEventListener('click', function() {
+        var videoId = '{{ section.settings.youtube_video_id | default: "naahPzd8CY0" }}';
+        this.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+      });
+    </script>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "AfterSol Solution",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "The Solution"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "AfterSol Stops the Cycle"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_video",
+      "label": "Show Video",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "youtube_video_id",
+      "label": "YouTube Video ID",
+      "default": "naahPzd8CY0",
+      "info": "Just the ID part, e.g., 'naahPzd8CY0' from youtube.com/watch?v=naahPzd8CY0"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_thumbnail",
+      "label": "Video Thumbnail (Optional)",
+      "info": "Leave blank to auto-generate from YouTube"
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Solution"
+    }
+  ]
+}
+{% endschema %}
