@@ -938,13 +938,17 @@
                     currency: 'USD'
                 });
             }
-            // Google Analytics
+            // Google Analytics - GA4 ecommerce format
             if (typeof gtag === 'function') {
                 gtag('event', 'begin_checkout', {
-                    'event_category': 'ecommerce',
-                    'event_label': buttonLocation,
-                    'value': 44,
-                    'transport_type': 'beacon'
+                    currency: 'USD',
+                    value: 44.00,
+                    items: [{
+                        item_id: 'aftersol-kit',
+                        item_name: 'AfterSol Emergency Kit',
+                        price: 44.00,
+                        quantity: 1
+                    }]
                 });
             }
             // Small delay to ensure tracking completes, then redirect
