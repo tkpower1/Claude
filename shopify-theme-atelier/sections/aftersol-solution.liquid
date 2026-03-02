@@ -1,0 +1,209 @@
+{% comment %}
+  AfterSol Solution Section - Atelier Theme
+  Elegant product introduction with features
+{% endcomment %}
+
+<section class="aftersol-solution section-{{ section.id }}">
+  <div class="page-width">
+    <div class="aftersol-solution__layout">
+      {% if section.settings.image != blank %}
+        <div class="aftersol-solution__media">
+          {{ section.settings.image | image_url: width: 800 | image_tag: class: 'aftersol-solution__image', loading: 'lazy' }}
+        </div>
+      {% endif %}
+
+      <div class="aftersol-solution__content">
+        {% if section.settings.eyebrow != blank %}
+          <p class="caption">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+
+        <h2 class="h2">{{ section.settings.heading | default: "The AfterSol System" }}</h2>
+
+        {% if section.settings.description != blank %}
+          <p class="body-large">{{ section.settings.description }}</p>
+        {% endif %}
+
+        <div class="aftersol-solution__features">
+          {% for block in section.blocks %}
+            <div class="aftersol-solution__feature" {{ block.shopify_attributes }}>
+              <h3 class="h5">{{ block.settings.title }}</h3>
+              <p class="body">{{ block.settings.description }}</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if section.settings.show_cta %}
+          <div class="aftersol-solution__cta">
+            <a href="{{ section.settings.button_link | default: '/products/aftersol-kit' }}" class="button button--primary">
+              {{ section.settings.button_text | default: 'Shop Now' }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .aftersol-solution {
+    padding: var(--spacing-section-vertical) 0;
+    background: {{ section.settings.background_color | default: '#FFFAF5' }};
+  }
+
+  .aftersol-solution__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-10);
+    align-items: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .aftersol-solution__layout {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-16);
+    }
+  }
+
+  .aftersol-solution__image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+  }
+
+  .aftersol-solution__content .caption {
+    color: var(--color-foreground-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aftersol-solution__content .h2 {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aftersol-solution__content .body-large {
+    color: var(--color-foreground-secondary);
+    margin-bottom: var(--spacing-8);
+  }
+
+  .aftersol-solution__features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+    padding-top: var(--spacing-6);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .aftersol-solution__feature .h5 {
+    margin-bottom: var(--spacing-2);
+  }
+
+  .aftersol-solution__feature .body {
+    color: var(--color-foreground-secondary);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "AfterSol Solution",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "The Solution"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The AfterSol System"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Medical-grade hydrogel technology meets overnight recovery. Two steps to transform your worst sunburn into a manageable night."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFAF5"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Feature"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Feature description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Solution",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Instant Cooling",
+            "description": "Medical-grade hydrogel delivers immediate, sustained temperature relief."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Overnight Recovery",
+            "description": "Wake up with dramatically reduced redness and pain."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Clean Formula",
+            "description": "No artificial fragrances, parabens, or harsh chemicals."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

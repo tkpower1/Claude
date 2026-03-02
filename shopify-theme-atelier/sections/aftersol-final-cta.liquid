@@ -1,0 +1,182 @@
+{% comment %}
+  AfterSol Final CTA Section - Atelier Theme
+  Clean, focused call to action
+{% endcomment %}
+
+<section class="aftersol-cta section-{{ section.id }}">
+  <div class="page-width page-width--narrow">
+    <div class="aftersol-cta__content">
+      <h2 class="h1">{{ section.settings.heading | default: "Don't Suffer Tonight" }}</h2>
+
+      {% if section.settings.subheading != blank %}
+        <p class="body-large">{{ section.settings.subheading }}</p>
+      {% endif %}
+
+      <div class="aftersol-cta__action">
+        <a href="{{ section.settings.button_link | default: '/products/aftersol-kit' }}" class="button button--primary button--large">
+          {{ section.settings.button_text | default: 'Get Relief Tonight — $44' }}
+        </a>
+      </div>
+
+      {% if section.settings.show_availability %}
+        <p class="aftersol-cta__availability caption">
+          <span class="availability-dot"></span>
+          {{ section.settings.availability_text | default: 'In Stock — Ships within 24-48 hours' }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.show_trust %}
+        <div class="aftersol-cta__trust">
+          <span class="aftersol-cta__trust-item caption">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            100% Money-Back Guarantee
+          </span>
+          <span class="aftersol-cta__trust-item caption">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            Free Shipping
+          </span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .aftersol-cta {
+    padding: var(--spacing-section-vertical) 0;
+    background: {{ section.settings.background_color | default: '#1a1a1a' }};
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+  }
+
+  .aftersol-cta__content {
+    text-align: center;
+  }
+
+  .aftersol-cta__content .h1 {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aftersol-cta__content .body-large {
+    opacity: 0.8;
+    margin-bottom: var(--spacing-8);
+    max-width: 48ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .aftersol-cta__action {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .aftersol-cta .button--primary {
+    background: #ffffff;
+    color: #1a1a1a;
+    padding: var(--spacing-4) var(--spacing-8);
+    font-size: 1.125rem;
+  }
+
+  .aftersol-cta .button--primary:hover {
+    background: #f5f5f5;
+  }
+
+  .aftersol-cta__availability {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    opacity: 0.8;
+    margin-bottom: var(--spacing-6);
+  }
+
+  .aftersol-cta .availability-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+  }
+
+  .aftersol-cta__trust {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-6);
+  }
+
+  .aftersol-cta__trust-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    opacity: 0.8;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "AfterSol Final CTA",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Don't Suffer Tonight"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Get the relief you need, delivered fast."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Get Relief Tonight — $44"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability",
+      "label": "Show availability",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "availability_text",
+      "label": "Availability text",
+      "default": "In Stock — Ships within 24-48 hours"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Show trust signals",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Final CTA"
+    }
+  ]
+}
+{% endschema %}

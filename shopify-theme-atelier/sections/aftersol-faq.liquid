@@ -1,0 +1,178 @@
+{% comment %}
+  AfterSol FAQ Section - Atelier Theme
+  Clean accordion-style FAQ with elegant typography
+{% endcomment %}
+
+<section class="aftersol-faq section-{{ section.id }}">
+  <div class="page-width page-width--narrow">
+    <header class="aftersol-faq__header section-header">
+      {% if section.settings.eyebrow != blank %}
+        <p class="caption">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h2 class="h2">{{ section.settings.heading | default: "Questions? We've Got Answers." }}</h2>
+    </header>
+
+    <div class="aftersol-faq__list">
+      {% for block in section.blocks %}
+        <details class="aftersol-faq__item" {{ block.shopify_attributes }}>
+          <summary class="aftersol-faq__question">
+            <span class="h5">{{ block.settings.question }}</span>
+            <span class="aftersol-faq__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <div class="aftersol-faq__answer body">
+            {{ block.settings.answer }}
+          </div>
+        </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .aftersol-faq {
+    padding: var(--spacing-section-vertical) 0;
+  }
+
+  .aftersol-faq__header {
+    text-align: center;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .aftersol-faq__header .caption {
+    color: var(--color-foreground-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aftersol-faq__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .aftersol-faq__item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .aftersol-faq__question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-6) 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .aftersol-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .aftersol-faq__question .h5 {
+    margin: 0;
+    text-align: left;
+    padding-right: var(--spacing-4);
+  }
+
+  .aftersol-faq__icon {
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .aftersol-faq__item[open] .aftersol-faq__icon {
+    transform: rotate(180deg);
+  }
+
+  .aftersol-faq__answer {
+    padding-bottom: var(--spacing-6);
+    color: var(--color-foreground-secondary);
+    max-width: 65ch;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "AfterSol FAQ",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Questions? We've Got Answers."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Question goes here"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Answer goes here"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol FAQ",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What's in the kit?",
+            "answer": "Each AfterSol Kit includes: 2 Cooling Hydrogel Sheets (for immediate relief) and 2 Recovery Sheets (for overnight healing). That's enough for two full treatments."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How is this different from aloe?",
+            "answer": "Aloe evaporates quickly, providing brief relief. Our hydrogel technology maintains cooling contact with your skin for 30+ minutes, and the recovery sheet works all night while you sleep."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Will it work on severe sunburns?",
+            "answer": "AfterSol is designed for first-degree sunburns (red, painful, no blisters). For severe burns with blistering, please consult a medical professional."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "When will my order ship?",
+            "answer": "Orders ship within 24-48 hours. You'll receive a tracking number by email as soon as your kit ships."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What if it doesn't work for me?",
+            "answer": "We offer a 100% money-back guarantee. If you're not satisfied, contact us for a full refund. No questions asked."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

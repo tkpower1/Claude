@@ -1,0 +1,206 @@
+{% comment %}
+  AfterSol Problem Section - Atelier Theme
+  Clean grid layout showcasing pain points
+{% endcomment %}
+
+<section class="aftersol-problem section-{{ section.id }}">
+  <div class="page-width">
+    <header class="aftersol-problem__header section-header">
+      {% if section.settings.eyebrow != blank %}
+        <p class="caption">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h2 class="h2">{{ section.settings.heading | default: "Aloe Isn't Enough" }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="body-large">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+
+    <div class="aftersol-problem__grid">
+      {% for block in section.blocks %}
+        <div class="aftersol-problem__item" {{ block.shopify_attributes }}>
+          <div class="aftersol-problem__icon">
+            {% case block.settings.icon %}
+              {% when 'thermometer' %}
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                </svg>
+              {% when 'moon' %}
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              {% when 'clock' %}
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              {% else %}
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            {% endcase %}
+          </div>
+          <h3 class="h4">{{ block.settings.title }}</h3>
+          <p class="body">{{ block.settings.description }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .aftersol-problem {
+    padding: var(--spacing-section-vertical) 0;
+  }
+
+  .aftersol-problem__header {
+    text-align: center;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .aftersol-problem__header .caption {
+    color: var(--color-foreground-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aftersol-problem__header .h2 {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aftersol-problem__header .body-large {
+    color: var(--color-foreground-secondary);
+    max-width: 48ch;
+    margin: 0 auto;
+  }
+
+  .aftersol-problem__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--spacing-8);
+  }
+
+  @media screen and (min-width: 750px) {
+    .aftersol-problem__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .aftersol-problem__item {
+    text-align: center;
+    padding: var(--spacing-8);
+  }
+
+  .aftersol-problem__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    margin-bottom: var(--spacing-6);
+    color: var(--color-foreground);
+  }
+
+  .aftersol-problem__item .h4 {
+    margin-bottom: var(--spacing-3);
+  }
+
+  .aftersol-problem__item .body {
+    color: var(--color-foreground-secondary);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "AfterSol Problem",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "The Problem"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Aloe Isn't Enough"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Traditional sunburn remedies provide temporary relief at best. You deserve better."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "problem",
+      "name": "Problem",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "thermometer", "label": "Thermometer" },
+            { "value": "moon", "label": "Moon" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "alert", "label": "Alert" }
+          ],
+          "default": "alert"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Pain Point"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Description of the problem customers face."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Problem",
+      "blocks": [
+        {
+          "type": "problem",
+          "settings": {
+            "icon": "thermometer",
+            "title": "Heat That Won't Quit",
+            "description": "Your skin radiates heat for hours. Aloe evaporates in minutes, leaving you right back where you started."
+          }
+        },
+        {
+          "type": "problem",
+          "settings": {
+            "icon": "moon",
+            "title": "Sleepless Nights",
+            "description": "Every position hurts. Sheets stick to your skin. You toss and turn until exhaustion wins."
+          }
+        },
+        {
+          "type": "problem",
+          "settings": {
+            "icon": "clock",
+            "title": "Days of Recovery",
+            "description": "Peeling, tenderness, and discomfort that lingers. Your vacation—or week—is compromised."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
