@@ -1,0 +1,16 @@
+services:
+  polybot:
+    build: ..
+    restart: always
+    env_file:
+      - ../.env          # PRIVATE_KEY, API_KEY, API_SECRET, API_PASSPHRASE, FUNDER
+    volumes:
+      - cache:/root/.cache/polymarket_backtest   # persist price-history cache
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  cache:
