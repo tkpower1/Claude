@@ -10,11 +10,16 @@ set -euo pipefail
 
 REPO_DIR="/opt/polybot"
 SERVICE="polybot"
-PYTHON="python3.11"
-
 echo "==> Installing system packages"
 apt-get update -qq
-apt-get install -y -qq python3.11 python3.11-venv python3-pip git
+# Try python3.11 first; fall back to whatever python3 is available
+if apt-cache show python3.11 &>/dev/null; then
+    apt-get install -y -qq python3.11 python3.11-venv python3-pip git
+    PYTHON="python3.11"
+else
+    apt-get install -y -qq python3 python3-venv python3-pip git
+    PYTHON="python3"
+fi
 
 echo "==> Creating botuser"
 id -u botuser &>/dev/null || useradd -r -s /bin/false -d "$REPO_DIR" botuser
