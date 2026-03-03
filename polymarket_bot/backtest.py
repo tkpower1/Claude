@@ -80,6 +80,11 @@ class BacktestConfig:
     # Taker fee on hedge fill (Polymarket charges ~0.0 for makers, ~0.01 for takers)
     taker_fee: float = 0.01
 
+    # Number of price ladder levels per side.
+    # 1 = single order (default); 2+ = spread orders from 0.5× to 1.5× base depth.
+    # The position_size is split equally across levels.
+    num_ladder_levels: int = 1
+
 
 # ---------------------------------------------------------------------------
 # Per-period slot
@@ -245,98 +250,163 @@ class BacktestEngine:
     ) -> Period:
         cfg = self.cfg
         v   = cfg.default_v
-        depth = v * cfg.order_depth_fraction
 
         mid_open  = window_ticks[0].price
         mid_close = window_ticks[-1].price
         lo        = min(t.price for t in window_ticks)
         hi        = max(t.price for t in window_ticks)
 
-        # Our order prices
-        yes_bid = round(max(mid_open - depth, 0.01), 4)
-        no_bid  = round(max((1.0 - mid_open) - depth, 0.01), 4)
-
-        # Combined cost check
-        combined = yes_bid + no_bid
-        if combined > cfg.max_fill_cost:
-            # Squeeze symmetrically
-            excess = combined - cfg.max_fill_cost + 0.001
-            yes_bid = round(yes_bid - excess / 2, 4)
-            no_bid  = round(no_bid  - excess / 2, 4)
-            combined = yes_bid + no_bid
-
-        period = Period(
-            start_ts=window_ticks[0].timestamp,
-            end_ts=period_end_ts,
-            mid_open=mid_open,
-            mid_close=mid_close,
-            yes_bid=yes_bid,
-            no_bid=no_bid,
-            period_low=lo,
-            period_high=hi,
-        )
-
-        # Fill detection
-        # YES fills: price drops to our YES bid or below
-        yes_filled = lo <= yes_bid
-        # NO fills: YES price rises to (1 - no_bid) or above
-        no_fill_trigger = 1.0 - no_bid
-        no_filled = hi >= no_fill_trigger
-
         # Period duration in hours for reward calculation
         period_hours = (window_ticks[-1].timestamp - window_ticks[0].timestamp) / 3600
         period_hours = max(period_hours, 1 / 60)  # at least 1 minute
 
-        # Reward estimation: score-based, prorated by period duration
-        period_reward = self._estimate_period_reward(
-            depth=depth, v=v, period_hours=period_hours
-        )
+        n_levels = cfg.num_ladder_levels
 
-        period.reward_income = period_reward
+        if n_levels <= 1:
+            # ---- Single-level path (original behaviour, all tests preserved) ----
+            depth = v * cfg.order_depth_fraction
 
-        # P&L from fills
-        #
-        # Key insight: both YES and NO orders are posted simultaneously at
-        # (yes_bid, no_bid) where combined = yes_bid + no_bid ≤ max_fill_cost.
-        # When ONE side fills, the OTHER order is STILL live on the book at its
-        # posted price — it serves as the natural hedge.  We do NOT need to go
-        # to market at a worse price; we simply track the existing NO/YES order.
-        #
-        # Gross PnL at resolution = 1.00 − (yes_bid + no_bid)
-        # This is ALWAYS ≥ 0 when combined ≤ 1.00, and only marginally negative
-        # (≤ 2¢) when max_fill_cost = 1.02.  The taker fee applies only to the
-        # fill that was triggered (our maker order being hit = 0 fee on most
-        # venues; we conservatively apply taker_fee to both sides as the
-        # configuration default is 0.01 = 1¢ per $1).
-        if yes_filled and no_filled:
-            # Scenario 3: both orders filled — fully hedged
-            period.yes_filled = True
-            period.no_filled  = True
-            # Gross: 1.00 − combined; taker fee on both fills
-            fill_gross = 1.0 - combined
-            period.fill_pnl = (fill_gross - 2 * cfg.taker_fee) * (cfg.position_size / 100)
+            # Our order prices
+            yes_bid = round(max(mid_open - depth, 0.01), 4)
+            no_bid  = round(max((1.0 - mid_open) - depth, 0.01), 4)
 
-        elif yes_filled:
-            # Scenario 2a: YES filled; existing NO order at no_bid IS the hedge
-            period.yes_filled  = True
-            period.hedge_price = no_bid          # existing maker order
-            hedge_combined     = yes_bid + no_bid   # ≤ max_fill_cost by construction
-            fill_gross = 1.0 - hedge_combined
-            period.fill_pnl = (fill_gross - cfg.taker_fee) * (cfg.position_size / 100)
+            # Combined cost check
+            combined = yes_bid + no_bid
+            if combined > cfg.max_fill_cost:
+                # Squeeze symmetrically
+                excess = combined - cfg.max_fill_cost + 0.001
+                yes_bid = round(yes_bid - excess / 2, 4)
+                no_bid  = round(no_bid  - excess / 2, 4)
+                combined = yes_bid + no_bid
 
-        elif no_filled:
-            # Scenario 2b: NO filled; existing YES order at yes_bid IS the hedge
-            period.no_filled   = True
-            period.hedge_price = yes_bid         # existing maker order
-            hedge_combined     = yes_bid + no_bid   # ≤ max_fill_cost by construction
-            fill_gross = 1.0 - hedge_combined
-            period.fill_pnl = (fill_gross - cfg.taker_fee) * (cfg.position_size / 100)
-        # else: Scenario 1 – neither fills, reward_income is the income
+            period = Period(
+                start_ts=window_ticks[0].timestamp,
+                end_ts=period_end_ts,
+                mid_open=mid_open,
+                mid_close=mid_close,
+                yes_bid=yes_bid,
+                no_bid=no_bid,
+                period_low=lo,
+                period_high=hi,
+            )
+
+            # Fill detection
+            # YES fills: price drops to our YES bid or below
+            yes_filled = lo <= yes_bid
+            # NO fills: YES price rises to (1 - no_bid) or above
+            no_fill_trigger = 1.0 - no_bid
+            no_filled = hi >= no_fill_trigger
+
+            # Reward estimation: score-based, prorated by period duration
+            period.reward_income = self._estimate_period_reward(
+                depth=depth, v=v, period_hours=period_hours
+            )
+
+            # P&L from fills
+            #
+            # Key insight: both YES and NO orders are posted simultaneously at
+            # (yes_bid, no_bid) where combined = yes_bid + no_bid ≤ max_fill_cost.
+            # When ONE side fills, the OTHER order is STILL live on the book at its
+            # posted price — it serves as the natural hedge.  We do NOT need to go
+            # to market at a worse price; we simply track the existing NO/YES order.
+            #
+            # Gross PnL at resolution = 1.00 − (yes_bid + no_bid)
+            if yes_filled and no_filled:
+                period.yes_filled = True
+                period.no_filled  = True
+                fill_gross = 1.0 - combined
+                period.fill_pnl = (fill_gross - 2 * cfg.taker_fee) * (cfg.position_size / 100)
+
+            elif yes_filled:
+                period.yes_filled  = True
+                period.hedge_price = no_bid
+                fill_gross = 1.0 - (yes_bid + no_bid)
+                period.fill_pnl = (fill_gross - cfg.taker_fee) * (cfg.position_size / 100)
+
+            elif no_filled:
+                period.no_filled   = True
+                period.hedge_price = yes_bid
+                fill_gross = 1.0 - (yes_bid + no_bid)
+                period.fill_pnl = (fill_gross - cfg.taker_fee) * (cfg.position_size / 100)
+            # else: Scenario 1 – neither fills, reward_income is the income
+
+        else:
+            # ---- Multi-level ladder path ----
+            # Spread n_levels orders per side from 0.5× to 1.5× base depth.
+            # Each level gets an equal share of position_size.
+            frac_multipliers = [
+                0.5 + i / (n_levels - 1) for i in range(n_levels)
+            ]
+            size_per_level = cfg.position_size / n_levels
+
+            # Use mid-level for Period metadata (for reporting / tests that
+            # operate on single-level configs only)
+            mid_idx  = n_levels // 2
+            base_depth = v * cfg.order_depth_fraction * frac_multipliers[mid_idx]
+            yes_bid_rep = round(max(mid_open - base_depth, 0.01), 4)
+            no_bid_rep  = round(max((1.0 - mid_open) - base_depth, 0.01), 4)
+
+            period = Period(
+                start_ts=window_ticks[0].timestamp,
+                end_ts=period_end_ts,
+                mid_open=mid_open,
+                mid_close=mid_close,
+                yes_bid=yes_bid_rep,
+                no_bid=no_bid_rep,
+                period_low=lo,
+                period_high=hi,
+            )
+
+            total_reward   = 0.0
+            total_fill_pnl = 0.0
+            any_yes = False
+            any_no  = False
+
+            for frac_mult in frac_multipliers:
+                depth   = v * cfg.order_depth_fraction * frac_mult
+                yes_bid = round(max(mid_open - depth, 0.01), 4)
+                no_bid  = round(max((1.0 - mid_open) - depth, 0.01), 4)
+                combined = yes_bid + no_bid
+                if combined > cfg.max_fill_cost:
+                    excess   = combined - cfg.max_fill_cost + 0.001
+                    yes_bid  = round(yes_bid - excess / 2, 4)
+                    no_bid   = round(no_bid  - excess / 2, 4)
+                    combined = yes_bid + no_bid
+
+                # Reward for this level (scaled to level's capital)
+                total_reward += self._estimate_period_reward(
+                    depth=depth, v=v, period_hours=period_hours,
+                    position_size=size_per_level,
+                )
+
+                # Fill detection
+                yes_filled = lo <= yes_bid
+                no_filled  = hi >= (1.0 - no_bid)
+
+                if yes_filled and no_filled:
+                    any_yes = True
+                    any_no  = True
+                    fill_gross = 1.0 - combined
+                    total_fill_pnl += (fill_gross - 2 * cfg.taker_fee) * (size_per_level / 100)
+                elif yes_filled:
+                    any_yes = True
+                    fill_gross = 1.0 - (yes_bid + no_bid)
+                    total_fill_pnl += (fill_gross - cfg.taker_fee) * (size_per_level / 100)
+                elif no_filled:
+                    any_no = True
+                    fill_gross = 1.0 - (yes_bid + no_bid)
+                    total_fill_pnl += (fill_gross - cfg.taker_fee) * (size_per_level / 100)
+
+            period.reward_income = total_reward
+            period.fill_pnl      = total_fill_pnl
+            period.yes_filled    = any_yes
+            period.no_filled     = any_no
 
         return period
 
     def _estimate_period_reward(
-        self, depth: float, v: float, period_hours: float
+        self, depth: float, v: float, period_hours: float,
+        position_size: float = None,
     ) -> float:
         """
         Estimate USDC reward income for one period based on scoring function.
@@ -351,8 +421,9 @@ class BacktestEngine:
         competition_factor = 20.0
         our_share = s / (s * competition_factor) if s > 0 else 0.0
 
-        # Daily pool scaled to our position size
-        daily_pool = cfg.assumed_daily_pool_per_1k * (cfg.position_size / 1000)
+        # Daily pool scaled to position size (use per-level size if provided)
+        size = position_size if position_size is not None else cfg.position_size
+        daily_pool = cfg.assumed_daily_pool_per_1k * (size / 1000)
 
         # Prorate by period fraction of a day
         return our_share * daily_pool * (period_hours / 24)

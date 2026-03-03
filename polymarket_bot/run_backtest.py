@@ -76,6 +76,8 @@ def _parse_args() -> argparse.Namespace:
                    help="Assumed daily USDC reward pool per $1k deployed")
     p.add_argument("--taker-fee", type=float, default=0.01,
                    help="Taker fee fraction applied on hedge fills")
+    p.add_argument("--ladder-levels", type=int, default=1,
+                   help="Number of price-ladder levels per side (1=single order, 2-3=ladder)")
     p.add_argument("--use-cache", action="store_true",
                    help="Use cached price histories (no live API calls)")
     p.add_argument("--min-near50", type=float, default=0.05,
@@ -150,6 +152,7 @@ def main() -> None:
         position_size=args.position_size,
         max_fill_cost=args.max_fill_cost,
         taker_fee=args.taker_fee,
+        num_ladder_levels=args.ladder_levels,
     )
 
     # Discover markets
