@@ -1,0 +1,11 @@
+# Polymarket LP/Hedge Bot — Python dependencies
+#
+# Core (always required)
+requests>=2.31.0
+
+# Polymarket CLOB order placement (required for live trading)
+# Install: pip install py-clob-client
+py-clob-client>=0.18.0
+
+# Testing
+pytest>=7.0.0

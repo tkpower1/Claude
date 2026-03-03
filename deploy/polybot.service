@@ -1,0 +1,27 @@
+[Unit]
+Description=Polymarket LP/Hedge Trading Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=botuser
+WorkingDirectory=/opt/polybot
+ExecStart=/opt/polybot/venv/bin/python -m polymarket_bot
+Restart=always
+RestartSec=30
+
+# Credentials loaded from /opt/polybot/.env
+EnvironmentFile=/opt/polybot/.env
+
+# Logging — view with: journalctl -u polybot -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=polybot
+
+# Safety limits
+MemoryMax=256M
+CPUQuota=20%
+
+[Install]
+WantedBy=multi-user.target
