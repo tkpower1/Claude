@@ -1,0 +1,13 @@
+# Polymarket LP / Hedge Bot – Python dependencies
+
+# Polymarket official CLOB client (order signing, placement)
+py-clob-client>=0.17.0
+
+# HTTP with retry
+requests>=2.31.0
+
+# Optional: load credentials from .env file
+python-dotenv>=1.0.0
+
+# Optional: improved JSON speed
+orjson>=3.9.0
