@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 
 from .client import KalshiClient
 from .config import BotConfig
+from .market_selector import _parse_market
 
 logger = logging.getLogger(__name__)
 
@@ -58,14 +59,18 @@ class DataCollector:
     def collect_once(self) -> int:
         """Single poll: fetch all open markets and store snapshots. Returns row count."""
         try:
-            markets = self.client.get_markets()
+            raw_markets = self.client.get_active_markets()
         except Exception as exc:
             logger.error("API fetch failed: %s", exc)
             return 0
 
         ts = int(time.time())
-        rows = [
-            (
+        rows = []
+        for raw in raw_markets:
+            m = _parse_market(raw)
+            if m is None:
+                continue
+            rows.append((
                 ts,
                 m.ticker,
                 m.yes_bid,
@@ -75,9 +80,7 @@ class DataCollector:
                 m.mid_price,
                 m.spread,
                 m.status,
-            )
-            for m in markets
-        ]
+            ))
         if not rows:
             return 0
 

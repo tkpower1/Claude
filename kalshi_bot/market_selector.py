@@ -144,6 +144,31 @@ def market_attractiveness(market: MarketInfo, config: BotConfig) -> float:
 # Main entry point
 # ---------------------------------------------------------------------------
 
+def fee_break_even_spread(config: BotConfig) -> float:
+    """
+    Minimum observed bid-ask spread for expected net P&L > 0 after Kalshi fees.
+
+    Derived from: gross_captured > fee_on_both_fills
+      2 * depth > fee_rate * (1 - 2 * depth)
+      where depth = spread * order_depth_fraction
+
+    Solving for spread:
+      s_min = fee_rate / (2 * depth_fraction * (1 + fee_rate))
+
+    Special case: if the default_v floor already makes us fee-positive
+    (because default_v * depth_fraction yields enough gross), return 0.
+    """
+    d = config.scoring.order_depth_fraction
+    r = config.risk.fee_rate
+    if r <= 0 or d <= 0:
+        return 0.0
+    # Check if the volatility floor alone is sufficient
+    default_depth = config.scoring.default_v * d
+    if 2 * default_depth > r * (1 - 2 * default_depth):
+        return 0.0
+    return r / (2 * d * (1 + r))
+
+
 def select_markets(
     client: KalshiClient,
     config: BotConfig,
@@ -151,10 +176,25 @@ def select_markets(
 ) -> list[MarketInfo]:
     """
     Fetch open markets, apply filters, rank, return top candidates.
+
+    Two-stage filter:
+      1. MarketFilter criteria (mid range, spread, OI, expiry)
+      2. Fee-profitability gate: spread must cover Kalshi trading fees
     """
     logger.info("Fetching open Kalshi markets…")
     raw_markets = client.get_active_markets(limit=200)
     logger.info("  → %d markets fetched", len(raw_markets))
+
+    # Compute minimum spread needed to turn a profit after fees
+    fee_min = fee_break_even_spread(config)
+    effective_min_spread = max(config.market_filter.min_spread, fee_min)
+    if fee_min > config.market_filter.min_spread:
+        logger.info(
+            "Fee gate: min spread raised %.4f → %.4f "
+            "(fee_rate=%.0f%% depth_frac=%.2f)",
+            config.market_filter.min_spread, fee_min,
+            config.risk.fee_rate * 100, config.scoring.order_depth_fraction,
+        )
 
     candidates: list[tuple[float, MarketInfo]] = []
 
@@ -166,6 +206,14 @@ def select_markets(
         ok, reason = passes_filter(market, config.market_filter)
         if not ok:
             logger.debug("  Skip %s: %s", market.ticker, reason)
+            continue
+
+        # Fee-profitability gate (spread must be wide enough to cover fees)
+        if market.spread < effective_min_spread:
+            logger.debug(
+                "  Skip %s: spread %.4f < fee_min %.4f",
+                market.ticker, market.spread, effective_min_spread,
+            )
             continue
 
         score = market_attractiveness(market, config)

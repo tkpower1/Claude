@@ -1,7 +1,11 @@
-# Polymarket LP/Hedge Bot — Python dependencies
+# Kalshi / Polymarket Bot — Python dependencies
 #
 # Core (always required)
 requests>=2.31.0
+cryptography>=41.0.0
+
+# WebSocket real-time fill notifications (Kalshi bot)
+websocket-client>=1.6.0
 
 # Polymarket CLOB order placement (required for live trading)
 # Install: pip install py-clob-client

@@ -67,6 +67,10 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--min-spread", type=float, default=0.03)
     p.add_argument("--min-days", type=int, default=3)
 
+    # Persistence
+    p.add_argument("--state-db", type=str, default=None, metavar="PATH",
+                   help="SQLite file for position persistence (enables crash recovery)")
+
     return p.parse_args()
 
 
@@ -110,7 +114,7 @@ def main() -> None:
         env_label, config.risk.total_budget, config.dry_run, config.scan_interval,
     )
 
-    bot = KalshiBot(config)
+    bot = KalshiBot(config, state_db=args.state_db)
     bot.run()
 
 

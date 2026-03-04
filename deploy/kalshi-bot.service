@@ -1,0 +1,27 @@
+[Unit]
+Description=Kalshi Market-Making Bot
+After=network-online.target kalshi-collector.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kalshi
+WorkingDirectory=/opt/kalshi-bot
+EnvironmentFile=/opt/kalshi-bot/.env
+ExecStart=/opt/kalshi-bot/.venv/bin/python -m kalshi_bot \
+    --state-db /var/lib/kalshi/bot_state.db \
+    --budget    1000 \
+    --scan-interval 60 \
+    --min-spread    0.08 \
+    --log-level INFO
+Restart=on-failure
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kalshi-bot
+
+StartLimitIntervalSec=600
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

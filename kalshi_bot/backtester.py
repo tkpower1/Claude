@@ -26,9 +26,12 @@ from enum import Enum, auto
 from typing import Optional
 
 from .config import BotConfig, MarketFilter
+from .fill_model import FillModel, DEFAULT_FILL_MODEL
 from .position_sizer import BudgetTracker, size_position
 from .rewards import compute_scenario_pnl
+from .stats import TTestResult, pnl_ttest_from_results
 from .synthetic_data import MarketSnapshot, PricePath, Scenario
+from .vol_estimator import realized_vol
 
 logger = logging.getLogger("kalshi_bot.backtester")
 
@@ -112,6 +115,8 @@ class ScenarioResult:
     max_portfolio_drawdown: float
     markets: list[MarketResult]
     events: list[str] = field(default_factory=list)
+    # Newey-West HAC t-test on per-position P&L (None if <2 closed positions)
+    pnl_ttest: Optional[TTestResult] = None
 
 
 # ---------------------------------------------------------------------------
@@ -128,8 +133,13 @@ class Backtester:
       - Position sizing matches the real bot's logic.
     """
 
-    def __init__(self, config: BotConfig) -> None:
+    def __init__(
+        self,
+        config: BotConfig,
+        fill_model: FillModel | None = None,
+    ) -> None:
         self.cfg = config
+        self.fill_model = fill_model or DEFAULT_FILL_MODEL
         self.budget = BudgetTracker(config.risk.total_budget)
         self._order_seq = 0
 
@@ -156,12 +166,15 @@ class Backtester:
         # (a) Deterministic: ask crosses our limit
         if snap.yes_ask <= order.price:
             return True
-        # (b) Stochastic: market orders hitting our resting bid
-        # Rate = (volume / 100k) * depth_factor; deeper → less likely to fill
+        # (b) Stochastic: market orders hitting our resting bid.
+        # P(fill) from MLE-calibrated logistic model (depth, volume, spread).
         depth_from_ask = max(snap.yes_ask - order.price, 0.0)
-        depth_penalty = max(1.0 - depth_from_ask / 0.20, 0.0)  # zero at 20¢ depth
-        hourly_rate = (snap.volume_usd / 100_000) * depth_penalty * 0.04
-        return rng.random() < min(hourly_rate, 0.15)
+        hourly_rate = self.fill_model.predict(
+            depth=depth_from_ask,
+            volume_usd=snap.volume_usd,
+            spread=snap.spread,
+        )
+        return rng.random() < hourly_rate
 
     def _no_order_fills(
         self, order: SimOrder, snap: MarketSnapshot, rng: random.Random
@@ -171,9 +184,12 @@ class Backtester:
         if no_ask <= order.price:
             return True
         depth_from_ask = max(no_ask - order.price, 0.0)
-        depth_penalty = max(1.0 - depth_from_ask / 0.20, 0.0)
-        hourly_rate = (snap.volume_usd / 100_000) * depth_penalty * 0.04
-        return rng.random() < min(hourly_rate, 0.15)
+        hourly_rate = self.fill_model.predict(
+            depth=depth_from_ask,
+            volume_usd=snap.volume_usd,
+            spread=snap.spread,
+        )
+        return rng.random() < hourly_rate
 
     # ------------------------------------------------------------------
     # Resolution
@@ -271,6 +287,11 @@ class Backtester:
         no_orders_placed = 0
         no_orders_filled = 0
         hold_days: list[float] = []
+
+        # Rolling window of mid-prices for realized-vol estimation.
+        # 24 snapshots = 24 hours of hourly data (matches PricePath dt=1/24 default).
+        _vol_window_size = 24
+        _mid_window: list[float] = []
 
         for snap in snapshots:
             # ── Check existing position ──────────────────────────────────
@@ -400,10 +421,19 @@ class Backtester:
                         pos.state = PosState.RESOLVED
                         active_pos = None
 
+            # ── Maintain rolling mid-price window for vol estimation ─────
+            _mid_window.append(snap.mid)
+            if len(_mid_window) > _vol_window_size:
+                _mid_window.pop(0)
+
             # ── Open a new position if none active ───────────────────────
             if (active_pos is None or active_pos.state == PosState.RESOLVED) \
                     and self.budget.available >= 5.0 \
                     and self._passes_filter(snap):
+
+                # Rolling realized vol: dt = 1h (PricePath default step size)
+                rv = realized_vol(_mid_window, dt_hours=1.0)
+                vol_for_sizing = max(rv, self.cfg.scoring.default_v) if rv else None
 
                 # Simple sizing from the real bot's logic
                 from .client import MarketInfo as _MI
@@ -421,7 +451,10 @@ class Backtester:
                     close_time="",
                     status="open",
                 )
-                sizing = size_position(fake_info, self.budget.available, self.cfg)
+                sizing = size_position(
+                    fake_info, self.budget.available, self.cfg,
+                    vol_override=vol_for_sizing,
+                )
 
                 pnl_check = compute_scenario_pnl(
                     sizing.yes_price, sizing.no_price,
@@ -551,6 +584,9 @@ class Backtester:
         final_budget = self.cfg.risk.total_budget + total_pnl
         ret_pct = total_pnl / max(self.cfg.risk.total_budget, 1) * 100
 
+        # Newey-West HAC t-test: is mean P&L significantly different from zero?
+        ttest = pnl_ttest_from_results(market_results)
+
         return ScenarioResult(
             scenario_name=scenario.name,
             description=scenario.description,
@@ -561,4 +597,5 @@ class Backtester:
             max_portfolio_drawdown=round(max_dd, 4),
             markets=market_results,
             events=events,
+            pnl_ttest=ttest,
         )
