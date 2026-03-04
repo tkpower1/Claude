@@ -60,7 +60,7 @@ class PricePath:
         kappa: float = 0.5,        # mean-reversion speed (per day)
         sigma: float = 0.05,       # daily volatility (probability units)
         base_spread: float = 0.06, # typical spread (probability units)
-        spread_vol: float = 0.4,   # spread volatility (log-normal σ)
+        spread_vol: float = 0.15,  # spread volatility (log-normal σ per sqrt-day)
         dt: float = 1 / 24,        # time step = 1 hour
         seed: int | None = None,
     ) -> None:
@@ -99,11 +99,27 @@ class PricePath:
             new_mid = 1.98 - new_mid
         new_mid = max(0.01, min(0.99, new_mid))
 
-        # Spread: log-normal noise, widens when mid moves a lot
-        move_mag = abs(diffusion)
-        spread_scale = 1.0 + 3.0 * move_mag / max(self.sigma * sqrt_dt, 1e-9)
-        log_spread = math.log(self._spread) + rng.gauss(0, self.spread_vol * sqrt_dt)
-        new_spread = math.exp(log_spread) * spread_scale
+        # Spread: Ornstein-Uhlenbeck process in log-space.
+        #
+        # d log(s) = κ_s · (log(base_spread) - log(s)) · dt + σ_s · dW_s
+        #
+        # This mean-reverts to base_spread without exploding.  An additive
+        # widening term proportional to the price move captures the adverse-
+        # selection effect (large moves → temporarily wider spreads) without
+        # the old 1+3|dW| multiplicative bias that caused spreads to pin at 0.30.
+        #
+        # Calibration: κ_s=4/day → half-life ≈ 4h; σ_s=0.15 keeps the spread
+        # mostly within ±1.5 base_spread, consistent with Kalshi market data.
+        kappa_s = 4.0  # mean-reversion speed for spread (per day)
+        log_s = math.log(max(self._spread, 0.001))
+        log_s_new = (
+            log_s
+            + kappa_s * (math.log(self.base_spread) - log_s) * dt
+            + self.spread_vol * sqrt_dt * rng.gauss(0, 1)
+        )
+        new_spread = math.exp(log_s_new)
+        # Small additive widening on large price moves (adverse selection)
+        new_spread += 0.5 * abs(diffusion)
         # Keep spread between 0.01 and 0.30
         new_spread = max(0.01, min(0.30, new_spread))
         # Spread can't push prices outside (0, 1)
@@ -129,8 +145,13 @@ class PricePath:
             yes_ask=yes_ask,
             mid=(yes_bid + yes_ask) / 2,
             spread=actual_spread,
-            # Rough volume model: higher spread → lower volume
-            volume_usd=self._rng.expovariate(1 / max(5000 / (actual_spread * 100), 1)),
+            # 24-hour volume (USD).  Tighter spread → more active market → higher volume.
+            # Formula: mean_24h = 120_000 / (spread_pct) where spread_pct = spread * 100.
+            # At spread=0.06 (6¢) → mean ≈ $20k/day.  At spread=0.12 → ≈$10k/day.
+            # Exponential distribution models the heavy tail of daily volume.
+            volume_usd=self._rng.expovariate(
+                1 / max(120_000 / max(actual_spread * 100, 0.5), 1)
+            ),
             open_interest=self._rng.uniform(1_000, 50_000),
         )
 
