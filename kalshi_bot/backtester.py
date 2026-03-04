@@ -196,10 +196,13 @@ class Backtester:
         pnl = 0.0
         contracts = pos.contracts
 
+        fee_rate = self.cfg.risk.fee_rate
+
         if pos.state == PosState.BOTH_FILLED:
             # Held both YES and NO → one pays $1, other pays $0
-            # Profit = 1.0 - (yes_price + no_price) per contract
-            pnl = (1.0 - pos.yes_price - pos.no_price) * contracts
+            # Profit = 1.0 - (yes_price + no_price) per contract, minus fees on both fills
+            fee = fee_rate * (pos.yes_price + pos.no_price) * contracts
+            pnl = (1.0 - pos.yes_price - pos.no_price) * contracts - fee
 
         elif pos.state == PosState.ONE_SIDE_HEDGED and pos.hedge_order:
             # One original side filled + hedge order placed (may or may not have filled).
@@ -207,17 +210,19 @@ class Backtester:
             if pos.yes_order and pos.yes_order.filled:
                 yes_cost = pos.yes_price
                 if hedge_filled:
-                    # Both sides confirmed held → guaranteed spread capture
-                    pnl = (1.0 - yes_cost - pos.hedge_order.price) * contracts
+                    fee = fee_rate * (yes_cost + pos.hedge_order.price) * contracts
+                    pnl = (1.0 - yes_cost - pos.hedge_order.price) * contracts - fee
                 else:
-                    # Only YES held; P&L depends on resolution outcome
-                    pnl = ((1.0 if resolution == "yes" else 0.0) - yes_cost) * contracts
+                    fee = fee_rate * yes_cost * contracts
+                    pnl = ((1.0 if resolution == "yes" else 0.0) - yes_cost) * contracts - fee
             elif pos.no_order and pos.no_order.filled:
                 no_cost = pos.no_price
                 if hedge_filled:
-                    pnl = (1.0 - no_cost - pos.hedge_order.price) * contracts
+                    fee = fee_rate * (no_cost + pos.hedge_order.price) * contracts
+                    pnl = (1.0 - no_cost - pos.hedge_order.price) * contracts - fee
                 else:
-                    pnl = ((1.0 if resolution == "no" else 0.0) - no_cost) * contracts
+                    fee = fee_rate * no_cost * contracts
+                    pnl = ((1.0 if resolution == "no" else 0.0) - no_cost) * contracts - fee
 
         elif pos.state in (PosState.QUOTING, PosState.YES_FILLED, PosState.NO_FILLED):
             # Still open (unhedged) at resolution
@@ -354,11 +359,13 @@ class Backtester:
                         else:
                             gap = snap.yes_ask - h.price            # yes_ask - hedge_limit
                         if gap > self.cfg.risk.hedge_stop_gap:
-                            # Cut the losing leg at current mark-to-market
+                            # Cut the losing leg at current mark-to-market (fee on filled side)
                             if pos.yes_order and pos.yes_order.filled:
-                                mtm_pnl = (snap.yes_bid - pos.yes_price) * pos.contracts
+                                fee = self.cfg.risk.fee_rate * pos.yes_price * pos.contracts
+                                mtm_pnl = (snap.yes_bid - pos.yes_price) * pos.contracts - fee
                             else:
-                                mtm_pnl = ((1.0 - snap.yes_ask) - pos.no_price) * pos.contracts
+                                fee = self.cfg.risk.fee_rate * pos.no_price * pos.contracts
+                                mtm_pnl = ((1.0 - snap.yes_ask) - pos.no_price) * pos.contracts - fee
                             gross_pnl += mtm_pnl
                             pos.realised_pnl = mtm_pnl
                             hold_days.append(snap.t - pos.open_t)
@@ -373,7 +380,8 @@ class Backtester:
 
                 # ── Cycle: BOTH_FILLED → immediately resolve and redeploy ─
                 if pos.state == PosState.BOTH_FILLED:
-                    locked_pnl = (1.0 - pos.yes_price - pos.no_price) * pos.contracts
+                    fee = self.cfg.risk.fee_rate * (pos.yes_price + pos.no_price) * pos.contracts
+                    locked_pnl = (1.0 - pos.yes_price - pos.no_price) * pos.contracts - fee
                     gross_pnl += locked_pnl
                     pos.realised_pnl = locked_pnl
                     hold_days.append(snap.t - pos.open_t)

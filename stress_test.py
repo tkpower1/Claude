@@ -239,6 +239,7 @@ def _make_config(
     max_order_age: int = 14400,   # 4 hours in seconds
     hedge_stop_gap: float = 0.12,
     cancel_if_mid_drift: float = 0.07,
+    fee_rate: float = 0.07,
 ) -> BotConfig:
     return BotConfig(
         dry_run=True,
@@ -252,6 +253,7 @@ def _make_config(
             max_order_age=max_order_age,
             hedge_stop_gap=hedge_stop_gap,
             cancel_if_mid_drift=cancel_if_mid_drift,
+            fee_rate=fee_rate,
         ),
         market_filter=MarketFilter(
             min_mid=0.35,
@@ -390,17 +392,21 @@ def format_comparison(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Kalshi bot stress test")
-    parser.add_argument("--budget",  type=float, default=1000.0)
-    parser.add_argument("--seed",    type=int,   default=42)
-    parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--sweep",   action="store_true",
+    parser.add_argument("--budget",   type=float, default=1000.0)
+    parser.add_argument("--seed",     type=int,   default=42)
+    parser.add_argument("--verbose",  action="store_true")
+    parser.add_argument("--sweep",    action="store_true",
                         help="Grid-search parameters and show baseline vs best")
-    parser.add_argument("--seeds",   type=int,   default=1,
+    parser.add_argument("--seeds",    type=int,   default=1,
                         help="Number of random seeds to average over (default 1)")
     parser.add_argument(
         "--scenario", type=str, default=None,
         help="Run only this scenario (by name). Omit to run all.",
     )
+    parser.add_argument("--replay",   type=str,   default=None, metavar="DB",
+                        help="Replay real data from a collector SQLite database")
+    parser.add_argument("--fee-rate", type=float, default=0.07,
+                        help="Kalshi fee rate per fill (default 0.07 = 7%%)")
     parser.add_argument("--log-level", default="WARNING",
                         choices=["DEBUG", "INFO", "WARNING", "ERROR"])
     args = parser.parse_args()
@@ -409,6 +415,13 @@ def main() -> None:
         level=getattr(logging, args.log_level),
         format="%(levelname)-8s %(name)s  %(message)s",
     )
+
+    # ── Historical replay mode ────────────────────────────────────────────
+    if args.replay:
+        from kalshi_bot.historical_replay import _make_replay_config, run_replay
+        cfg = _make_replay_config(args.budget, args.fee_rate)
+        run_replay(args.replay, cfg)
+        sys.exit(0)
 
     scenarios = SCENARIOS
     if args.scenario:

@@ -102,6 +102,14 @@ class RiskParams:
     # Set to 1.0 to disable.
     cancel_if_mid_drift: float = 0.07
 
+    # Kalshi trading fee as a fraction of position cost per fill.
+    # Kalshi charges approximately 7% of the cost of each filled contract.
+    # e.g. buying 10 YES contracts at $0.48 each:
+    #   fee = 0.07 × $0.48 × 10 = $0.336
+    # Verify the current schedule at: https://kalshi.com/fees
+    # Set to 0.0 to ignore fees (useful for gross P&L analysis).
+    fee_rate: float = 0.07
+
 
 # ---------------------------------------------------------------------------
 # Operational parameters
