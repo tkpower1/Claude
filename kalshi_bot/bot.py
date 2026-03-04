@@ -24,6 +24,7 @@ from .market_selector import select_markets, title_short
 from .order_manager import OrderManager, PositionState
 from .position_sizer import BudgetTracker, size_position
 from .rewards import compute_scenario_pnl
+from .state_store import StateStore
 
 logger = logging.getLogger(__name__)
 
@@ -35,14 +36,34 @@ class KalshiBot:
     Instantiate with a BotConfig, then call .run() to start the event loop.
     """
 
-    def __init__(self, config: BotConfig) -> None:
+    def __init__(self, config: BotConfig, state_db: Optional[str] = None) -> None:
         config.validate()
         self.cfg = config
         self.client = KalshiClient(config)
-        self.order_mgr = OrderManager(self.client, config)
+
+        store: Optional[StateStore] = None
+        if state_db:
+            store = StateStore(state_db)
+
+        self.order_mgr = OrderManager(self.client, config, store=store)
         self.budget = BudgetTracker(config.risk.total_budget)
         self._running = False
         self._tick_count = 0
+
+        # Restore any live positions that survived a restart
+        if store:
+            restored = store.load()
+            for ticker, pos in restored.items():
+                self.order_mgr.positions[ticker] = pos
+                # Re-allocate budget for positions still consuming capital
+                if pos.contracts > 0 and pos.yes_price > 0:
+                    cost = (pos.yes_price + pos.no_price) * pos.contracts
+                    self.budget.allocate(ticker, cost)
+            if restored:
+                logger.info(
+                    "Restored %d position(s) from %s. %s",
+                    len(restored), state_db, self.budget.summary(),
+                )
 
     # ------------------------------------------------------------------
     # Main loop
