@@ -25,6 +25,7 @@ from .order_manager import OrderManager, PositionState
 from .position_sizer import BudgetTracker, size_position
 from .rewards import compute_scenario_pnl
 from .state_store import StateStore
+from .ws_client import KalshiWebSocket
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +37,15 @@ class KalshiBot:
     Instantiate with a BotConfig, then call .run() to start the event loop.
     """
 
-    def __init__(self, config: BotConfig, state_db: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        config: BotConfig,
+        state_db: Optional[str] = None,
+        data_db: Optional[str] = None,
+    ) -> None:
         config.validate()
         self.cfg = config
+        self._data_db = data_db   # market_data.db for realized-vol lookups
         self.client = KalshiClient(config)
 
         store: Optional[StateStore] = None
@@ -49,6 +56,14 @@ class KalshiBot:
         self.budget = BudgetTracker(config.risk.total_budget)
         self._running = False
         self._tick_count = 0
+
+        # WebSocket listener for real-time fill detection.
+        # Skipped in dry_run (no real orders to watch).
+        self._ws: Optional[KalshiWebSocket] = None
+        if not config.dry_run:
+            self._ws = KalshiWebSocket(
+                config, on_fill=self.order_mgr.handle_ws_fill
+            )
 
         # Restore any live positions that survived a restart
         if store:
@@ -78,6 +93,8 @@ class KalshiBot:
         )
         self._install_signal_handlers()
         self._running = True
+        if self._ws is not None:
+            self._ws.start()
 
         last_report = 0.0
 
@@ -102,6 +119,8 @@ class KalshiBot:
             if sleep_for > 0 and self._running:
                 time.sleep(sleep_for)
 
+        if self._ws is not None:
+            self._ws.stop()
         logger.info("Bot stopped gracefully.")
 
     def stop(self) -> None:
@@ -173,7 +192,20 @@ class KalshiBot:
             if self.budget.available < 5.0:
                 break
 
-            sizing = size_position(market, self.budget.available, self.cfg)
+            # Fetch order book for order-flow-aware quote adjustment.
+            # Best-effort: if it fails, size_position falls back to mid ± depth.
+            order_book = None
+            if not self.cfg.dry_run:
+                try:
+                    order_book = self.client.get_order_book(market.ticker)
+                except Exception:
+                    pass
+
+            sizing = size_position(
+                market, self.budget.available, self.cfg,
+                data_db=self._data_db,
+                order_book=order_book,
+            )
 
             # Guard: spread must be profitable
             pnl = compute_scenario_pnl(

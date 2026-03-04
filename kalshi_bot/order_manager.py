@@ -495,6 +495,57 @@ class OrderManager:
             self._store.upsert(pos)
 
     # ------------------------------------------------------------------
+    # WebSocket fill handler
+    # ------------------------------------------------------------------
+
+    def handle_ws_fill(
+        self, ticker: str, order_id: str, side: str, count: int
+    ) -> None:
+        """
+        Called by KalshiWebSocket on every real-time fill event.
+
+        Performs a targeted refresh of the affected position so the hedge
+        is placed within milliseconds of the fill, rather than waiting for
+        the next 60-second REST poll.
+
+        Thread-safe: reads/writes self.positions under a short-lived
+        lookup — the dict is only mutated here and in the main loop,
+        which share the GIL.
+        """
+        pos = self.positions.get(ticker)
+        if pos is None:
+            logger.debug("WS fill for unknown position %s (order=%s)", ticker, order_id)
+            return
+
+        if pos.state not in (
+            PositionState.QUOTING, PositionState.ONE_SIDE_HEDGED
+        ):
+            logger.debug(
+                "WS fill %s ignored (state=%s)", ticker, pos.state.name
+            )
+            return
+
+        logger.info(
+            "WS fill received for %s order=%s side=%s count=%d — fast refresh.",
+            ticker, order_id, side, count,
+        )
+
+        # Fetch the current open-order list and order book for a targeted refresh
+        try:
+            open_orders = {o.order_id: o for o in self.client.get_open_orders()}
+            order_book = None
+            if not self.cfg.dry_run:
+                try:
+                    order_book = self.client.get_order_book(ticker)
+                except Exception:
+                    pass
+            self._refresh_position(pos, open_orders, order_book=order_book)
+        except Exception as exc:
+            logger.error(
+                "handle_ws_fill refresh error for %s: %s", ticker, exc, exc_info=True
+            )
+
+    # ------------------------------------------------------------------
     # Reporting
     # ------------------------------------------------------------------
 

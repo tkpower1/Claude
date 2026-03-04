@@ -21,8 +21,10 @@ import logging
 import math
 from dataclasses import dataclass
 
-from .client import MarketInfo
+from .client import MarketInfo, OrderBook
 from .config import BotConfig
+from .quote_adjuster import adjust_for_order_flow, extract_depth_from_order_book
+from .vol_estimator import effective_vol
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +69,9 @@ def size_position(
     market: MarketInfo,
     available_budget: float,
     config: BotConfig,
+    data_db: str | None = None,
+    vol_override: float | None = None,
+    order_book: OrderBook | None = None,
 ) -> SizingResult:
     """
     Compute order prices and contract counts for a Kalshi market.
@@ -75,7 +80,14 @@ def size_position(
       1. Kelly fraction determines budget allocation.
       2. Budget split evenly across `risk.order_levels` levels per side.
       3. YES price = mid − depth;  NO price = (1 − mid) − depth
+         depth = realized_vol × order_depth_fraction  (adaptive to market σ)
       4. Contract count = floor(budget_per_level / price)
+
+    Volatility priority for depth sizing:
+      a) vol_override  — caller-supplied (e.g. from backtester rolling window)
+      b) Realized vol from data_db  (historical snapshots, if db path given)
+      c) Current market spread / 4  (spread is a market-implied vol proxy)
+      d) config.scoring.default_v   (static fallback)
     """
     risk = config.risk
     sc = config.scoring
@@ -91,14 +103,40 @@ def size_position(
     # 2. Budget per level per side
     budget_per_level = budget_for_market / max(2 * levels, 1)
 
-    # 3. Order prices (depth inside the spread from mid)
-    spread = market.spread
-    v = max(spread, sc.default_v)
+    # 3. Order prices — depth derived from realized volatility
+    if vol_override is not None:
+        v = max(vol_override, sc.default_v)
+        vol_source = "override"
+    else:
+        v, vol_source = effective_vol(
+            market.ticker,
+            market.spread,
+            sc.default_v,
+            data_db=data_db,
+        )
+        v = max(v, sc.default_v)
+
     depth = v * sc.order_depth_fraction
+    logger.debug(
+        "Vol [%s]: v=%.4f source=%s depth=%.4f",
+        market.ticker, v, vol_source, depth,
+    )
 
     yes_price = round(max(mid - depth, 0.01), 4)
     no_mid = 1.0 - mid
     no_price = round(max(no_mid - depth, 0.01), 4)
+
+    # Order-flow-aware adjustment (LMSR-inspired adverse selection protection).
+    # If the order book shows heavy imbalance on one side, widen the quote on
+    # that side to reduce adverse-selection exposure.
+    if order_book is not None:
+        yes_depth, no_depth = extract_depth_from_order_book(order_book)
+        yes_adj, no_adj = adjust_for_order_flow(
+            yes_depth, no_depth, market.spread,
+            ofi_sensitivity=sc.order_depth_fraction,
+        )
+        yes_price = round(max(yes_price - yes_adj, 0.01), 4)
+        no_price  = round(max(no_price  - no_adj,  0.01), 4)
 
     # Safety: combined cost must be ≤ max_fill_cost
     combined = yes_price + no_price

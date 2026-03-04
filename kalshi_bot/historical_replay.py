@@ -24,6 +24,7 @@ import sqlite3
 from datetime import datetime, timezone
 
 from .backtester import Backtester, MarketResult
+from .stats import newey_west_ttest
 from .config import BotConfig, MarketFilter, RiskParams, ScoringParams
 from .synthetic_data import MarketSnapshot
 
@@ -179,7 +180,20 @@ def run_replay(
     print(f"\n  Profitable markets : {profitable}/{len(results)}")
     print(f"  Avg YES fill rate  : {avg_fy:.1%}")
     print(f"  Avg NO  fill rate  : {avg_fn:.1%}")
-    print(f"  Both-side fill %   : {both_pct:.1%}  ← key profitability driver\n")
+    print(f"  Both-side fill %   : {both_pct:.1%}  ← key profitability driver")
+
+    # Newey-West HAC t-test across per-market P&L series
+    pnl_series = [r.total_pnl for _, _, _, r in results]
+    tt = newey_west_ttest(pnl_series)
+    print(f"\n  Statistical significance (Newey-West HAC):")
+    print(f"  {tt.summary()}")
+    if tt.significant_5pct:
+        print("  ✓ P&L is significant at the 5% level (|t| > 1.96)")
+    elif tt.significant_10pct:
+        print("  ~ P&L is significant at the 10% level only (|t| > 1.645)")
+    else:
+        print("  ✗ P&L is NOT statistically significant — may be noise")
+    print()
 
 
 # ---------------------------------------------------------------------------
