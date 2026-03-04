@@ -62,10 +62,10 @@ class RiskParams:
     total_budget: float = 1_000.0
 
     # Maximum share of budget in any single market
-    max_market_fraction: float = 0.15
+    max_market_fraction: float = 0.10   # sweep-optimised (was 0.15)
 
     # Kelly fraction multiplier (quarter-Kelly for safety)
-    kelly_multiplier: float = 0.25
+    kelly_multiplier: float = 0.20   # sweep-optimised (was 0.25)
 
     # Maximum combined cost of YES + NO per contract pair
     # At resolution one pays $1 and one pays $0, so combined ≤ $1.00.
@@ -81,11 +81,18 @@ class RiskParams:
     # Gap between ladder levels (probability units)
     level_gap: float = 0.01
 
-    # Maximum position age before cancellation and re-quote (seconds)
-    max_order_age: int = 3600    # 1 hour
+    # Maximum QUOTING age before cancellation and re-quote (seconds)
+    max_order_age: int = 43_200   # 12 hours – sweep-optimised (was 24 h)
 
     # Minimum contract count per order (Kalshi minimum is 1)
     min_order_contracts: int = 1
+
+    # Directional stop-loss for one-sided hedges (probability units).
+    # If the unhedged side's market ask is this far above our hedge limit
+    # (meaning the market has moved against us), close at mark-to-market
+    # rather than holding until resolution.
+    # Set to 1.0 to disable (never stop out).
+    hedge_stop_gap: float = 0.12
 
 
 # ---------------------------------------------------------------------------

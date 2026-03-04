@@ -201,18 +201,22 @@ class Backtester:
             pnl = (1.0 - pos.yes_price - pos.no_price) * contracts
 
         elif pos.state == PosState.ONE_SIDE_HEDGED and pos.hedge_order:
-            # One original + hedge
+            # One original side filled + hedge order placed (may or may not have filled).
+            hedge_filled = pos.hedge_order.filled
             if pos.yes_order and pos.yes_order.filled:
-                # YES filled, then hedged NO
                 yes_cost = pos.yes_price
-                no_hedge_price = pos.hedge_order.price
-                payout = (1.0 if resolution == "yes" else 0.0) + (1.0 if resolution == "no" else 0.0)
-                pnl = (payout - yes_cost - no_hedge_price) * contracts
+                if hedge_filled:
+                    # Both sides confirmed held → guaranteed spread capture
+                    pnl = (1.0 - yes_cost - pos.hedge_order.price) * contracts
+                else:
+                    # Only YES held; P&L depends on resolution outcome
+                    pnl = ((1.0 if resolution == "yes" else 0.0) - yes_cost) * contracts
             elif pos.no_order and pos.no_order.filled:
                 no_cost = pos.no_price
-                yes_hedge_price = pos.hedge_order.price
-                payout = (1.0 if resolution == "no" else 0.0) + (1.0 if resolution == "yes" else 0.0)
-                pnl = (payout - no_cost - yes_hedge_price) * contracts
+                if hedge_filled:
+                    pnl = (1.0 - no_cost - pos.hedge_order.price) * contracts
+                else:
+                    pnl = ((1.0 if resolution == "no" else 0.0) - no_cost) * contracts
 
         elif pos.state in (PosState.QUOTING, PosState.YES_FILLED, PosState.NO_FILLED):
             # Still open (unhedged) at resolution
@@ -323,6 +327,52 @@ class Backtester:
                         h.filled = True
                         pos.state = PosState.BOTH_FILLED
                         no_orders_filled += 1
+                    # ── Directional stop-loss if hedge is still open ──────
+                    if not h.filled:
+                        # gap = how far the current market ask is above our hedge limit
+                        # positive → market has moved away from us
+                        if h.side == "no":
+                            gap = (1.0 - snap.yes_bid) - h.price   # no_ask - hedge_limit
+                        else:
+                            gap = snap.yes_ask - h.price            # yes_ask - hedge_limit
+                        if gap > self.cfg.risk.hedge_stop_gap:
+                            # Cut the losing leg at current mark-to-market
+                            if pos.yes_order and pos.yes_order.filled:
+                                mtm_pnl = (snap.yes_bid - pos.yes_price) * pos.contracts
+                            else:
+                                mtm_pnl = ((1.0 - snap.yes_ask) - pos.no_price) * pos.contracts
+                            gross_pnl += mtm_pnl
+                            pos.realised_pnl = mtm_pnl
+                            hold_days.append(snap.t - pos.open_t)
+                            self.budget.release(ticker)
+                            pos.close_t = snap.t
+                            pos.state = PosState.RESOLVED
+                            active_pos = None
+                            logger.debug(
+                                "[%s t=%.2f] hedge stop: gap=%.3f > %.3f mtm_pnl=%.2f",
+                                ticker, snap.t, gap, self.cfg.risk.hedge_stop_gap, mtm_pnl,
+                            )
+
+                # ── Cycle: BOTH_FILLED → immediately resolve and redeploy ─
+                if pos.state == PosState.BOTH_FILLED:
+                    locked_pnl = (1.0 - pos.yes_price - pos.no_price) * pos.contracts
+                    gross_pnl += locked_pnl
+                    pos.realised_pnl = locked_pnl
+                    hold_days.append(snap.t - pos.open_t)
+                    self.budget.release(ticker)
+                    pos.close_t = snap.t
+                    pos.state = PosState.RESOLVED
+                    active_pos = None
+
+                # ── Stale-quote requote ───────────────────────────────────
+                elif pos.state == PosState.QUOTING:
+                    age_hours = (snap.t - pos.open_t) * 24
+                    if age_hours > self.cfg.risk.max_order_age / 3600:
+                        # Cancel, release budget, allow reopen at current prices
+                        self.budget.release(ticker)
+                        hold_days.append(snap.t - pos.open_t)
+                        pos.state = PosState.RESOLVED
+                        active_pos = None
 
             # ── Open a new position if none active ───────────────────────
             if (active_pos is None or active_pos.state == PosState.RESOLVED) \

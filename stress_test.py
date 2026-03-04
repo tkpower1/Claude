@@ -231,11 +231,168 @@ def format_full_report(results: list[ScenarioResult], elapsed: float) -> str:
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
+def _make_config(
+    budget: float,
+    depth: float,
+    kelly: float,
+    mf: float,
+    max_order_age: int = 14400,   # 4 hours in seconds
+    hedge_stop_gap: float = 0.12,
+) -> BotConfig:
+    return BotConfig(
+        dry_run=True,
+        risk=RiskParams(
+            total_budget=budget,
+            kelly_multiplier=kelly,
+            max_market_fraction=mf,
+            max_fill_cost=1.02,
+            order_levels=3,
+            min_order_contracts=1,
+            max_order_age=max_order_age,
+            hedge_stop_gap=hedge_stop_gap,
+        ),
+        market_filter=MarketFilter(
+            min_mid=0.35,
+            max_mid=0.65,
+            min_spread=0.03,
+            min_days_to_expiry=0,
+        ),
+        scoring=ScoringParams(order_depth_fraction=depth, default_v=0.06),
+    )
+
+
+def _run_all(
+    scenarios: list,
+    config: BotConfig,
+    seed: int,
+    label: str,
+    verbose: bool = False,
+) -> tuple[list[ScenarioResult], float]:
+    """Run all scenarios and return (results, elapsed)."""
+    t0 = time.perf_counter()
+    results: list[ScenarioResult] = []
+    for i, scenario in enumerate(scenarios):
+        print(f"  [{label}] {scenario.name:<25} … ", end="", flush=True)
+        bt = Backtester(config)
+        result = bt.run_scenario(scenario, seed=seed)
+        results.append(result)
+        pnl_s = f"{'+' if result.net_pnl >= 0 else ''}{result.net_pnl:.2f}"
+        print(f"P&L ${pnl_s}  MaxDD {result.max_portfolio_drawdown*100:.1f}%")
+    return results, time.perf_counter() - t0
+
+
+def run_sweep(scenarios: list, budget: float, seed: int) -> tuple[dict, list[ScenarioResult]]:
+    """
+    Grid-search over (depth_fraction, kelly, max_market_fraction, max_order_age).
+
+    Scoring metric: aggregate P&L weighted so that losses count 2× (risk-adjusted).
+    This penalises parameter sets that profit on easy scenarios but blow up on shocks.
+    """
+    import itertools
+
+    # Shallower depth → orders closer to mid → more fills in volatile markets
+    depths = [0.15, 0.20, 0.30, 0.40]
+    kellys = [0.20, 0.25, 0.30, 0.35]
+    fracs  = [0.10, 0.15, 0.20]
+    # Longer age → price has more time to reach our limit; shorter → faster cycling
+    ages   = [14_400, 43_200, 86_400]   # 4h, 12h, 24h in seconds
+    # Tighter stop → cut losses sooner; looser → let hedges ride longer
+    stops  = [0.06, 0.10, 0.15, 1.0]   # 1.0 = disabled
+
+    def score(results: list[ScenarioResult]) -> float:
+        """Risk-adjusted aggregate P&L: losses penalised 2×."""
+        total = 0.0
+        for r in results:
+            total += r.net_pnl if r.net_pnl >= 0 else r.net_pnl * 2
+        return total
+
+    best_score = float("-inf")
+    best_params: dict = {}
+    best_results: list[ScenarioResult] = []
+    n_combos = len(depths) * len(kellys) * len(fracs) * len(ages) * len(stops)
+
+    print(f"\n  Sweeping {n_combos} parameter combinations (risk-adjusted scoring) …")
+    done = 0
+    for depth, kelly, mf, age, stop in itertools.product(depths, kellys, fracs, ages, stops):
+        cfg = _make_config(budget, depth, kelly, mf, age, stop)
+        run_results = []
+        for scenario in scenarios:
+            bt = Backtester(cfg)
+            run_results.append(bt.run_scenario(scenario, seed=seed))
+        sc = score(run_results)
+        done += 1
+        if sc > best_score:
+            best_score = sc
+            best_params = {"depth": depth, "kelly": kelly, "mf": mf, "age": age, "stop": stop}
+            best_results = run_results
+        if done % 48 == 0:
+            print(f"    {done}/{n_combos} … best score {best_score:+.2f}", flush=True)
+
+    return best_params, best_results
+
+
+def format_comparison(
+    baseline: list[ScenarioResult],
+    optimized: list[ScenarioResult],
+    opt_params: dict,
+) -> str:
+    sep = "─" * 72
+    lines = [
+        "",
+        "╔══════════════════════════════════════════════════════════════════════╗",
+        "║       BASELINE vs OPTIMISED COMPARISON                              ║",
+        "╚══════════════════════════════════════════════════════════════════════╝",
+        "",
+        f"  Optimised params: depth={opt_params['depth']:.2f}  "
+        f"kelly={opt_params['kelly']:.2f}  "
+        f"max_market_frac={opt_params['mf']:.2f}  "
+        f"max_order_age={opt_params['age']//3600}h  "
+        f"hedge_stop={opt_params.get('stop', 0.12):.2f}",
+        "",
+        sep,
+        f"  {'Scenario':<22} {'Base P&L':>10} {'Opt P&L':>10} {'Delta':>10} {'Imp%':>7}",
+        "  " + "-" * 63,
+    ]
+
+    base_map = {r.scenario_name: r for r in baseline}
+    opt_map  = {r.scenario_name: r for r in optimized}
+
+    total_base = 0.0
+    total_opt  = 0.0
+    for name in [r.scenario_name for r in baseline]:
+        b = base_map[name]
+        o = opt_map.get(name)
+        if o is None:
+            continue
+        delta = o.net_pnl - b.net_pnl
+        imp = (delta / max(abs(b.net_pnl), 0.01)) * 100 if b.net_pnl != 0 else float("inf")
+        imp_s = f"{imp:+.0f}%" if abs(imp) < 9999 else "new"
+        delta_s = f"{delta:+.2f}"
+        lines.append(
+            f"  {name:<22} {b.net_pnl:>+10.2f} {o.net_pnl:>+10.2f} "
+            f"{delta_s:>10} {imp_s:>7}"
+        )
+        total_base += b.net_pnl
+        total_opt  += o.net_pnl
+
+    total_delta = total_opt - total_base
+    pct = (total_delta / max(abs(total_base), 0.01)) * 100
+    lines += [
+        "  " + "-" * 63,
+        f"  {'TOTAL':<22} {total_base:>+10.2f} {total_opt:>+10.2f} "
+        f"{total_delta:>+10.2f} {pct:>+6.0f}%",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Kalshi bot stress test")
     parser.add_argument("--budget",  type=float, default=1000.0)
     parser.add_argument("--seed",    type=int,   default=42)
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument("--sweep",   action="store_true",
+                        help="Grid-search parameters and show baseline vs best")
     parser.add_argument(
         "--scenario", type=str, default=None,
         help="Run only this scenario (by name). Omit to run all.",
@@ -249,25 +406,6 @@ def main() -> None:
         format="%(levelname)-8s %(name)s  %(message)s",
     )
 
-    config = BotConfig(
-        dry_run=True,
-        risk=RiskParams(
-            total_budget=args.budget,
-            kelly_multiplier=0.25,
-            max_market_fraction=0.15,
-            max_fill_cost=1.02,
-            order_levels=3,
-            min_order_contracts=1,
-        ),
-        market_filter=MarketFilter(
-            min_mid=0.35,
-            max_mid=0.65,
-            min_spread=0.03,
-            min_days_to_expiry=0,   # backtester controls time
-        ),
-        scoring=ScoringParams(order_depth_fraction=0.40, default_v=0.06),
-    )
-
     scenarios = SCENARIOS
     if args.scenario:
         scenarios = [s for s in SCENARIOS if s.name == args.scenario]
@@ -277,22 +415,38 @@ def main() -> None:
                 print(f"  {s.name:25s} – {s.description}")
             sys.exit(1)
 
-    print(f"\nRunning {len(scenarios)} scenario(s) | budget=${args.budget:.0f} | seed={args.seed}")
-    print("Please wait…\n")
+    if args.sweep:
+        # ── Parameter sweep ───────────────────────────────────────────────
+        print(f"\nParameter sweep | budget=${args.budget:.0f} | seed={args.seed}")
+        base_cfg = _make_config(args.budget, depth=0.40, kelly=0.25, mf=0.15, max_order_age=86_400)
+        print("\nBaseline run:")
+        base_results, base_t = _run_all(scenarios, base_cfg, args.seed, "base")
 
-    t0 = time.perf_counter()
-    results: list[ScenarioResult] = []
+        best_params, opt_results = run_sweep(scenarios, args.budget, args.seed)
 
-    for i, scenario in enumerate(scenarios):
-        print(f"  [{i+1}/{len(scenarios)}] {scenario.name:<25} … ", end="", flush=True)
-        bt = Backtester(config)
-        result = bt.run_scenario(scenario, seed=args.seed)
-        results.append(result)
-        pnl_s = f"{'+' if result.net_pnl >= 0 else ''}{result.net_pnl:.2f}"
-        print(f"P&L ${pnl_s}  MaxDD {result.max_portfolio_drawdown*100:.1f}%")
+        print(f"\n  Best params found: {best_params}")
+        print(format_comparison(base_results, opt_results, best_params))
 
-    elapsed = time.perf_counter() - t0
-    print(format_full_report(results, elapsed))
+        opt_cfg = _make_config(
+            args.budget,
+            depth=best_params["depth"],
+            kelly=best_params["kelly"],
+            mf=best_params["mf"],
+            max_order_age=best_params["age"],
+            hedge_stop_gap=best_params.get("stop", 0.12),
+        )
+        elapsed = base_t
+        print(format_full_report(opt_results, elapsed))
+
+    else:
+        # ── Standard run ─────────────────────────────────────────────────
+        config = _make_config(args.budget, depth=0.40, kelly=0.25, mf=0.15, max_order_age=86_400)
+
+        print(f"\nRunning {len(scenarios)} scenario(s) | budget=${args.budget:.0f} | seed={args.seed}")
+        print("Please wait…\n")
+
+        results, elapsed = _run_all(scenarios, config, args.seed, " ", args.verbose)
+        print(format_full_report(results, elapsed))
 
 
 if __name__ == "__main__":
