@@ -94,6 +94,14 @@ class RiskParams:
     # Set to 1.0 to disable (never stop out).
     hedge_stop_gap: float = 0.12
 
+    # Pre-fill price-drift cancellation (probability units).
+    # While a position is still QUOTING (neither side filled yet), if the
+    # market mid has moved more than this from where we placed the order,
+    # cancel and release budget immediately – before any fill can register.
+    # Effectively implements real-time order cancellation on price shocks.
+    # Set to 1.0 to disable.
+    cancel_if_mid_drift: float = 0.07
+
 
 # ---------------------------------------------------------------------------
 # Operational parameters

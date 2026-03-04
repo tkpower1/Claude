@@ -69,6 +69,7 @@ class SimPosition:
     hedge_order: Optional[SimOrder] = None
 
     open_t: float = 0.0
+    open_mid: float = 0.50      # mid-price when position was opened (for drift check)
     close_t: float = 0.0
     realised_pnl: float = 0.0
     resolution_side: str = ""   # "yes" | "no"
@@ -274,8 +275,25 @@ class Backtester:
                 pos = active_pos
 
                 if pos.state == PosState.QUOTING:
-                    yes_f = pos.yes_order and self._yes_order_fills(pos.yes_order, snap, rng)
-                    no_f = pos.no_order and self._no_order_fills(pos.no_order, snap, rng)
+                    # ── Pre-fill drift cancel ─────────────────────────────
+                    # If mid has moved too far from where we placed the order,
+                    # cancel before any fill can register (mirrors real-time
+                    # order cancellation on price shock in production).
+                    mid_drift = abs(snap.mid - pos.open_mid)
+                    yes_f, no_f = False, False
+                    if mid_drift > self.cfg.risk.cancel_if_mid_drift:
+                        self.budget.release(ticker)
+                        hold_days.append(snap.t - pos.open_t)
+                        pos.state = PosState.RESOLVED
+                        active_pos = None
+                        logger.debug(
+                            "[%s t=%.2f] drift cancel: |%.3f-%.3f|=%.3f > %.3f",
+                            ticker, snap.t, snap.mid, pos.open_mid,
+                            mid_drift, self.cfg.risk.cancel_if_mid_drift,
+                        )
+                    else:
+                        yes_f = pos.yes_order and self._yes_order_fills(pos.yes_order, snap, rng)
+                        no_f = pos.no_order and self._no_order_fills(pos.no_order, snap, rng)
 
                     if yes_f:
                         pos.yes_order.filled = True
@@ -421,6 +439,7 @@ class Backtester:
                     yes_order=yes_o,
                     no_order=no_o,
                     open_t=snap.t,
+                    open_mid=snap.mid,
                 )
                 self.budget.allocate(ticker, sizing.budget_allocated)
                 active_pos = pos

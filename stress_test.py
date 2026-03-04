@@ -238,6 +238,7 @@ def _make_config(
     mf: float,
     max_order_age: int = 14400,   # 4 hours in seconds
     hedge_stop_gap: float = 0.12,
+    cancel_if_mid_drift: float = 0.07,
 ) -> BotConfig:
     return BotConfig(
         dry_run=True,
@@ -250,6 +251,7 @@ def _make_config(
             min_order_contracts=1,
             max_order_age=max_order_age,
             hedge_stop_gap=hedge_stop_gap,
+            cancel_if_mid_drift=cancel_if_mid_drift,
         ),
         market_filter=MarketFilter(
             min_mid=0.35,
@@ -442,7 +444,8 @@ def main() -> None:
 
     else:
         # ── Standard run – uses sweep-optimised defaults ──────────────────
-        config = _make_config(args.budget, depth=0.40, kelly=0.20, mf=0.10, max_order_age=43_200)
+        config = _make_config(args.budget, depth=0.40, kelly=0.20, mf=0.10,
+                              max_order_age=43_200, cancel_if_mid_drift=0.07)
 
         n_seeds = max(1, args.seeds)
         seeds   = [args.seed + i * 137 for i in range(n_seeds)]
