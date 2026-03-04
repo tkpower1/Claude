@@ -110,6 +110,9 @@ def passes_filter(market: MarketInfo, filt: MarketFilter) -> tuple[bool, str]:
     if days < filt.min_days_to_expiry:
         return False, f"only {days:.1f} days to close"
 
+    if filt.max_days_to_expiry > 0 and days > filt.max_days_to_expiry:
+        return False, f"{days:.1f} days to close > max {filt.max_days_to_expiry}"
+
     return True, ""
 
 

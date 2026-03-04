@@ -107,6 +107,34 @@ def realized_vol_from_db(
 
 
 # ---------------------------------------------------------------------------
+# Vol ratio: short-term vs long-term baseline (spike detector)
+# ---------------------------------------------------------------------------
+
+def vol_ratio(
+    ticker: str,
+    db_path: str,
+    short_hours: int = 6,
+    long_hours: int = 168,   # 7 days
+    min_obs: int = 4,
+) -> Optional[float]:
+    """
+    Return short_rv / long_rv for a ticker, or None if insufficient data.
+
+    A ratio > 1.5 indicates a volatility spike vs the 7-day baseline:
+    the core condition for the pre-resolution vol-spike paper-trade strategy.
+
+    short_hours : lookback for current vol estimate (6h default)
+    long_hours  : lookback for baseline vol estimate (7 days = 168h default)
+    """
+    short_rv = realized_vol_from_db(ticker, db_path, lookback_hours=short_hours, min_obs=min_obs)
+    long_rv  = realized_vol_from_db(ticker, db_path, lookback_hours=long_hours,  min_obs=min_obs)
+
+    if short_rv is None or long_rv is None or long_rv < 1e-9:
+        return None
+    return short_rv / long_rv
+
+
+# ---------------------------------------------------------------------------
 # Effective volatility: realized (if available) else config default
 # ---------------------------------------------------------------------------
 

@@ -37,6 +37,13 @@ class MarketFilter:
     # Require at least this many days until resolution
     min_days_to_expiry: int = 3
 
+    # Maximum days until resolution.
+    # Set to 0 to disable (trade markets at any horizon).
+    # Set to 3 for the pre-resolution vol-spike paper-trade strategy:
+    #   the 72h pre-resolution window has higher vol and shorter adverse-
+    #   selection exposure — the core hypothesis being tested.
+    max_days_to_expiry: int = 0
+
     # Only trade markets with this status
     allowed_statuses: tuple = ("open",)
 
@@ -51,6 +58,13 @@ class ScoringParams:
 
     # Default spread window v if not derivable from market data
     default_v: float = 0.05
+
+    # Minimum ratio of short-term realized vol to long-term baseline before
+    # we open a new position.  0.0 = disabled (always quote).
+    # Set to 1.5 for the vol-spike paper-trade strategy: only quote when the
+    # last 6h of realized vol is ≥ 1.5× the 7-day baseline.  This selects
+    # the "pre-resolution spike" window where spreads widen above fee break-even.
+    min_vol_ratio: float = 0.0
 
 
 # ---------------------------------------------------------------------------

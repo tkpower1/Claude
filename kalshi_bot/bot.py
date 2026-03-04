@@ -25,6 +25,7 @@ from .order_manager import OrderManager, PositionState
 from .position_sizer import BudgetTracker, size_position
 from .rewards import compute_scenario_pnl
 from .state_store import StateStore
+from .vol_estimator import vol_ratio
 from .ws_client import KalshiWebSocket
 
 logger = logging.getLogger(__name__)
@@ -191,6 +192,29 @@ class KalshiBot:
                 continue
             if self.budget.available < 5.0:
                 break
+
+            # Vol-spike filter: only enter when short-term realized vol is
+            # sufficiently elevated vs the 7-day baseline (min_vol_ratio > 0).
+            # This is the core condition for the pre-resolution hypothesis.
+            min_ratio = self.cfg.scoring.min_vol_ratio
+            if min_ratio > 0 and self._data_db:
+                ratio = vol_ratio(market.ticker, self._data_db)
+                if ratio is None:
+                    logger.debug(
+                        "[%s] vol_ratio unavailable (insufficient history) – skipping.",
+                        market.ticker,
+                    )
+                    continue
+                if ratio < min_ratio:
+                    logger.debug(
+                        "[%s] vol_ratio=%.2f < min=%.2f – no spike, skipping.",
+                        market.ticker, ratio, min_ratio,
+                    )
+                    continue
+                logger.info(
+                    "[%s] Vol spike detected: ratio=%.2fx (threshold=%.2fx) – quoting.",
+                    market.ticker, ratio, min_ratio,
+                )
 
             # Fetch order book for order-flow-aware quote adjustment.
             # Best-effort: if it fails, size_position falls back to mid ± depth.
