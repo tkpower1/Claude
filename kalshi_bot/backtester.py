@@ -513,12 +513,25 @@ class Backtester:
                     pos.state = PosState.RESOLVED
 
         # Categorise
-        both_filled = sum(1 for p in positions if p.state == PosState.BOTH_FILLED
-                          or (p.realised_pnl > 0 and p.yes_order and p.yes_order.filled
-                              and p.no_order and p.no_order.filled))
+        # A position is BOTH_FILLED when either:
+        #   (a) Both original orders filled simultaneously, or
+        #   (b) One original order filled + the hedge order also filled.
+        # The original NO/YES order is cancelled after the first fill and is
+        # replaced by a hedge SimOrder, so we must check hedge_order.filled.
+        def _both_filled(p) -> bool:
+            yes_f   = bool(p.yes_order    and p.yes_order.filled)
+            no_f    = bool(p.no_order     and p.no_order.filled)
+            hedge_f = bool(p.hedge_order  and p.hedge_order.filled)
+            return (yes_f and no_f) or ((yes_f or no_f) and hedge_f)
+
+        both_filled = sum(1 for p in positions if _both_filled(p))
         one_filled = sum(
             1 for p in positions
-            if (p.yes_order and p.yes_order.filled) != (p.no_order and p.no_order.filled)
+            if not _both_filled(p)
+            and bool(
+                (p.yes_order and p.yes_order.filled)
+                or (p.no_order and p.no_order.filled)
+            )
         )
         neither = sum(
             1 for p in positions
