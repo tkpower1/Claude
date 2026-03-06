@@ -126,6 +126,12 @@ def _print_stats(db_path: str) -> None:
 
 
 if __name__ == "__main__":
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
+
     parser = argparse.ArgumentParser(description="Kalshi market data collector")
     parser.add_argument("--db",       default="market_data.db", help="SQLite database path")
     parser.add_argument("--interval", type=int, default=60,    help="Poll interval (seconds)")
