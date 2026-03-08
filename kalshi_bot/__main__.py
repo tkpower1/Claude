@@ -60,6 +60,11 @@ def _parse_args() -> argparse.Namespace:
                    help="Kelly multiplier (default: 0.25)")
     p.add_argument("--order-levels", type=int, default=3,
                    help="Ladder levels per side (default: 3)")
+    p.add_argument("--fee-rate", type=float, default=None,
+                   help="Kalshi fee rate fraction (default: 0.07); set 0 to disable fee gate")
+    p.add_argument("--depth-frac", type=float, default=None,
+                   help="Order depth fraction inside spread (default: 0.40); "
+                        "higher values lower the fee-gate spread threshold")
 
     # Market filter
     p.add_argument("--min-mid", type=float, default=0.35)
@@ -92,6 +97,12 @@ def main() -> None:
     )
     if args.budget is not None:
         risk.total_budget = args.budget
+    if args.fee_rate is not None:
+        risk.fee_rate = args.fee_rate
+
+    scoring = ScoringParams()
+    if args.depth_frac is not None:
+        scoring.order_depth_fraction = args.depth_frac
 
     filt = MarketFilter(
         min_mid=args.min_mid,
@@ -105,6 +116,7 @@ def main() -> None:
         demo=args.demo or os.getenv("KALSHI_DEMO", "false").lower() == "true",
         scan_interval=args.scan_interval,
         risk=risk,
+        scoring=scoring,
         market_filter=filt,
     )
 
