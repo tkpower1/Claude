@@ -57,7 +57,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .bot import MarketMakingBot
+from .bot import KalshiBot
 from .config import BotConfig, MarketFilter, RiskParams, ScoringParams
 from .stats import newey_west_ttest
 
@@ -153,12 +153,12 @@ def _build_config(args: argparse.Namespace) -> BotConfig:
         ),
         risk=RiskParams(
             total_budget=args.budget,
-            max_fill_cost=0.935,        # enforce fee-profitable spread capture
+            max_fill_cost=0.93,         # fee break-even at 7% fee: 1/1.07 = 0.9346
             kelly_multiplier=0.20,
             max_market_fraction=0.10,
-            max_order_age=7_200,        # 2h max quote age (pre-resolution moves fast)
-            cancel_if_mid_drift=0.05,   # tighter cancel on drift
-            hedge_stop_gap=0.10,
+            max_order_age=14_400,       # 4h — sweep-optimised: fast reprice reduces adverse selection
+            cancel_if_mid_drift=0.15,   # wider than depth+half_spread to allow fills
+            hedge_stop_gap=1.0,         # disabled: rely on mean reversion
             fee_rate=0.07,
         ),
         scan_interval=60,
@@ -202,7 +202,7 @@ def run_paper_trade(args: argparse.Namespace) -> None:
             args.db, args.db,
         )
 
-    bot = MarketMakingBot(cfg, data_db=data_db)
+    bot = KalshiBot(cfg, data_db=data_db)
 
     # Monkey-patch the bot to also log fills to our CSV
     orig_refresh = bot.order_mgr.refresh_all

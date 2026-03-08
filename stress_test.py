@@ -236,9 +236,9 @@ def _make_config(
     depth: float,
     kelly: float,
     mf: float,
-    max_order_age: int = 14400,   # 4 hours in seconds
-    hedge_stop_gap: float = 0.12,
-    cancel_if_mid_drift: float = 0.07,
+    max_order_age: int = 14_400,   # 4 hours — sweep-optimised: fast reprice reduces adverse selection
+    hedge_stop_gap: float = 1.0,   # disabled: rely on mean reversion
+    cancel_if_mid_drift: float = 0.15,  # wider than fill_dist (depth + half_spread)
     fee_rate: float = 0.07,
 ) -> BotConfig:
     return BotConfig(
@@ -247,7 +247,7 @@ def _make_config(
             total_budget=budget,
             kelly_multiplier=kelly,
             max_market_fraction=mf,
-            max_fill_cost=1.02,
+            max_fill_cost=0.93,   # fee break-even = 1/(1+0.07) = 0.9346; use 0.93 for margin
             order_levels=3,
             min_order_contracts=1,
             max_order_age=max_order_age,
@@ -258,10 +258,10 @@ def _make_config(
         market_filter=MarketFilter(
             min_mid=0.35,
             max_mid=0.65,
-            min_spread=0.03,
+            min_spread=0.07,      # need spread > 2×3.27¢ = 6.54¢ for fee-profitable depth
             min_days_to_expiry=0,
         ),
-        scoring=ScoringParams(order_depth_fraction=depth, default_v=0.06),
+        scoring=ScoringParams(order_depth_fraction=depth, default_v=0.09),
     )
 
 
@@ -457,8 +457,7 @@ def main() -> None:
 
     else:
         # ── Standard run – uses sweep-optimised defaults ──────────────────
-        config = _make_config(args.budget, depth=0.40, kelly=0.20, mf=0.10,
-                              max_order_age=43_200, cancel_if_mid_drift=0.07)
+        config = _make_config(args.budget, depth=0.40, kelly=0.20, mf=0.10)
 
         n_seeds = max(1, args.seeds)
         seeds   = [args.seed + i * 137 for i in range(n_seeds)]
