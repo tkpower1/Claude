@@ -31,7 +31,7 @@ class MarketFilter:
     # Minimum bid-ask spread we require (probability units).
     # Fee break-even requires depth > 3.27¢/side, so spread > 2×3.27¢ = 6.54¢.
     # Use 0.07 (7¢) as the minimum to ensure positive expected value after fees.
-    min_spread: float = 0.07
+    min_spread: float = 0.02
 
     # Maximum open interest we'll enter (USD)
     max_open_interest: float = 100_000.0
