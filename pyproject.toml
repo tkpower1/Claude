@@ -28,6 +28,7 @@ classifiers = [
 
 [project.scripts]
 superpowers = "superpowers.cli:main"
+kalshi_bot = "kalshi_bot.__main__:main"
 
 [project.optional-dependencies]
 dev = [
@@ -41,4 +42,8 @@ python_files = ["test_*.py"]
 addopts = "-v --tb=short"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["superpowers*", "kalshi_bot*", "polymarket_bot*"]
+
+[tool.setuptools.package-dir]
+superpowers = "src/superpowers"
