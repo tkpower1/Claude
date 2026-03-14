@@ -47,7 +47,7 @@ class MarketFilter:
     max_days_to_expiry: int = 0
 
     # Only trade markets with this status
-    allowed_statuses: tuple = ("open",)
+    allowed_statuses: tuple = ("open", "active")
 
 
 # ---------------------------------------------------------------------------
