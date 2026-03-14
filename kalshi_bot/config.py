@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 # ---------------------------------------------------------------------------
 # Network / endpoint constants
 # ---------------------------------------------------------------------------
-KALSHI_API_BASE = "https://trading-api.kalshi.com/trade-api/v2"
+KALSHI_API_BASE = "https://api.elections.kalshi.com/trade-api/v2"
 KALSHI_DEMO_BASE = "https://demo-api.kalshi.co/trade-api/v2"
 
 
