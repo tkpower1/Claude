@@ -12,3 +12,5 @@ paper_scans_*.csv
 # Bot runtime data
 market_data.db
 state_store.db
+bot_state.db
+logs/
