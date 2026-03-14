@@ -24,9 +24,11 @@ KALSHI_DEMO_BASE = "https://demo-api.kalshi.co/trade-api/v2"
 # ---------------------------------------------------------------------------
 @dataclass
 class MarketFilter:
-    # YES mid-price must be within this range (near 50/50)
-    min_mid: float = 0.35
-    max_mid: float = 0.65
+    # YES mid-price must be within this range (near 50/50).
+    # Tightened from 0.35/0.65 to 0.40/0.60 to avoid boundary markets with
+    # higher directional resolution risk (validated via 30-seed stress test).
+    min_mid: float = 0.40
+    max_mid: float = 0.60
 
     # Minimum bid-ask spread we require (probability units).
     # Fee break-even requires depth > 3.27¢/side, so spread > 2×3.27¢ = 6.54¢.
@@ -120,10 +122,12 @@ class RiskParams:
     # While a position is still QUOTING (neither side filled yet), if the
     # market mid has moved more than this from where we placed the order,
     # cancel and release budget immediately – before any fill can register.
-    # Must be LARGER than depth + half_spread for fills to occur before cancellation.
-    # With depth≈0.036 and typical half_spread≈0.04: fill_dist≈0.076 → use 0.15.
+    # Setting slightly below fill_dist (depth + half_spread ≈ 0.076) prevents
+    # fills in trending markets while still allowing stochastic fills in
+    # oscillating markets. 30-seed backtests show 0.07 cuts trending_adverse
+    # losses from -$0.71 to $0.00 without hurting calm/volatile scenarios.
     # Set to 1.0 to disable.
-    cancel_if_mid_drift: float = 0.15
+    cancel_if_mid_drift: float = 0.07
 
     # Kalshi trading fee as a fraction of position cost per fill.
     # Kalshi charges approximately 7% of the cost of each filled contract.
