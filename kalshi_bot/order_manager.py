@@ -257,13 +257,13 @@ class OrderManager:
                 pos.state = PositionState.YES_FILLED
                 pos.filled_side = "yes"
                 logger.info("[%s] YES filled @ %.4f – hedging NO…", pos.ticker, pos.yes_price)
-                self._hedge_no(pos)
+                self._hedge_no(pos, order_book=order_book)
 
             elif no_filled:
                 pos.state = PositionState.NO_FILLED
                 pos.filled_side = "no"
                 logger.info("[%s] NO filled @ %.4f – hedging YES…", pos.ticker, pos.no_price)
-                self._hedge_yes(pos)
+                self._hedge_yes(pos, order_book=order_book)
 
             else:
                 # Neither filled yet: check mid drift
@@ -348,8 +348,8 @@ class OrderManager:
     # Hedging
     # ------------------------------------------------------------------
 
-    def _hedge_no(self, pos: MarketPosition) -> None:
-        """After YES fills, place a NO-BUY hedge."""
+    def _hedge_no(self, pos: MarketPosition, order_book: Optional[OrderBook] = None) -> None:
+        """After YES fills, place a NO-BUY hedge at the max profitable price."""
         max_no_price = self.cfg.risk.max_fill_cost - pos.yes_price
         if max_no_price <= 0:
             logger.error("[%s] No headroom for profitable NO hedge.", pos.ticker)
@@ -371,8 +371,8 @@ class OrderManager:
             pos.ticker, hedge_price, pos.yes_price, pos.yes_price + hedge_price,
         )
 
-    def _hedge_yes(self, pos: MarketPosition) -> None:
-        """After NO fills, place a YES-BUY hedge."""
+    def _hedge_yes(self, pos: MarketPosition, order_book: Optional[OrderBook] = None) -> None:
+        """After NO fills, place a YES-BUY hedge at the max profitable price."""
         max_yes_price = self.cfg.risk.max_fill_cost - pos.no_price
         if max_yes_price <= 0:
             logger.error("[%s] No headroom for profitable YES hedge.", pos.ticker)

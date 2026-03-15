@@ -3,3 +3,14 @@ __pycache__/
 *.pyo
 .env
 *.egg-info/
+
+# Paper trade output
+paper_trade_results/
+paper_fills_*.csv
+paper_scans_*.csv
+
+# Bot runtime data
+market_data.db
+state_store.db
+bot_state.db
+logs/

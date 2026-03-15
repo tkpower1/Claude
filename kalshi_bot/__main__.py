@@ -67,8 +67,8 @@ def _parse_args() -> argparse.Namespace:
                         "higher values lower the fee-gate spread threshold")
 
     # Market filter
-    p.add_argument("--min-mid", type=float, default=0.35)
-    p.add_argument("--max-mid", type=float, default=0.65)
+    p.add_argument("--min-mid", type=float, default=0.40)
+    p.add_argument("--max-mid", type=float, default=0.60)
     p.add_argument("--min-spread", type=float, default=0.03)
     p.add_argument("--min-days", type=int, default=3)
 
