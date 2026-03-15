@@ -149,16 +149,18 @@ class KalshiBot:
                         released, title_short(pos.title),
                     )
 
-        # 3. Sync live balance
-        live_balance = self.client.get_balance()
-        if live_balance > 0 and abs(live_balance - self.budget.available) > 10:
-            logger.info(
-                "Balance mismatch: live=$%.2f internal=$%.2f – adjusting.",
-                live_balance, self.budget.available,
-            )
-            self.budget.total = live_balance + sum(
-                self.budget._deployed.values()
-            )
+        # 3. Sync live balance (skip in dry-run: get_balance() returns a
+        #    constant there, which would corrupt the budget tracker)
+        if not self.cfg.dry_run:
+            live_balance = self.client.get_balance()
+            if live_balance > 0 and abs(live_balance - self.budget.available) > 10:
+                logger.info(
+                    "Balance mismatch: live=$%.2f internal=$%.2f – adjusting.",
+                    live_balance, self.budget.available,
+                )
+                self.budget.total = live_balance + sum(
+                    self.budget._deployed.values()
+                )
 
         # 4. Open new positions
         if self.budget.available >= 5.0:
