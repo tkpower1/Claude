@@ -128,6 +128,41 @@ class KalshiBot:
         logger.info("Shutdown requested.")
         self._running = False
 
+    def close_all(self) -> None:
+        """
+        Emergency exit: cancel every resting order then market-sell all held
+        contracts.  Does not start the normal run loop.
+        """
+        logger.info("=== CLOSE ALL: cancelling resting orders ===")
+        open_orders = self.client.get_open_orders()
+        if open_orders:
+            for o in open_orders:
+                self.client.cancel_order(o.order_id)
+            logger.info("Cancelled %d resting order(s).", len(open_orders))
+        else:
+            logger.info("No resting orders found.")
+
+        logger.info("=== CLOSE ALL: selling held positions ===")
+        positions = self.client.get_portfolio_positions()
+        sold = 0
+        for p in positions:
+            ticker = p.get("ticker", "")
+            net = int(p.get("position", 0))  # positive = YES contracts, negative = NO
+            if net == 0 or not ticker:
+                continue
+            side = "yes" if net > 0 else "no"
+            count = abs(net)
+            logger.info("Selling %d %s contracts on %s", count, side.upper(), ticker)
+            self.client.place_market_sell_order(ticker, side, count)
+            sold += 1
+
+        if sold == 0:
+            logger.info("No open positions to sell.")
+
+        # Final balance check
+        cash = self.client.get_balance()
+        logger.info("=== CLOSE ALL complete. Cash balance: $%.2f ===", cash)
+
     # ------------------------------------------------------------------
     # Single tick
     # ------------------------------------------------------------------

@@ -384,6 +384,44 @@ class KalshiClient:
             logger.error("get_fills error: %s", exc)
             return []
 
+    def place_market_sell_order(
+        self,
+        ticker: str,
+        side: str,   # "yes" | "no"
+        count: int,
+    ) -> Optional[str]:
+        """
+        Submit a market SELL order to exit a held position immediately.
+
+        Returns order_id on success, None on failure.
+        """
+        if self.cfg.dry_run:
+            logger.info(
+                "[DRY-RUN] Would market-sell %d %s contracts on %s",
+                count, side.upper(), ticker,
+            )
+            return f"dry-sell-{ticker[:12]}-{side}-{int(time.time())}"
+
+        try:
+            body = {
+                "ticker": ticker,
+                "action": "sell",
+                "side": side,
+                "type": "market",
+                "count": count,
+            }
+            resp = self._post("/portfolio/orders", body)
+            order = resp.get("order", resp)
+            order_id = order.get("order_id", "")
+            logger.info(
+                "Market sell: %s %s ×%d → id=%s",
+                side.upper(), ticker, count, order_id,
+            )
+            return order_id
+        except Exception as exc:
+            logger.error("place_market_sell_order error (%s %s): %s", ticker, side, exc)
+            return None
+
     def get_order_status(self, order_id: str) -> Optional[Order]:
         """
         Fetch a single order by ID to determine whether it was filled or cancelled.
