@@ -25,6 +25,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import logging
+import threading
 import time
 from dataclasses import dataclass
 from typing import Any, Optional
@@ -35,6 +36,43 @@ from requests.adapters import HTTPAdapter, Retry
 from .config import BotConfig
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Token-bucket rate limiter
+# ---------------------------------------------------------------------------
+
+class _RateLimiter:
+    """
+    Thread-safe token bucket rate limiter.
+
+    Allows bursting up to `rate` tokens but averages out at `rate` per second.
+    Shared across the read or write path so the WebSocket thread and main loop
+    both count against the same bucket.
+    """
+
+    def __init__(self, rate: float) -> None:
+        self._rate = rate          # tokens added per second
+        self._tokens = rate        # start full
+        self._last = time.monotonic()
+        self._lock = threading.Lock()
+
+    def acquire(self) -> None:
+        """Block until a token is available."""
+        with self._lock:
+            now = time.monotonic()
+            self._tokens = min(
+                self._rate,
+                self._tokens + (now - self._last) * self._rate,
+            )
+            self._last = now
+            if self._tokens >= 1.0:
+                self._tokens -= 1.0
+                return
+            wait = (1.0 - self._tokens) / self._rate
+        time.sleep(wait)
+        with self._lock:
+            self._tokens = 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -143,6 +181,11 @@ class KalshiClient:
         self._base = config.api_base
         self._private_key = None
 
+        # Kalshi Basic tier: 20 reads/sec, 10 writes/sec.
+        # Use 80 % of the limit to leave headroom and avoid 429/401 bursts.
+        self._read_limiter  = _RateLimiter(rate=16)
+        self._write_limiter = _RateLimiter(rate=8)
+
         if not config.dry_run:
             try:
                 self._private_key = config.load_private_key()
@@ -174,6 +217,7 @@ class KalshiClient:
         return parsed.path + path
 
     def _get(self, path: str, params: dict | None = None, auth: bool = True) -> Any:
+        self._read_limiter.acquire()
         url = self._base + path
         headers = self._auth_headers("GET", self._full_path(path)) if auth else {}
         resp = self._session.get(url, headers=headers, params=params, timeout=15)
@@ -181,6 +225,7 @@ class KalshiClient:
         return resp.json()
 
     def _post(self, path: str, body: dict) -> Any:
+        self._write_limiter.acquire()
         url = self._base + path
         headers = self._auth_headers("POST", self._full_path(path))
         resp = self._session.post(url, headers=headers, json=body, timeout=15)
@@ -188,6 +233,7 @@ class KalshiClient:
         return resp.json()
 
     def _delete(self, path: str) -> Any:
+        self._write_limiter.acquire()
         url = self._base + path
         headers = self._auth_headers("DELETE", self._full_path(path))
         resp = self._session.delete(url, headers=headers, timeout=15)
