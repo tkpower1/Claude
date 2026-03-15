@@ -308,7 +308,6 @@ class KalshiClient:
                 "type": "limit",
                 "yes_price": self._to_cents(price) if side == "yes" else 100 - self._to_cents(price),
                 "count": count,
-                "time_in_force": "gtc",
             }
             resp = self._post("/portfolio/orders", body)
             order = resp.get("order", resp)
