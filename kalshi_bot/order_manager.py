@@ -247,8 +247,46 @@ class OrderManager:
 
         # ── QUOTING: waiting for either side to fill ───────────────────
         if pos.state == PositionState.QUOTING:
-            yes_filled = not yes_live and pos.yes_order_id is not None
-            no_filled = not no_live and pos.no_order_id is not None
+            # An order absent from open_orders could be filled OR cancelled.
+            # Always verify via API before advancing the state machine.
+            yes_gone = not yes_live and pos.yes_order_id is not None
+            no_gone  = not no_live  and pos.no_order_id  is not None
+
+            yes_filled = False
+            no_filled  = False
+
+            if yes_gone:
+                order = self.client.get_order_status(pos.yes_order_id)
+                if order is None:
+                    pass  # API error – leave state unchanged, retry next tick
+                elif order.status == "filled":
+                    yes_filled = True
+                else:
+                    logger.info(
+                        "[%s] YES order %s (status=%s) – going IDLE.",
+                        pos.ticker, pos.yes_order_id, order.status,
+                    )
+                    pos.state = PositionState.IDLE
+                    self._save(pos)
+                    return
+
+            if no_gone:
+                order = self.client.get_order_status(pos.no_order_id)
+                if order is None:
+                    pass  # API error – leave state unchanged, retry next tick
+                elif order.status == "filled":
+                    no_filled = True
+                else:
+                    logger.info(
+                        "[%s] NO order %s (status=%s) – going IDLE.",
+                        pos.ticker, pos.no_order_id, order.status,
+                    )
+                    # Cancel the other side if it's still live
+                    if yes_live and pos.yes_order_id:
+                        self.client.cancel_order(pos.yes_order_id)
+                    pos.state = PositionState.IDLE
+                    self._save(pos)
+                    return
 
             if yes_filled and no_filled:
                 self._record_both_filled(pos)

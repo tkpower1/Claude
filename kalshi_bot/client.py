@@ -383,3 +383,55 @@ class KalshiClient:
         except Exception as exc:
             logger.error("get_fills error: %s", exc)
             return []
+
+    def get_order_status(self, order_id: str) -> Optional[Order]:
+        """
+        Fetch a single order by ID to determine whether it was filled or cancelled.
+
+        Returns None on error (caller should treat as unknown / re-check later).
+        """
+        if self.cfg.dry_run:
+            return None
+
+        try:
+            data = self._get(f"/portfolio/orders/{order_id}")
+            o = data.get("order", data)
+            yes_price_cents = o.get("yes_price", 50)
+            side = o.get("side", "yes").lower()
+            price_prob = (
+                self._to_prob(yes_price_cents)
+                if side == "yes"
+                else self._to_prob(100 - yes_price_cents)
+            )
+            return Order(
+                order_id=o.get("order_id", order_id),
+                ticker=o.get("ticker", ""),
+                side=side,
+                action=o.get("action", "buy").lower(),
+                price=price_prob,
+                count=int(o.get("count", 0)),
+                status=o.get("status", "").lower(),
+                filled_count=int(o.get("filled_count", 0)),
+                created_time=o.get("created_time", ""),
+            )
+        except Exception as exc:
+            logger.error("get_order_status(%s) error: %s", order_id, exc)
+            return None
+
+    def get_portfolio_positions(self) -> list[dict]:
+        """
+        Return all current contract positions held in the portfolio.
+
+        Each entry is a raw Kalshi market_position dict with keys including:
+          ticker, position (net YES contracts), total_cost (cents),
+          market_exposure (cents), realized_pnl (cents), unrealized_pnl (cents).
+        """
+        if self.cfg.dry_run:
+            return []
+
+        try:
+            data = self._get("/portfolio/positions")
+            return data.get("market_positions", [])
+        except Exception as exc:
+            logger.error("get_portfolio_positions error: %s", exc)
+            return []
