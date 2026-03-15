@@ -41,10 +41,6 @@ def _parse_args() -> argparse.Namespace:
         description="Kalshi Market-Making Bot – spread-capture liquidity strategy",
     )
 
-    # Emergency exit
-    p.add_argument("--close-all", action="store_true",
-                   help="Cancel all resting orders and market-sell all held positions, then exit")
-
     # Operational
     p.add_argument("--dry-run", action="store_true",
                    help="Simulate orders without submitting")
@@ -131,11 +127,7 @@ def main() -> None:
     )
 
     bot = KalshiBot(config, state_db=args.state_db)
-
-    if args.close_all:
-        bot.close_all()
-    else:
-        bot.run()
+    bot.run()
 
 
 if __name__ == "__main__":
