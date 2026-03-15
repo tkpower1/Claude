@@ -167,23 +167,29 @@ class KalshiClient:
             "Content-Type": "application/json",
         }
 
+    def _full_path(self, path: str) -> str:
+        """Return the full API path used in signing (e.g. /trade-api/v2/portfolio/balance)."""
+        from urllib.parse import urlparse
+        parsed = urlparse(self._base)
+        return parsed.path + path
+
     def _get(self, path: str, params: dict | None = None, auth: bool = True) -> Any:
         url = self._base + path
-        headers = self._auth_headers("GET", path) if auth else {}
+        headers = self._auth_headers("GET", self._full_path(path)) if auth else {}
         resp = self._session.get(url, headers=headers, params=params, timeout=15)
         resp.raise_for_status()
         return resp.json()
 
     def _post(self, path: str, body: dict) -> Any:
         url = self._base + path
-        headers = self._auth_headers("POST", path)
+        headers = self._auth_headers("POST", self._full_path(path))
         resp = self._session.post(url, headers=headers, json=body, timeout=15)
         resp.raise_for_status()
         return resp.json()
 
     def _delete(self, path: str) -> Any:
         url = self._base + path
-        headers = self._auth_headers("DELETE", path)
+        headers = self._auth_headers("DELETE", self._full_path(path))
         resp = self._session.delete(url, headers=headers, timeout=15)
         resp.raise_for_status()
         return resp.json()
