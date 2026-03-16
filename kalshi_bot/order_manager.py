@@ -247,8 +247,46 @@ class OrderManager:
 
         # ── QUOTING: waiting for either side to fill ───────────────────
         if pos.state == PositionState.QUOTING:
-            yes_filled = not yes_live and pos.yes_order_id is not None
-            no_filled = not no_live and pos.no_order_id is not None
+            # An order absent from open_orders could be filled OR cancelled.
+            # Always verify via API before advancing the state machine.
+            yes_gone = not yes_live and pos.yes_order_id is not None
+            no_gone  = not no_live  and pos.no_order_id  is not None
+
+            yes_filled = False
+            no_filled  = False
+
+            if yes_gone:
+                order = self.client.get_order_status(pos.yes_order_id)
+                if order is None:
+                    pass  # API error – leave state unchanged, retry next tick
+                elif order.status == "filled":
+                    yes_filled = True
+                else:
+                    logger.info(
+                        "[%s] YES order %s (status=%s) – going IDLE.",
+                        pos.ticker, pos.yes_order_id, order.status,
+                    )
+                    pos.state = PositionState.IDLE
+                    self._save(pos)
+                    return
+
+            if no_gone:
+                order = self.client.get_order_status(pos.no_order_id)
+                if order is None:
+                    pass  # API error – leave state unchanged, retry next tick
+                elif order.status == "filled":
+                    no_filled = True
+                else:
+                    logger.info(
+                        "[%s] NO order %s (status=%s) – going IDLE.",
+                        pos.ticker, pos.no_order_id, order.status,
+                    )
+                    # Cancel the other side if it's still live
+                    if yes_live and pos.yes_order_id:
+                        self.client.cancel_order(pos.yes_order_id)
+                    pos.state = PositionState.IDLE
+                    self._save(pos)
+                    return
 
             if yes_filled and no_filled:
                 self._record_both_filled(pos)
@@ -257,13 +295,13 @@ class OrderManager:
                 pos.state = PositionState.YES_FILLED
                 pos.filled_side = "yes"
                 logger.info("[%s] YES filled @ %.4f – hedging NO…", pos.ticker, pos.yes_price)
-                self._hedge_no(pos)
+                self._hedge_no(pos, order_book=order_book)
 
             elif no_filled:
                 pos.state = PositionState.NO_FILLED
                 pos.filled_side = "no"
                 logger.info("[%s] NO filled @ %.4f – hedging YES…", pos.ticker, pos.no_price)
-                self._hedge_yes(pos)
+                self._hedge_yes(pos, order_book=order_book)
 
             else:
                 # Neither filled yet: check mid drift
@@ -348,8 +386,8 @@ class OrderManager:
     # Hedging
     # ------------------------------------------------------------------
 
-    def _hedge_no(self, pos: MarketPosition) -> None:
-        """After YES fills, place a NO-BUY hedge."""
+    def _hedge_no(self, pos: MarketPosition, order_book: Optional[OrderBook] = None) -> None:
+        """After YES fills, place a NO-BUY hedge at the max profitable price."""
         max_no_price = self.cfg.risk.max_fill_cost - pos.yes_price
         if max_no_price <= 0:
             logger.error("[%s] No headroom for profitable NO hedge.", pos.ticker)
@@ -371,8 +409,8 @@ class OrderManager:
             pos.ticker, hedge_price, pos.yes_price, pos.yes_price + hedge_price,
         )
 
-    def _hedge_yes(self, pos: MarketPosition) -> None:
-        """After NO fills, place a YES-BUY hedge."""
+    def _hedge_yes(self, pos: MarketPosition, order_book: Optional[OrderBook] = None) -> None:
+        """After NO fills, place a YES-BUY hedge at the max profitable price."""
         max_yes_price = self.cfg.risk.max_fill_cost - pos.no_price
         if max_yes_price <= 0:
             logger.error("[%s] No headroom for profitable YES hedge.", pos.ticker)

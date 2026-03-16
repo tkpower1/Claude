@@ -333,9 +333,11 @@ class Backtester:
                         logger.debug("[%s t=%.2f] BOTH filled", ticker, snap.t)
                     elif yes_f:
                         pos.state = PosState.YES_FILLED
-                        # Hedge: place NO-BUY at max profitable price
+                        # Hedge: place NO-BUY at max profitable price.
+                        # Conservative limit (max_fill_cost - yes_price) only fills when
+                        # the market moves favourably, locking in profit on the pair.
                         max_no = self.cfg.risk.max_fill_cost - pos.yes_price
-                        hedge_price = min(max_no, snap.yes_ask)  # use current ask
+                        hedge_price = min(max_no, snap.yes_ask)  # snap.yes_ask ≈ no_ask
                         if hedge_price > 0:
                             h = SimOrder(
                                 order_id=self._next_id("H"),

@@ -149,20 +149,62 @@ class KalshiBot:
                         released, title_short(pos.title),
                     )
 
-        # 3. Sync live balance
-        live_balance = self.client.get_balance()
-        if live_balance > 0 and abs(live_balance - self.budget.available) > 10:
-            logger.info(
-                "Balance mismatch: live=$%.2f internal=$%.2f – adjusting.",
-                live_balance, self.budget.available,
-            )
-            self.budget.total = live_balance + sum(
-                self.budget._deployed.values()
-            )
+        # 3. Sync live balance using actual portfolio data (cash + positions).
+        #    Skip in dry-run: API calls return constants that corrupt the tracker.
+        if not self.cfg.dry_run:
+            self._sync_portfolio_balance()
 
         # 4. Open new positions
         if self.budget.available >= 5.0:
             self._open_new_positions()
+
+    # ------------------------------------------------------------------
+    # Portfolio balance sync
+    # ------------------------------------------------------------------
+
+    def _sync_portfolio_balance(self) -> None:
+        """
+        Reconcile internal budget tracker against live Kalshi portfolio data.
+
+        cash_balance  = available USD (Kalshi "Cash" column)
+        positions_cost = sum of what was paid for currently-held contracts
+        true_total    = cash_balance + positions_cost
+
+        This replaces the old heuristic that added _deployed to live_balance,
+        which compounded incorrectly on every mismatch.
+        """
+        cash = self.client.get_balance()
+        if cash <= 0:
+            return  # API error – don't corrupt the tracker
+
+        positions = self.client.get_portfolio_positions()
+        non_zero = [p for p in positions if p.get("position", 0) != 0]
+        zero_net  = [p for p in positions if p.get("position", 0) == 0]
+        # total_cost is in cents; sum absolute values (long YES or long NO both positive cost)
+        positions_cost = sum(
+            abs(p.get("total_cost", 0)) / 100.0
+            for p in non_zero
+        )
+        true_total = cash + positions_cost
+        logger.info(
+            "Portfolio sync: cash=$%.2f  non-zero positions=%d (cost=$%.2f)  "
+            "netted-zero=%d  true_total=$%.2f  internal=$%.2f",
+            cash, len(non_zero), positions_cost, len(zero_net),
+            true_total, self.budget.total,
+        )
+
+        if abs(true_total - self.budget.total) > 1.0:
+            self.budget.total = true_total
+
+        # Also clamp available so it never exceeds actual cash on hand.
+        # If internal available > cash, deployed is understated; correct it.
+        internal_available = self.budget.available
+        if internal_available > cash + 1.0:
+            logger.info(
+                "Available overstated: internal=$%.2f live_cash=$%.2f – correcting deployed.",
+                internal_available, cash,
+            )
+            self.budget.total = cash + sum(self.budget._deployed.values())
 
     # ------------------------------------------------------------------
     # Market scan + open

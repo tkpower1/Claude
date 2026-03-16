@@ -238,7 +238,7 @@ def _make_config(
     mf: float,
     max_order_age: int = 14_400,   # 4 hours — sweep-optimised: fast reprice reduces adverse selection
     hedge_stop_gap: float = 1.0,   # disabled: rely on mean reversion
-    cancel_if_mid_drift: float = 0.15,  # wider than fill_dist (depth + half_spread)
+    cancel_if_mid_drift: float = 0.07,  # just below fill_dist to block trending-market fills
     fee_rate: float = 0.07,
 ) -> BotConfig:
     return BotConfig(
@@ -256,9 +256,9 @@ def _make_config(
             fee_rate=fee_rate,
         ),
         market_filter=MarketFilter(
-            min_mid=0.35,
-            max_mid=0.65,
-            min_spread=0.07,      # need spread > 2×3.27¢ = 6.54¢ for fee-profitable depth
+            min_mid=0.40,
+            max_mid=0.60,
+            min_spread=0.07,      # fee gate in backtester raises this to ~0.082 dynamically
             min_days_to_expiry=0,
         ),
         scoring=ScoringParams(order_depth_fraction=depth, default_v=0.09),

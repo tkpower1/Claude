@@ -5,14 +5,14 @@
 
 <section class="aftersol-section aftersol-final-cta" id="order">
   <div class="aftersol-container">
-    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'Don\'t Suffer Tonight' }}</h2>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: "Don't Suffer Tonight" }}</h2>
 
     <a href="{{ section.settings.button_link | default: '/products/aftersol-kit' }}" class="aftersol-btn-primary">
       {{ section.settings.button_text | default: 'Get Relief Tonight — $44' }}
     </a>
 
     {% if section.settings.show_urgency %}
-    <p class="subtext">{{ section.settings.urgency_text | default: 'Only 23 kits left — Pre-order now' }}</p>
+    <p class="subtext">{{ section.settings.urgency_text | default: 'In Stock — Ships within 24-48 hours' }}</p>
     {% endif %}
 
     {% if section.settings.show_trust_signals %}
@@ -59,7 +59,7 @@
       "type": "text",
       "id": "urgency_text",
       "label": "Urgency Text",
-      "default": "Only 23 kits left — Pre-order now"
+      "default": "In Stock — Ships within 24-48 hours"
     },
     {
       "type": "checkbox",

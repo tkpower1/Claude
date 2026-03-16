@@ -87,8 +87,8 @@ def _parse_args() -> argparse.Namespace:
                    help="Order depth fraction inside spread 0.0-1.0 (default: 0.40)")
 
     # Market filter
-    p.add_argument("--min-mid", type=_fraction, default=0.35)
-    p.add_argument("--max-mid", type=_fraction, default=0.65)
+    p.add_argument("--min-mid", type=_fraction, default=0.40)
+    p.add_argument("--max-mid", type=_fraction, default=0.60)
     p.add_argument("--min-spread", type=_positive_float, default=0.07,
                    help="Minimum bid-ask spread (default: 0.07, fee break-even)")
     p.add_argument("--min-days", type=_positive_int, default=3)
@@ -96,6 +96,10 @@ def _parse_args() -> argparse.Namespace:
     # Persistence
     p.add_argument("--state-db", type=str, default=None, metavar="PATH",
                    help="SQLite file for position persistence (enables crash recovery)")
+
+    # Diagnostics
+    p.add_argument("--check-positions", action="store_true",
+                   help="Print live portfolio positions from Kalshi API and exit")
 
     return p.parse_args()
 
@@ -146,6 +150,34 @@ def main() -> None:
         "Config: env=%s budget=$%.2f dry_run=%s scan=%ds",
         env_label, config.risk.total_budget, config.dry_run, config.scan_interval,
     )
+
+    if args.check_positions:
+        from .client import KalshiClient
+        client = KalshiClient(config)
+        cash = client.get_balance()
+        positions = client.get_portfolio_positions()
+        log = logging.getLogger(__name__)
+        log.info("Cash balance: $%.2f", cash)
+        log.info("%d position(s) from API:", len(positions))
+        yes_count = no_count = zero_count = 0
+        total_cost = 0.0
+        for p in sorted(positions, key=lambda x: abs(x.get("position", 0)), reverse=True):
+            net = p.get("position", 0)
+            cost = abs(p.get("total_cost", 0)) / 100.0
+            total_cost += cost
+            ticker = p.get("ticker", "?")[:50]
+            if net > 0:
+                yes_count += 1
+            elif net < 0:
+                no_count += 1
+            else:
+                zero_count += 1
+            log.info("  %-50s  net=%-4d  cost=$%.2f", ticker, net, cost)
+        log.info("Summary: %d YES-only  %d NO-only  %d netted-zero  total_cost=$%.2f",
+                 yes_count, no_count, zero_count, total_cost)
+        log.info("True portfolio value: cash=$%.2f + positions_cost=$%.2f = $%.2f",
+                 cash, total_cost, cash + total_cost)
+        return
 
     bot = KalshiBot(config, state_db=args.state_db)
     bot.run()

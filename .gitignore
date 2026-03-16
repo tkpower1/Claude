@@ -9,11 +9,13 @@ __pycache__/
 # Private keys
 *.pem
 
-# SQLite databases (bot state / market data)
-bot_state.db
-market_data.db
+# Paper trade output
+paper_trade_results/
+paper_fills_*.csv
+paper_scans_*.csv
 
-# Logs
+# Bot runtime data (SQLite, logs)
+*.db
 logs/
 
 # OS files

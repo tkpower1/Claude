@@ -53,7 +53,7 @@ cleanup() {
 trap cleanup INT TERM
 
 # Start collector (background)
-python -m kalshi_bot.data_collector \
+python3 -m kalshi_bot.data_collector \
     --db "$DATA_DB" \
     --interval 60 \
     --log-level INFO \
@@ -62,9 +62,11 @@ COLLECTOR_PID=$!
 echo "Collector PID $COLLECTOR_PID → $LOG_DIR/collector.log"
 
 # Start bot (background)
-python -m kalshi_bot \
-    --demo \
-    --dry-run \
+BOT_FLAGS=()
+[[ "${KALSHI_DEMO:-false}" == "true" ]] && BOT_FLAGS+=(--demo)
+[[ "${KALSHI_DRY_RUN:-false}" == "true" ]] && BOT_FLAGS+=(--dry-run)
+python3 -m kalshi_bot \
+    "${BOT_FLAGS[@]}" \
     --state-db "$STATE_DB" \
     --log-level INFO \
     "$@" \

@@ -25,6 +25,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import logging
+import threading
 import time
 from dataclasses import dataclass
 from typing import Any, Optional
@@ -35,6 +36,43 @@ from requests.adapters import HTTPAdapter, Retry
 from .config import BotConfig
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Token-bucket rate limiter
+# ---------------------------------------------------------------------------
+
+class _RateLimiter:
+    """
+    Thread-safe token bucket rate limiter.
+
+    Allows bursting up to `rate` tokens but averages out at `rate` per second.
+    Shared across the read or write path so the WebSocket thread and main loop
+    both count against the same bucket.
+    """
+
+    def __init__(self, rate: float) -> None:
+        self._rate = rate          # tokens added per second
+        self._tokens = rate        # start full
+        self._last = time.monotonic()
+        self._lock = threading.Lock()
+
+    def acquire(self) -> None:
+        """Block until a token is available."""
+        with self._lock:
+            now = time.monotonic()
+            self._tokens = min(
+                self._rate,
+                self._tokens + (now - self._last) * self._rate,
+            )
+            self._last = now
+            if self._tokens >= 1.0:
+                self._tokens -= 1.0
+                return
+            wait = (1.0 - self._tokens) / self._rate
+        time.sleep(wait)
+        with self._lock:
+            self._tokens = 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -143,6 +181,11 @@ class KalshiClient:
         self._base = config.api_base
         self._private_key = None
 
+        # Kalshi Basic tier: 20 reads/sec, 10 writes/sec.
+        # Use 80 % of the limit to leave headroom and avoid 429/401 bursts.
+        self._read_limiter  = _RateLimiter(rate=16)
+        self._write_limiter = _RateLimiter(rate=8)
+
         if not config.dry_run:
             try:
                 self._private_key = config.load_private_key()
@@ -167,23 +210,32 @@ class KalshiClient:
             "Content-Type": "application/json",
         }
 
+    def _full_path(self, path: str) -> str:
+        """Return the full API path used in signing (e.g. /trade-api/v2/portfolio/balance)."""
+        from urllib.parse import urlparse
+        parsed = urlparse(self._base)
+        return parsed.path + path
+
     def _get(self, path: str, params: dict | None = None, auth: bool = True) -> Any:
+        self._read_limiter.acquire()
         url = self._base + path
-        headers = self._auth_headers("GET", path) if auth else {}
+        headers = self._auth_headers("GET", self._full_path(path)) if auth else {}
         resp = self._session.get(url, headers=headers, params=params, timeout=15)
         resp.raise_for_status()
         return resp.json()
 
     def _post(self, path: str, body: dict) -> Any:
+        self._write_limiter.acquire()
         url = self._base + path
-        headers = self._auth_headers("POST", path)
+        headers = self._auth_headers("POST", self._full_path(path))
         resp = self._session.post(url, headers=headers, json=body, timeout=15)
         resp.raise_for_status()
         return resp.json()
 
     def _delete(self, path: str) -> Any:
+        self._write_limiter.acquire()
         url = self._base + path
-        headers = self._auth_headers("DELETE", path)
+        headers = self._auth_headers("DELETE", self._full_path(path))
         resp = self._session.delete(url, headers=headers, timeout=15)
         resp.raise_for_status()
         return resp.json()
@@ -302,7 +354,6 @@ class KalshiClient:
                 "type": "limit",
                 "yes_price": self._to_cents(price) if side == "yes" else 100 - self._to_cents(price),
                 "count": count,
-                "time_in_force": "gtc",
             }
             resp = self._post("/portfolio/orders", body)
             order = resp.get("order", resp)
@@ -377,4 +428,56 @@ class KalshiClient:
             return data.get("fills", [])
         except Exception as exc:
             logger.error("get_fills error: %s", exc)
+            return []
+
+    def get_order_status(self, order_id: str) -> Optional[Order]:
+        """
+        Fetch a single order by ID to determine whether it was filled or cancelled.
+
+        Returns None on error (caller should treat as unknown / re-check later).
+        """
+        if self.cfg.dry_run:
+            return None
+
+        try:
+            data = self._get(f"/portfolio/orders/{order_id}")
+            o = data.get("order", data)
+            yes_price_cents = o.get("yes_price", 50)
+            side = o.get("side", "yes").lower()
+            price_prob = (
+                self._to_prob(yes_price_cents)
+                if side == "yes"
+                else self._to_prob(100 - yes_price_cents)
+            )
+            return Order(
+                order_id=o.get("order_id", order_id),
+                ticker=o.get("ticker", ""),
+                side=side,
+                action=o.get("action", "buy").lower(),
+                price=price_prob,
+                count=int(o.get("count", 0)),
+                status=o.get("status", "").lower(),
+                filled_count=int(o.get("filled_count", 0)),
+                created_time=o.get("created_time", ""),
+            )
+        except Exception as exc:
+            logger.error("get_order_status(%s) error: %s", order_id, exc)
+            return None
+
+    def get_portfolio_positions(self) -> list[dict]:
+        """
+        Return all current contract positions held in the portfolio.
+
+        Each entry is a raw Kalshi market_position dict with keys including:
+          ticker, position (net YES contracts), total_cost (cents),
+          market_exposure (cents), realized_pnl (cents), unrealized_pnl (cents).
+        """
+        if self.cfg.dry_run:
+            return []
+
+        try:
+            data = self._get("/portfolio/positions")
+            return data.get("market_positions", [])
+        except Exception as exc:
+            logger.error("get_portfolio_positions error: %s", exc)
             return []

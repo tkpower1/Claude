@@ -1,0 +1,179 @@
+{% comment %}
+  AfterSol Hero Section - Atelier Theme
+  Clean, minimal aesthetic with elegant typography
+{% endcomment %}
+
+{{ 'aftersol-atelier.css' | asset_url | stylesheet_tag }}
+
+<section class="aftersol-hero section-{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <div class="aftersol-hero__content">
+      <div class="aftersol-hero__text">
+        {% if section.settings.eyebrow != blank %}
+          <p class="aftersol-hero__eyebrow caption">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+
+        <h1 class="aftersol-hero__heading h0">{{ section.settings.heading | default: "Sunburn Relief That Actually Works" }}</h1>
+
+        {% if section.settings.subheading != blank %}
+          <p class="aftersol-hero__subheading body-large">{{ section.settings.subheading }}</p>
+        {% endif %}
+
+        <div class="aftersol-hero__cta">
+          <a href="{{ section.settings.button_link | default: '/products/aftersol-kit' }}" class="button button--primary">
+            {{ section.settings.button_text | default: 'Get Your Kit — $44' }}
+          </a>
+        </div>
+
+        {% if section.settings.show_availability %}
+          <p class="aftersol-hero__availability caption">
+            <span class="availability-dot"></span>
+            {{ section.settings.availability_text | default: 'In Stock — Ships within 24-48 hours' }}
+          </p>
+        {% endif %}
+      </div>
+
+      {% if section.settings.image != blank %}
+        <div class="aftersol-hero__media">
+          {{ section.settings.image | image_url: width: 800 | image_tag: class: 'aftersol-hero__image', loading: 'eager' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .aftersol-hero {
+    padding: var(--spacing-section-vertical) 0;
+    background: {{ section.settings.background_color | default: '#FFFAF5' }};
+  }
+
+  .aftersol-hero__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+    align-items: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .aftersol-hero__content {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-12);
+    }
+  }
+
+  .aftersol-hero__eyebrow {
+    color: var(--color-foreground-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aftersol-hero__heading {
+    margin-bottom: var(--spacing-6);
+    max-width: 16ch;
+  }
+
+  .aftersol-hero__subheading {
+    color: var(--color-foreground-secondary);
+    margin-bottom: var(--spacing-8);
+    max-width: 42ch;
+  }
+
+  .aftersol-hero__cta {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .aftersol-hero__availability {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--color-foreground-secondary);
+  }
+
+  .availability-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .aftersol-hero__image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "AfterSol Hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Introducing AfterSol"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Sunburn Relief That Actually Works"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Our two-step hydrogel system delivers instant cooling and overnight recovery. Wake up healed, not hurting."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Get Your Kit — $44"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability",
+      "label": "Show availability status",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "availability_text",
+      "label": "Availability text",
+      "default": "In Stock — Ships within 24-48 hours"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFAF5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "AfterSol Hero"
+    }
+  ]
+}
+{% endschema %}
