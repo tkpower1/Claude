@@ -131,6 +131,12 @@ class BotConfig:
 
     def validate(self) -> None:
         """Raise if required credentials are missing (unless dry_run)."""
+        if self.risk.total_budget <= 0:
+            raise ValueError("Budget must be positive")
+        if self.risk.kelly_multiplier < 0 or self.risk.kelly_multiplier > 1:
+            raise ValueError("Kelly multiplier must be between 0.0 and 1.0")
+        if self.risk.order_levels < 1:
+            raise ValueError("Order levels must be at least 1")
         if self.dry_run:
             return
         missing = [

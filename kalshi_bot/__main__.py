@@ -24,6 +24,27 @@ from .config import BotConfig, MarketFilter, RiskParams, ScoringParams
 from .bot import KalshiBot
 
 
+def _positive_float(value: str) -> float:
+    fval = float(value)
+    if fval <= 0:
+        raise argparse.ArgumentTypeError(f"{value} must be positive")
+    return fval
+
+
+def _positive_int(value: str) -> int:
+    ival = int(value)
+    if ival <= 0:
+        raise argparse.ArgumentTypeError(f"{value} must be positive")
+    return ival
+
+
+def _fraction(value: str) -> float:
+    fval = float(value)
+    if not (0.0 <= fval <= 1.0):
+        raise argparse.ArgumentTypeError(f"{value} must be between 0.0 and 1.0")
+    return fval
+
+
 def _setup_logging(level: str) -> None:
     logging.basicConfig(
         level=getattr(logging, level.upper(), logging.INFO),
@@ -48,29 +69,29 @@ def _parse_args() -> argparse.Namespace:
                    help="Use Kalshi demo environment")
     p.add_argument("--log-level", default="INFO",
                    choices=["DEBUG", "INFO", "WARNING", "ERROR"])
-    p.add_argument("--scan-interval", type=int, default=60,
+    p.add_argument("--scan-interval", type=_positive_int, default=60,
                    help="Seconds between market scans (default: 60)")
 
     # Budget / risk
-    p.add_argument("--budget", type=float, default=None,
-                   help="Total USD budget")
-    p.add_argument("--max-fill-cost", type=float, default=1.02,
+    p.add_argument("--budget", type=_positive_float, default=None,
+                   help="Total USD budget (must be > 0)")
+    p.add_argument("--max-fill-cost", type=_positive_float, default=1.02,
                    help="Max YES+NO combined cost (default: 1.02)")
-    p.add_argument("--kelly-mult", type=float, default=0.25,
-                   help="Kelly multiplier (default: 0.25)")
-    p.add_argument("--order-levels", type=int, default=3,
+    p.add_argument("--kelly-mult", type=_fraction, default=0.25,
+                   help="Kelly multiplier 0.0-1.0 (default: 0.25)")
+    p.add_argument("--order-levels", type=_positive_int, default=3,
                    help="Ladder levels per side (default: 3)")
     p.add_argument("--fee-rate", type=float, default=None,
                    help="Kalshi fee rate fraction (default: 0.07); set 0 to disable fee gate")
-    p.add_argument("--depth-frac", type=float, default=None,
-                   help="Order depth fraction inside spread (default: 0.40); "
-                        "higher values lower the fee-gate spread threshold")
+    p.add_argument("--depth-frac", type=_fraction, default=None,
+                   help="Order depth fraction inside spread 0.0-1.0 (default: 0.40)")
 
     # Market filter
-    p.add_argument("--min-mid", type=float, default=0.35)
-    p.add_argument("--max-mid", type=float, default=0.65)
-    p.add_argument("--min-spread", type=float, default=0.03)
-    p.add_argument("--min-days", type=int, default=3)
+    p.add_argument("--min-mid", type=_fraction, default=0.35)
+    p.add_argument("--max-mid", type=_fraction, default=0.65)
+    p.add_argument("--min-spread", type=_positive_float, default=0.07,
+                   help="Minimum bid-ask spread (default: 0.07, fee break-even)")
+    p.add_argument("--min-days", type=_positive_int, default=3)
 
     # Persistence
     p.add_argument("--state-db", type=str, default=None, metavar="PATH",

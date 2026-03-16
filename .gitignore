@@ -2,4 +2,23 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+.env.*
+!.env.example
 *.egg-info/
+
+# Private keys
+*.pem
+
+# SQLite databases (bot state / market data)
+bot_state.db
+market_data.db
+
+# Logs
+logs/
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

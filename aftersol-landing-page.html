@@ -790,7 +790,7 @@
     <!-- NAV -->
     <nav class="nav">
         <a href="#" class="nav-brand">After<span>Sol</span></a>
-        <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-nav">Pre-Order</a>
+        <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-nav" data-location="nav">Pre-Order</a>
     </nav>
 
     <!-- HERO -->
@@ -810,7 +810,7 @@
                 </div>
             </div>
             <p class="hero-ba-caption">One night with AfterSol</p>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="hero">Get Relief Tonight — $44</a>
             <p class="urgency-text"><span class="urgency-dot"></span> Only 23 kits left in stock — Ships in 2-3 weeks</p>
             <div class="trust-signals">
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
@@ -871,7 +871,7 @@
                 </div>
             </div>
             <div style="text-align: center; margin-top: 40px;">
-                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Your Kit — $44</a>
+                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="how-it-works">Get Your Kit — $44</a>
                 <p class="urgency-text"><span class="urgency-dot"></span> Limited stock available</p>
             </div>
         </div>
@@ -986,7 +986,7 @@
     <section class="final-cta" id="order">
         <div class="container">
             <h2 class="section-title">Don't Suffer Tonight</h2>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary">Get Relief Tonight — $44</a>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="final-cta">Get Relief Tonight — $44</a>
             <p class="subtext" style="color: #ffcc00; margin-top: 16px;">Only 23 kits left — Pre-order now</p>
             <div class="trust-signals" style="margin-top: 16px;">
                 <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
@@ -1033,11 +1033,11 @@
         }
 
         // Add click tracking to all CTA buttons
-        document.querySelectorAll('a[href*="buy.stripe.com"]').forEach(function(btn, index) {
+        document.querySelectorAll('a[href*="buy.stripe.com"]').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                var locations = ['nav', 'hero', 'how-it-works', 'final-cta'];
-                trackCheckoutClick(locations[index] || 'unknown', btn.href);
+                var location = btn.getAttribute('data-location') || 'unknown';
+                trackCheckoutClick(location, btn.href);
             });
         });
 
@@ -1073,29 +1073,41 @@
         });
 
         // Lazy load YouTube video with tracking
-        document.getElementById('video-placeholder').addEventListener('click', function() {
-            if (typeof gtag === 'function') {
-                gtag('event', 'video_start', { video_title: 'AfterSol Demo' });
-            }
-            if (typeof fbq === 'function') {
-                fbq('trackCustom', 'VideoPlay');
-            }
-            this.innerHTML = '<iframe src="https://www.youtube.com/embed/naahPzd8CY0?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>';
-        });
+        var videoEl = document.getElementById('video-placeholder');
+        if (videoEl) {
+            videoEl.addEventListener('click', function() {
+                if (typeof gtag === 'function') {
+                    gtag('event', 'video_start', { video_title: 'AfterSol Demo' });
+                }
+                if (typeof fbq === 'function') {
+                    fbq('trackCustom', 'VideoPlay');
+                }
+                var iframe = document.createElement('iframe');
+                iframe.src = 'https://www.youtube.com/embed/naahPzd8CY0?autoplay=1';
+                iframe.frameBorder = '0';
+                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                iframe.allowFullscreen = true;
+                iframe.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%;';
+                this.textContent = '';
+                this.appendChild(iframe);
+            });
+        }
 
         // FAQ accordion
         document.querySelectorAll('.faq-question').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var item = btn.parentElement;
+                if (!item) return;
                 var answer = item.querySelector('.faq-answer');
                 var isOpen = item.classList.contains('open');
 
                 document.querySelectorAll('.faq-item').forEach(function(i) {
                     i.classList.remove('open');
-                    i.querySelector('.faq-answer').style.maxHeight = null;
+                    var a = i.querySelector('.faq-answer');
+                    if (a) a.style.maxHeight = null;
                 });
 
-                if (!isOpen) {
+                if (!isOpen && answer) {
                     item.classList.add('open');
                     answer.style.maxHeight = answer.scrollHeight + 'px';
                 }
