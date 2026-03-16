@@ -76,6 +76,10 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--state-db", type=str, default=None, metavar="PATH",
                    help="SQLite file for position persistence (enables crash recovery)")
 
+    # Diagnostics
+    p.add_argument("--check-positions", action="store_true",
+                   help="Print live portfolio positions from Kalshi API and exit")
+
     return p.parse_args()
 
 
@@ -125,6 +129,34 @@ def main() -> None:
         "Config: env=%s budget=$%.2f dry_run=%s scan=%ds",
         env_label, config.risk.total_budget, config.dry_run, config.scan_interval,
     )
+
+    if args.check_positions:
+        from .client import KalshiClient
+        client = KalshiClient(config)
+        cash = client.get_balance()
+        positions = client.get_portfolio_positions()
+        log = logging.getLogger(__name__)
+        log.info("Cash balance: $%.2f", cash)
+        log.info("%d position(s) from API:", len(positions))
+        yes_count = no_count = zero_count = 0
+        total_cost = 0.0
+        for p in sorted(positions, key=lambda x: abs(x.get("position", 0)), reverse=True):
+            net = p.get("position", 0)
+            cost = abs(p.get("total_cost", 0)) / 100.0
+            total_cost += cost
+            ticker = p.get("ticker", "?")[:50]
+            if net > 0:
+                yes_count += 1
+            elif net < 0:
+                no_count += 1
+            else:
+                zero_count += 1
+            log.info("  %-50s  net=%-4d  cost=$%.2f", ticker, net, cost)
+        log.info("Summary: %d YES-only  %d NO-only  %d netted-zero  total_cost=$%.2f",
+                 yes_count, no_count, zero_count, total_cost)
+        log.info("True portfolio value: cash=$%.2f + positions_cost=$%.2f = $%.2f",
+                 cash, total_cost, cash + total_cost)
+        return
 
     bot = KalshiBot(config, state_db=args.state_db)
     bot.run()
