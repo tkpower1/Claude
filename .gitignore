@@ -2,13 +2,25 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+.env.*
+!.env.example
 *.egg-info/
+
+# Private keys
+*.pem
 
 # Paper trade output
 paper_trade_results/
 paper_fills_*.csv
 paper_scans_*.csv
 
-# Bot runtime data
+# Bot runtime data (SQLite, logs)
 *.db
 logs/
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

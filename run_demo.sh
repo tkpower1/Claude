@@ -22,11 +22,15 @@ ENV_FILE="$REPO_DIR/.env"
 
 mkdir -p "$LOG_DIR"
 
-# Load .env if present
+# Load .env — required for API credentials
 if [[ -f "$ENV_FILE" ]]; then
     set -o allexport
     source "$ENV_FILE"
     set +o allexport
+else
+    echo "ERROR: .env file not found at $ENV_FILE"
+    echo "Copy .env.example to .env and fill in your API credentials."
+    exit 1
 fi
 
 # Force demo + dry-run safety net (remove --dry-run to submit real demo orders)

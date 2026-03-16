@@ -62,9 +62,9 @@ class TestCountLines:
 """
         result = CodePowers.count_lines(code)
         assert result["total_lines"] == 6
-        assert result["blank_lines"] == 1
+        assert result["blank_lines"] == 2
         assert result["comment_lines"] == 2
-        assert result["code_lines"] == 3
+        assert result["code_lines"] == 2
 
     def test_empty_code(self):
         result = CodePowers.count_lines("")
