@@ -39,16 +39,36 @@
     <meta name="twitter:image" content="https://i.imgur.com/wiCkThC.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Preload critical images -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
     <link rel="preload" as="image" href="https://i.imgur.com/wiCkThCl.jpg">
     <link rel="preload" as="image" href="https://i.imgur.com/zaev3B6l.jpg">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --color-primary: #C4552B;
+            --color-primary-hover: #A8431F;
+            --color-dark: #1A1A1A;
+            --color-text: #3D3D3D;
+            --color-text-secondary: #6B6B6B;
+            --color-text-light: #999999;
+            --color-bg: #FAFAF7;
+            --color-bg-warm: #F3F0EB;
+            --color-bg-dark: #131210;
+            --color-bg-dark-card: #1C1B18;
+            --color-border: rgba(0,0,0,0.07);
+            --color-border-dark: rgba(255,255,255,0.08);
+            --color-success: #2D8B55;
+            --color-star: #D4A843;
+            --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-serif: 'DM Serif Display', Georgia, serif;
+            --container: 1080px;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-pill: 100px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html {
             scroll-behavior: smooth;
@@ -57,96 +77,132 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: var(--font-sans);
             line-height: 1.6;
-            color: #1a1a1a;
-            background: #ffffff;
+            color: var(--color-text);
+            background: var(--color-bg);
         }
 
-        /* NAV */
+        /* ─── NAV ─── */
         .nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 16px 32px;
+            background: rgba(250, 250, 247, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 40px;
+            height: 64px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
+            border-bottom: 1px solid var(--color-border);
+            transition: transform var(--transition), background var(--transition);
         }
+
+        .nav--hidden { transform: translateY(-100%); }
 
         .nav-brand {
-            color: #1a1a1a;
-            font-size: 22px;
-            font-weight: 700;
+            color: var(--color-dark);
+            font-family: var(--font-serif);
+            font-size: 24px;
             text-decoration: none;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.3px;
         }
 
-        .nav-brand span {
-            color: #e85d2a;
-        }
+        .nav-brand span { color: var(--color-primary); }
 
         .btn-nav {
-            display: inline-block;
-            background: #1a1a1a;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--color-dark);
             color: #ffffff;
-            font-size: 14px;
+            font-family: var(--font-sans);
+            font-size: 13px;
             font-weight: 500;
             padding: 10px 24px;
-            border-radius: 100px;
+            border-radius: var(--radius-pill);
             text-decoration: none;
-            transition: all 0.24s ease-in-out;
+            letter-spacing: 0.3px;
+            transition: all var(--transition);
         }
 
         .btn-nav:hover {
-            background: #e85d2a;
+            background: var(--color-primary);
+            transform: translateY(-1px);
         }
 
+        /* ─── CONTAINER ─── */
         .container {
-            max-width: 960px;
+            max-width: var(--container);
             margin: 0 auto;
-            padding: 0 32px;
+            padding: 0 40px;
         }
 
-        /* HERO */
+        /* ─── HERO ─── */
         .hero {
-            padding: 100px 32px 60px;
+            padding: 120px 0 80px;
             text-align: center;
-            background: #fafafa;
+            background: var(--color-bg);
+            overflow: hidden;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(196, 85, 43, 0.08);
+            color: var(--color-primary);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 8px 20px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 28px;
+        }
+
+        .hero-eyebrow-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
         }
 
         .hero h1 {
-            font-size: clamp(36px, 5.5vw, 56px);
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -1.5px;
-            margin-bottom: 20px;
-            color: #111111;
-        }
-
-        .hero .subheadline {
-            color: #666666;
-            font-size: clamp(17px, 2.5vw, 20px);
+            font-family: var(--font-serif);
+            font-size: clamp(40px, 6vw, 64px);
             font-weight: 400;
-            max-width: 520px;
-            margin: 0 auto 32px;
-            line-height: 1.5;
+            line-height: 1.08;
+            letter-spacing: -1px;
+            color: var(--color-dark);
+            margin-bottom: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* HERO BEFORE/AFTER */
-        .hero-before-after {
+        .hero-sub {
+            color: var(--color-text-secondary);
+            font-size: clamp(16px, 2vw, 19px);
+            font-weight: 400;
+            max-width: 480px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* Before/After */
+        .hero-ba {
             display: flex;
-            max-width: 860px;
-            margin: 0 auto 12px;
-            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto 16px;
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.04);
         }
 
         .hero-ba-item {
@@ -161,69 +217,98 @@
             object-fit: cover;
             display: block;
             aspect-ratio: 4 / 5;
+            transition: transform 0.6s ease;
         }
+
+        .hero-ba-item:hover img { transform: scale(1.03); }
 
         .hero-ba-label {
             position: absolute;
-            bottom: 20px;
+            bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
-            padding: 8px 24px;
-            border-radius: 100px;
+            padding: 6px 20px;
+            border-radius: var(--radius-pill);
             letter-spacing: 1.5px;
             text-transform: uppercase;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .hero-ba-label-before {
-            background: rgba(200, 40, 40, 0.9);
+            background: rgba(180, 40, 40, 0.85);
             color: #fff;
         }
 
         .hero-ba-label-after {
-            background: rgba(34, 150, 83, 0.9);
+            background: rgba(34, 140, 75, 0.85);
             color: #fff;
         }
 
         .hero-ba-divider {
-            width: 3px;
-            background: #ffffff;
+            width: 2px;
+            background: rgba(255,255,255,0.9);
             flex-shrink: 0;
         }
 
         .hero-ba-caption {
-            color: #999999;
-            font-size: 15px;
+            color: var(--color-text-light);
+            font-size: 14px;
             font-weight: 400;
-            margin-bottom: 24px;
-            letter-spacing: 0.3px;
-        }
-
-        .btn-primary {
-            display: inline-block;
-            background: #e85d2a;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 600;
-            padding: 18px 48px;
-            border-radius: 100px;
-            text-decoration: none;
-            transition: all 0.24s ease-in-out;
+            margin-bottom: 32px;
             letter-spacing: 0.2px;
         }
 
-        .btn-primary:hover {
-            background: #d14f1f;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(232, 93, 42, 0.3);
+        /* ─── BUTTONS ─── */
+        .btn-primary {
+            display: inline-block;
+            background: var(--color-primary);
+            color: #ffffff;
+            font-family: var(--font-sans);
+            font-size: 15px;
+            font-weight: 600;
+            padding: 16px 48px;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            transition: all var(--transition);
+            border: none;
+            cursor: pointer;
         }
 
-        /* URGENCY & TRUST */
-        .urgency-text {
-            color: #c53030;
-            font-size: 14px;
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(196, 85, 43, 0.25);
+        }
+
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            color: var(--color-dark);
+            font-family: var(--font-sans);
+            font-size: 15px;
             font-weight: 600;
+            padding: 15px 48px;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            transition: all var(--transition);
+            border: 1.5px solid var(--color-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--color-dark);
+            color: #fff;
+        }
+
+        /* ─── URGENCY & TRUST ─── */
+        .urgency-text {
+            color: var(--color-success);
+            font-size: 13px;
+            font-weight: 500;
             margin-top: 16px;
             display: flex;
             align-items: center;
@@ -232,22 +317,22 @@
         }
 
         .urgency-dot {
-            width: 8px;
-            height: 8px;
-            background: #c53030;
+            width: 6px;
+            height: 6px;
+            background: var(--color-success);
             border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.4; }
         }
 
         .trust-signals {
             display: flex;
             justify-content: center;
-            gap: 24px;
+            gap: 28px;
             margin-top: 20px;
             flex-wrap: wrap;
         }
@@ -256,205 +341,95 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            color: #666666;
-            font-size: 13px;
+            color: var(--color-text-light);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
         }
 
-        .trust-icon {
-            color: #22964f;
-            font-weight: bold;
-        }
+        .trust-icon { color: var(--color-success); font-weight: bold; }
 
-        /* SECTIONS */
+        /* ─── SECTIONS ─── */
         section {
-            padding: 64px 32px;
+            padding: 100px 0;
         }
 
-        .section-title {
-            font-size: clamp(28px, 4vw, 40px);
-            font-weight: 700;
-            margin-bottom: 24px;
-            letter-spacing: -0.8px;
-            line-height: 1.2;
-        }
-
-        .section-subtitle {
-            color: #e85d2a;
-            font-size: 13px;
+        .section-label {
+            color: var(--color-primary);
+            font-size: 11px;
             font-weight: 600;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        /* PROBLEM */
-        .problem {
-            background: #ffffff;
-            text-align: center;
-        }
-
-        .problem-text {
-            font-size: 18px;
-            color: #555555;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.9;
-        }
-
-        .problem-text p {
             margin-bottom: 16px;
         }
 
-        .problem-text strong {
-            color: #1a1a1a;
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 400;
+            color: var(--color-dark);
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            margin-bottom: 20px;
         }
 
-        /* SOLUTION */
-        .solution {
-            background: #fafafa;
-            text-align: center;
-        }
-
-        .solution-text {
-            font-size: 20px;
-            color: #444444;
-            max-width: 540px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-
-        .solution-text strong {
-            color: #1a1a1a;
-        }
-
-        /* HOW IT WORKS */
-        .how-it-works {
+        /* ─── PROBLEM ─── */
+        .problem {
             background: #ffffff;
         }
 
-        .how-it-works .section-title {
+        .problem-inner {
+            max-width: 640px;
+            margin: 0 auto;
             text-align: center;
         }
 
-        .how-it-works .section-subtitle {
-            text-align: center;
+        .problem-body {
+            font-size: 17px;
+            color: var(--color-text-secondary);
+            line-height: 1.9;
         }
 
-        .steps {
+        .problem-body p { margin-bottom: 16px; }
+        .problem-body p:last-child { margin-bottom: 0; }
+        .problem-body strong { color: var(--color-dark); font-weight: 600; }
+
+        /* ─── SOLUTION ─── */
+        .solution {
+            background: var(--color-bg);
+        }
+
+        .solution-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            max-width: 720px;
-            margin: 32px auto 0;
-        }
-
-        .step {
-            background: #fafafa;
-            padding: 40px 32px;
-            border-radius: 20px;
-            text-align: left;
-        }
-
-        .step-number {
-            display: inline-block;
-            background: #e85d2a;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 5px 14px;
-            border-radius: 100px;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .step h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #1a1a1a;
-            letter-spacing: -0.3px;
-        }
-
-        .step p {
-            color: #666666;
-            font-size: 15px;
-            line-height: 1.7;
-        }
-
-        /* WHAT YOU GET */
-        .what-you-get {
-            background: #111111;
-            text-align: center;
-            border-radius: 0;
-        }
-
-        .what-you-get .section-title {
-            color: #ffffff;
-        }
-
-        .what-you-get .section-subtitle {
-            color: #e85d2a;
-        }
-
-        .features-list {
-            list-style: none;
-            max-width: 440px;
-            margin: 28px auto;
-            text-align: left;
-        }
-
-        .features-list li {
-            color: #cccccc;
-            font-size: 17px;
-            padding: 16px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            display: flex;
+            gap: 60px;
             align-items: center;
-            gap: 14px;
         }
 
-        .features-list li:last-child {
-            border-bottom: none;
+        .solution-content { }
+
+        .solution-text {
+            font-size: 17px;
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            margin-bottom: 32px;
         }
 
-        .check {
-            color: #48bb78;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .price-highlight {
-            font-size: 36px;
-            color: #e85d2a;
-            font-weight: 700;
-            margin-top: 32px;
-            letter-spacing: -1px;
-        }
-
-        .price-subtext {
-            color: #888888;
-            font-size: 15px;
-            margin-top: 8px;
-        }
-
-        /* SOCIAL PROOF */
-        .social-proof {
-            background: #fafafa;
-            text-align: center;
-        }
+        .solution-text strong { color: var(--color-dark); font-weight: 600; }
 
         .video-container {
-            max-width: 600px;
-            margin: 32px auto 0;
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
-            border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 16px 60px rgba(0,0,0,0.10);
+            cursor: pointer;
+            background: #000;
         }
 
-        .video-container iframe {
+        .video-container iframe,
+        .video-container img {
             position: absolute;
             top: 0;
             left: 0;
@@ -462,111 +437,332 @@
             height: 100%;
         }
 
+        .video-container img { object-fit: cover; }
+
+        .video-play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .video-container:hover .video-play-btn {
+            transform: translate(-50%, -50%) scale(1.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .video-play-icon {
+            width: 0;
+            height: 0;
+            border-left: 20px solid var(--color-primary);
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 4px;
+        }
+
+        /* ─── HOW IT WORKS ─── */
+        .how-it-works {
+            background: #ffffff;
+        }
+
+        .how-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            background: var(--color-bg);
+            padding: 48px 36px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition);
+        }
+
+        .step:hover {
+            border-color: rgba(196, 85, 43, 0.2);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.04);
+        }
+
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--color-primary);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 50%;
+            margin-bottom: 24px;
+        }
+
+        .step h3 {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 12px;
+            color: var(--color-dark);
+        }
+
+        .step p {
+            color: var(--color-text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .how-cta {
+            text-align: center;
+            margin-top: 56px;
+        }
+
+        /* ─── WHAT YOU GET ─── */
+        .what-you-get {
+            background: var(--color-bg-dark);
+            color: #fff;
+        }
+
+        .what-you-get .section-heading { color: #fff; }
+
+        .wyg-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            color: rgba(255,255,255,0.75);
+            font-size: 16px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--color-border-dark);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .features-list li:last-child { border-bottom: none; }
+
+        .check-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            background: rgba(45, 139, 85, 0.15);
+            color: #5ECE7B;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .wyg-price {
+            text-align: center;
+        }
+
+        .price-tag {
+            font-family: var(--font-serif);
+            font-size: 72px;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .price-sub {
+            color: rgba(255,255,255,0.5);
+            font-size: 15px;
+            max-width: 240px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ─── SOCIAL PROOF ─── */
+        .social-proof {
+            background: var(--color-bg-warm);
+        }
+
+        .social-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
         .photos-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            max-width: 720px;
-            margin: 24px auto 0;
+            gap: 16px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .photos-grid img {
             width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border-radius: var(--radius-md);
             aspect-ratio: 1;
             object-fit: cover;
+            transition: transform 0.5s ease;
         }
 
-        /* GUARANTEE */
+        .photos-grid img:hover { transform: scale(1.03); }
+
+        /* ─── REVIEWS ─── */
+        .reviews {
+            background: var(--color-bg-dark);
+        }
+
+        .reviews .section-heading { color: #fff; }
+
+        .reviews-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .review-card {
+            background: var(--color-bg-dark-card);
+            border: 1px solid var(--color-border-dark);
+            border-radius: var(--radius-md);
+            padding: 32px;
+            transition: border-color var(--transition);
+        }
+
+        .review-card:hover { border-color: rgba(255,255,255,0.15); }
+
+        .review-stars {
+            color: var(--color-star);
+            font-size: 14px;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .review-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            line-height: 1.75;
+            margin-bottom: 20px;
+        }
+
+        .review-author {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Stack last 2 cards in a column on the right */
+        .reviews-grid .review-card:nth-child(4),
+        .reviews-grid .review-card:nth-child(5) {
+            grid-column: auto;
+        }
+
+        /* ─── GUARANTEE ─── */
         .guarantee {
             background: #ffffff;
             text-align: center;
-            padding: 56px 32px;
         }
 
         .guarantee-badge {
             display: inline-block;
-            background: #22964f;
-            color: #fff;
-            font-size: 12px;
+            background: rgba(45, 139, 85, 0.08);
+            color: var(--color-success);
+            font-size: 11px;
             font-weight: 600;
-            padding: 6px 18px;
-            border-radius: 100px;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
+            padding: 8px 20px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 24px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
         }
 
         .guarantee h2 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            font-family: var(--font-serif);
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 16px;
+            color: var(--color-dark);
         }
 
         .guarantee p {
-            color: #666666;
+            color: var(--color-text-secondary);
             font-size: 16px;
-            max-width: 460px;
+            max-width: 440px;
             margin: 0 auto;
             line-height: 1.7;
         }
 
-        /* FAQ */
+        /* ─── FAQ ─── */
         .faq {
-            background: #fafafa;
+            background: var(--color-bg);
         }
 
-        .faq .section-title {
+        .faq-header {
             text-align: center;
-        }
-
-        .faq .section-subtitle {
-            text-align: center;
+            margin-bottom: 48px;
         }
 
         .faq-list {
-            max-width: 600px;
-            margin: 28px auto 0;
+            max-width: 640px;
+            margin: 0 auto;
         }
 
         .faq-item {
-            border-bottom: 1px solid rgba(0,0,0,0.08);
+            border-bottom: 1px solid var(--color-border);
         }
 
         .faq-question {
             width: 100%;
             background: none;
             border: none;
-            padding: 24px 0;
-            font-family: inherit;
+            padding: 28px 0;
+            font-family: var(--font-sans);
             font-size: 16px;
-            font-weight: 600;
-            color: #1a1a1a;
+            font-weight: 500;
+            color: var(--color-dark);
             text-align: left;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 16px;
-            transition: color 0.24s ease;
+            transition: color var(--transition);
         }
 
-        .faq-question:hover {
-            color: #e85d2a;
-        }
+        .faq-question:hover { color: var(--color-primary); }
 
         .faq-icon {
-            font-size: 20px;
+            font-size: 18px;
             transition: transform 0.3s ease;
             flex-shrink: 0;
-            color: #999999;
+            color: var(--color-text-light);
+            line-height: 1;
         }
 
-        .faq-item.open .faq-icon {
-            transform: rotate(45deg);
-        }
+        .faq-item.open .faq-icon { transform: rotate(45deg); }
 
         .faq-answer {
             max-height: 0;
@@ -575,176 +771,165 @@
         }
 
         .faq-answer p {
-            padding: 0 0 24px;
-            color: #666666;
+            padding: 0 0 28px;
+            color: var(--color-text-secondary);
             font-size: 15px;
             line-height: 1.8;
         }
 
-        /* REVIEWS */
-        .reviews {
-            background: #0a0a0a;
-        }
-
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-top: 40px;
-        }
-
-        .review-card {
-            background: #151515;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 28px;
-        }
-
-        .review-stars {
-            color: #f5a623;
-            font-size: 18px;
-            margin-bottom: 16px;
-            letter-spacing: 2px;
-        }
-
-        .review-text {
-            color: #cccccc;
-            font-size: 15px;
-            line-height: 1.7;
-            margin-bottom: 16px;
-            font-style: italic;
-        }
-
-        .review-author {
-            color: #888888;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        /* FINAL CTA */
+        /* ─── FINAL CTA ─── */
         .final-cta {
-            background: #111111;
+            background: var(--color-bg-dark);
             text-align: center;
+            padding: 120px 0;
         }
 
-        .final-cta .section-title {
-            color: #ffffff;
-            margin-bottom: 36px;
+        .final-cta .section-heading {
+            color: #fff;
+            font-size: clamp(32px, 5vw, 52px);
+            margin-bottom: 12px;
         }
 
-        .final-cta .subtext {
-            color: #888888;
-            font-size: 14px;
-            margin-top: 20px;
+        .final-cta-sub {
+            color: rgba(255,255,255,0.5);
+            font-size: 17px;
+            margin-bottom: 40px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* FOOTER */
+        .final-cta .btn-primary {
+            padding: 18px 56px;
+            font-size: 16px;
+        }
+
+        .final-trust {
+            margin-top: 28px;
+        }
+
+        .final-trust .trust-item {
+            color: rgba(255,255,255,0.35);
+        }
+
+        .final-trust .trust-icon {
+            color: rgba(255,255,255,0.35);
+        }
+
+        /* ─── FOOTER ─── */
         .footer {
-            background: #111111;
-            padding: 32px;
+            background: var(--color-bg-dark);
+            padding: 32px 40px;
             text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            border-top: 1px solid var(--color-border-dark);
         }
 
         .footer p {
-            color: #666666;
+            color: rgba(255,255,255,0.3);
             font-size: 13px;
         }
 
         .footer a {
-            color: #999999;
+            color: rgba(255,255,255,0.5);
             text-decoration: none;
-            transition: color 0.24s ease;
+            transition: color var(--transition);
         }
 
-        .footer a:hover {
-            color: #e85d2a;
-        }
+        .footer a:hover { color: var(--color-primary); }
 
-        /* FADE-IN */
-        .fade-in {
+        /* ─── FADE-IN ─── */
+        .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .fade-in.visible {
+        .reveal.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* MOBILE */
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+            .solution-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .solution-content { order: 1; }
+            .solution .video-container { order: 2; }
+
+            .wyg-grid {
+                grid-template-columns: 1fr;
+                gap: 48px;
+                text-align: center;
+            }
+
+            .wyg-price { order: -1; }
+
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
-            .hero {
-                padding: 70px 16px 32px;
-            }
-
-            .hero h1 {
-                font-size: 28px;
-                margin-bottom: 12px;
-            }
-
-            .hero .subheadline {
-                font-size: 15px;
-                margin-bottom: 20px;
-            }
-
-            .hero-ba-caption {
-                margin-bottom: 16px;
-            }
-
-            section {
-                padding: 40px 16px;
-            }
-
             .nav {
-                padding: 10px 16px;
+                padding: 0 20px;
+                height: 56px;
             }
 
-            .nav-brand {
-                font-size: 18px;
-            }
+            .nav-brand { font-size: 20px; }
 
             .btn-nav {
                 font-size: 12px;
-                padding: 8px 16px;
+                padding: 8px 18px;
+            }
+
+            .container { padding: 0 20px; }
+
+            .hero {
+                padding: 90px 0 56px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+                padding: 0 8px;
+            }
+
+            .hero-sub {
+                font-size: 15px;
+                margin-bottom: 28px;
+                padding: 0 8px;
+            }
+
+            .hero-ba {
+                border-radius: var(--radius-md);
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+
+            .hero-ba-item img { aspect-ratio: 3 / 4; }
+
+            .hero-ba-label {
+                font-size: 9px;
+                padding: 5px 14px;
+                bottom: 10px;
+            }
+
+            section { padding: 64px 0; }
+
+            .section-heading {
+                font-size: 28px;
             }
 
             .btn-primary {
-                padding: 14px 32px;
-                font-size: 15px;
+                padding: 15px 36px;
+                font-size: 14px;
                 width: 100%;
-                max-width: 300px;
-            }
-
-            .hero-before-after {
-                max-width: 100%;
-                border-radius: 12px;
-                margin-bottom: 8px;
-            }
-
-            .hero-ba-item img {
-                aspect-ratio: 3 / 4;
-            }
-
-            .hero-ba-label {
-                font-size: 10px;
-                padding: 5px 12px;
-                bottom: 8px;
-            }
-
-            .urgency-text {
-                font-size: 12px;
-                margin-top: 12px;
-            }
-
-            .trust-signals {
-                gap: 12px;
-                margin-top: 12px;
-            }
-
-            .trust-item {
-                font-size: 11px;
+                max-width: 320px;
             }
 
             .steps {
@@ -753,42 +938,37 @@
             }
 
             .step {
-                padding: 24px 20px;
+                padding: 32px 24px;
             }
 
             .photos-grid {
                 grid-template-columns: 1fr 1fr;
-                gap: 8px;
+                gap: 10px;
             }
 
             .features-list li {
                 font-size: 14px;
-                padding: 12px 0;
+                padding: 16px 0;
             }
 
             .faq-question {
                 font-size: 14px;
-                padding: 18px 0;
+                padding: 22px 0;
             }
 
-            .container {
-                padding: 0 16px;
-            }
+            .trust-signals { gap: 16px; }
+            .trust-item { font-size: 11px; }
 
-            .section-title {
-                font-size: 24px;
-            }
+            .final-cta { padding: 80px 0; }
 
-            .video-container {
-                margin-top: 20px;
-            }
+            .price-tag { font-size: 56px; }
         }
     </style>
 </head>
 <body>
 
     <!-- NAV -->
-    <nav class="nav">
+    <nav class="nav" id="nav">
         <a href="#" class="nav-brand">After<span>Sol</span></a>
         <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-nav" data-location="nav">Order Now</a>
     </nav>
@@ -796,9 +976,13 @@
     <!-- HERO -->
     <section class="hero">
         <div class="container">
-            <h1>Got Sunburned?<br>Tonight Is Going to Be Miserable.</h1>
-            <p class="subheadline">Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night.</p>
-            <div class="hero-before-after">
+            <div class="hero-eyebrow">
+                <span class="hero-eyebrow-dot"></span>
+                In Stock &mdash; Ships within 24-48 hours
+            </div>
+            <h1>Got Sunburned? Tonight Is Going to Be Miserable.</h1>
+            <p class="hero-sub">Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night.</p>
+            <div class="hero-ba">
                 <div class="hero-ba-item">
                     <img src="https://i.imgur.com/wiCkThCl.jpg" alt="Sunburned skin before AfterSol">
                     <span class="hero-ba-label hero-ba-label-before">Before</span>
@@ -810,96 +994,110 @@
                 </div>
             </div>
             <p class="hero-ba-caption">One night with AfterSol</p>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="hero">Get Relief Tonight — $44</a>
-            <p class="urgency-text"><span class="urgency-dot"></span> In Stock — Ships within 24-48 hours</p>
-            <div class="trust-signals">
-                <span class="trust-item"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
-                <span class="trust-item"><span class="trust-icon">&#128274;</span> Secure Checkout</span>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="hero">Get Relief Tonight &mdash; $44</a>
+            <div class="trust-signals" style="margin-top: 24px;">
+                <span class="trust-item"><span class="trust-icon">&#10003;</span> Money-Back Guarantee</span>
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> Free Shipping</span>
+                <span class="trust-item"><span class="trust-icon">&#10003;</span> Secure Checkout</span>
             </div>
         </div>
     </section>
 
     <!-- PROBLEM -->
-    <section class="problem fade-in">
+    <section class="problem">
         <div class="container">
-            <p class="section-subtitle">The Problem</p>
-            <h2 class="section-title">You Know What's Coming</h2>
-            <div class="problem-text">
-                <p>The throbbing. The heat radiating off your skin. The way every shirt, sheet, and breeze feels like sandpaper.</p>
-                <p>You'll try aloe. It'll help for 10 minutes, then evaporate. You'll take Advil. It won't touch the surface pain.</p>
-                <p>Tonight, you'll lie in bed unable to sleep. Tomorrow, you'll be exhausted AND still burned.</p>
-                <p><strong>Your vacation? Ruined. Your week? Shot. All because of one afternoon in the sun.</strong></p>
+            <div class="problem-inner reveal">
+                <p class="section-label">The Problem</p>
+                <h2 class="section-heading">You Know What's Coming</h2>
+                <div class="problem-body">
+                    <p>The throbbing. The heat radiating off your skin. The way every shirt, sheet, and breeze feels like sandpaper.</p>
+                    <p>You'll try aloe. It'll help for 10 minutes, then evaporate. You'll take Advil. It won't touch the surface pain.</p>
+                    <p>Tonight, you'll lie in bed unable to sleep. Tomorrow, you'll be exhausted AND still burned.</p>
+                    <p><strong>Your vacation? Ruined. Your week? Shot. All because of one afternoon in the sun.</strong></p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- SOLUTION -->
-    <section class="solution fade-in">
+    <section class="solution">
         <div class="container">
-            <p class="section-subtitle">The Solution</p>
-            <h2 class="section-title">AfterSol Stops the Cycle</h2>
-            <p class="solution-text">
-                AfterSol is a <strong>two-step emergency relief system</strong> designed for exactly this moment.<br><br>
-                Not a lotion. Not a spray. A clinical-grade cooling system that actually works.
-            </p>
-
-            <div class="video-container" id="video-placeholder" style="cursor: pointer; background: #000;">
-                <img src="https://img.youtube.com/vi/naahPzd8CY0/hqdefault.jpg" alt="Watch video" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px; background: #e85d2a; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                    <div style="width: 0; height: 0; border-left: 18px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 4px;"></div>
+            <div class="solution-grid">
+                <div class="solution-content reveal">
+                    <p class="section-label">The Solution</p>
+                    <h2 class="section-heading">AfterSol Stops the Cycle</h2>
+                    <p class="solution-text">
+                        AfterSol is a <strong>two-step emergency relief system</strong> designed for exactly this moment.<br><br>
+                        Not a lotion. Not a spray. A clinical-grade cooling system that actually works.
+                    </p>
+                    <a href="#order" class="btn-outline">Learn More</a>
+                </div>
+                <div class="video-container reveal reveal-delay-1" id="video-placeholder">
+                    <img src="https://img.youtube.com/vi/naahPzd8CY0/hqdefault.jpg" alt="Watch AfterSol demo video">
+                    <div class="video-play-btn">
+                        <div class="video-play-icon"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- HOW IT WORKS -->
-    <section class="how-it-works fade-in">
+    <section class="how-it-works">
         <div class="container">
-            <p class="section-subtitle">How It Works</p>
-            <h2 class="section-title">Two Steps. One Night. Done.</h2>
+            <div class="how-header reveal">
+                <p class="section-label">How It Works</p>
+                <h2 class="section-heading">Two Steps. One Night. Done.</h2>
+            </div>
             <div class="steps">
-                <div class="step">
-                    <span class="step-number">STEP 1</span>
+                <div class="step reveal">
+                    <div class="step-num">1</div>
                     <h3>Cooling Hydrogel Sheet</h3>
-                    <p>Apply to burned skin. Intense cooling starts immediately. Pain drops fast. Remove after 30 minutes — serum absorbs into skin.</p>
+                    <p>Apply to burned skin. Intense cooling starts immediately. Pain drops fast. Remove after 30 minutes &mdash; serum absorbs into skin.</p>
                 </div>
-                <div class="step">
-                    <span class="step-number">STEP 2</span>
+                <div class="step reveal reveal-delay-1">
+                    <div class="step-num">2</div>
                     <h3>Recovery Sheet (Overnight)</h3>
                     <p>Apply before bed. Sustained cooling keeps you comfortable all night. Wake up recovered, not wrecked.</p>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="how-it-works">Get Your Kit — $44</a>
-                <p class="urgency-text"><span class="urgency-dot"></span> Limited stock available</p>
+            <div class="how-cta reveal">
+                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="how-it-works">Get Your Kit &mdash; $44</a>
+                <p class="urgency-text"><span class="urgency-dot"></span> In Stock &mdash; Ships within 24-48 hours</p>
             </div>
         </div>
     </section>
 
     <!-- WHAT YOU GET -->
-    <section class="what-you-get fade-in">
+    <section class="what-you-get">
         <div class="container">
-            <p class="section-subtitle">What's Included</p>
-            <h2 class="section-title">The AfterSol Emergency Relief Kit</h2>
-            <ul class="features-list">
-                <li><span class="check">&#10003;</span> 4 Hydrogel Cooling Sheets (immediate relief)</li>
-                <li><span class="check">&#10003;</span> 4 Recovery Fiber Sheets (overnight comfort)</li>
-                <li><span class="check">&#10003;</span> 4 complete treatments per kit</li>
-                <li><span class="check">&#10003;</span> Works on arms, legs, shoulders, back</li>
-            </ul>
-            <p class="price-highlight">$44</p>
-            <p class="price-subtext">That's $11 per treatment to actually sleep through a sunburn.</p>
+            <div class="wyg-grid">
+                <div class="reveal">
+                    <p class="section-label">What's Included</p>
+                    <h2 class="section-heading">The AfterSol Emergency Relief Kit</h2>
+                    <ul class="features-list">
+                        <li><span class="check-circle">&#10003;</span> 4 Hydrogel Cooling Sheets (immediate relief)</li>
+                        <li><span class="check-circle">&#10003;</span> 4 Recovery Fiber Sheets (overnight comfort)</li>
+                        <li><span class="check-circle">&#10003;</span> 4 complete treatments per kit</li>
+                        <li><span class="check-circle">&#10003;</span> Works on arms, legs, shoulders, back</li>
+                    </ul>
+                </div>
+                <div class="wyg-price reveal reveal-delay-1">
+                    <p class="price-tag">$44</p>
+                    <p class="price-sub">That's $11 per treatment to actually sleep through a sunburn.</p>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- SOCIAL PROOF -->
-    <section class="social-proof fade-in">
+    <section class="social-proof">
         <div class="container">
-            <p class="section-subtitle">See It In Action</p>
-            <h2 class="section-title">Real Relief</h2>
-
-            <div class="photos-grid">
+            <div class="social-header reveal">
+                <p class="section-label">See It In Action</p>
+                <h2 class="section-heading">Real Relief</h2>
+            </div>
+            <div class="photos-grid reveal">
                 <img src="https://i.imgur.com/s8oQuEzm.jpg" alt="AfterSol application on skin" loading="lazy">
                 <img src="https://i.imgur.com/R5Y7m5Rm.jpg" alt="AfterSol cooling sheet" loading="lazy">
                 <img src="https://i.imgur.com/vR3p4FYm.jpg" alt="AfterSol relief treatment" loading="lazy">
@@ -909,43 +1107,45 @@
     </section>
 
     <!-- REVIEWS -->
-    <section class="reviews fade-in">
+    <section class="reviews">
         <div class="container">
-            <p class="section-subtitle">What People Are Saying</p>
-            <h2 class="section-title">Real Results</h2>
+            <div class="reviews-header reveal">
+                <p class="section-label">What People Are Saying</p>
+                <h2 class="section-heading">Real Results</h2>
+            </div>
             <div class="reviews-grid">
-                <div class="review-card">
+                <div class="review-card reveal">
                     <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <p class="review-text">"I got absolutely fried at the lake on Saturday. By Sunday night I was dreading sleep. Put on the hydrogel sheet and honestly within 20 minutes the throbbing stopped. Actually slept through the night. This stuff is legit."</p>
-                    <p class="review-author">— Marcus T., Austin TX</p>
+                    <p class="review-text">"I got absolutely fried at the lake on Saturday. By Sunday night I was dreading sleep. Put on the hydrogel sheet and honestly within 20 minutes the throbbing stopped. Actually slept through the night."</p>
+                    <p class="review-author">Marcus T., Austin TX</p>
                 </div>
-                <div class="review-card">
+                <div class="review-card reveal reveal-delay-1">
                     <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <p class="review-text">"My daughter got burned at soccer camp and was in tears. We'd tried aloe, cold towels, everything. The AfterSol sheet calmed her down in like 15 minutes and she slept fine. Ordering more to keep in the house."</p>
-                    <p class="review-author">— Jennifer M., San Diego CA</p>
+                    <p class="review-text">"My daughter got burned at soccer camp and was in tears. We'd tried aloe, cold towels, everything. The AfterSol sheet calmed her down in like 15 minutes and she slept fine."</p>
+                    <p class="review-author">Jennifer M., San Diego CA</p>
                 </div>
-                <div class="review-card">
+                <div class="review-card reveal reveal-delay-2">
                     <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <p class="review-text">"Skeptical at first because I've tried everything for sunburns. But this actually works different - it stays cool for hours, not minutes. Used it on my shoulders after a beach day and woke up feeling way better than I expected."</p>
-                    <p class="review-author">— David R., Miami FL</p>
+                    <p class="review-text">"Skeptical at first because I've tried everything for sunburns. But this actually works different - it stays cool for hours, not minutes. Used it on my shoulders after a beach day."</p>
+                    <p class="review-author">David R., Miami FL</p>
                 </div>
-                <div class="review-card">
+                <div class="review-card reveal">
                     <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
-                    <p class="review-text">"Works great, only complaint is I wish the sheets were a little bigger for covering my whole back. But for arms and shoulders it's perfect. Way better than any aloe gel I've used."</p>
-                    <p class="review-author">— Rachel K., Phoenix AZ</p>
+                    <p class="review-text">"Works great, only complaint is I wish the sheets were a little bigger for covering my whole back. But for arms and shoulders it's perfect. Way better than any aloe gel."</p>
+                    <p class="review-author">Rachel K., Phoenix AZ</p>
                 </div>
-                <div class="review-card">
+                <div class="review-card reveal reveal-delay-1">
                     <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="review-text">"Brought this on our Cabo trip 'just in case' and thank god I did. My husband turned into a lobster day 2. This saved the rest of our vacation. He was back at the pool by day 4."</p>
-                    <p class="review-author">— Christina L., Denver CO</p>
+                    <p class="review-author">Christina L., Denver CO</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- GUARANTEE -->
-    <section class="guarantee fade-in">
-        <div class="container">
+    <section class="guarantee">
+        <div class="container reveal">
             <span class="guarantee-badge">Risk Free</span>
             <h2>100% Money-Back Guarantee</h2>
             <p>If AfterSol doesn't stop your sunburn pain, we'll refund every penny. No questions asked.</p>
@@ -953,22 +1153,24 @@
     </section>
 
     <!-- FAQ -->
-    <section class="faq fade-in">
+    <section class="faq">
         <div class="container">
-            <p class="section-subtitle">FAQ</p>
-            <h2 class="section-title">Common Questions</h2>
-            <div class="faq-list">
+            <div class="faq-header reveal">
+                <p class="section-label">FAQ</p>
+                <h2 class="section-heading">Common Questions</h2>
+            </div>
+            <div class="faq-list reveal">
                 <div class="faq-item">
                     <button class="faq-question">How fast does it actually work? <span class="faq-icon">+</span></button>
                     <div class="faq-answer"><p>The cooling hydrogel sheet starts working on contact. Most people feel significant pain reduction within 30 minutes. The overnight recovery sheet keeps you comfortable through the night.</p></div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">How is this different from aloe vera? <span class="faq-icon">+</span></button>
-                    <div class="faq-answer"><p>Aloe evaporates in minutes and only provides temporary surface relief. AfterSol's hydrogel sheets maintain sustained cooling and deliver active ingredients directly into your skin over hours — not seconds.</p></div>
+                    <div class="faq-answer"><p>Aloe evaporates in minutes and only provides temporary surface relief. AfterSol's hydrogel sheets maintain sustained cooling and deliver active ingredients directly into your skin over hours &mdash; not seconds.</p></div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">What body areas can I use it on? <span class="faq-icon">+</span></button>
-                    <div class="faq-answer"><p>AfterSol sheets work on arms, legs, shoulders, back, and chest — anywhere you get burned. Each sheet covers a generous area and conforms to your body's shape.</p></div>
+                    <div class="faq-answer"><p>AfterSol sheets work on arms, legs, shoulders, back, and chest &mdash; anywhere you get burned. Each sheet covers a generous area and conforms to your body's shape.</p></div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">When will my order ship? <span class="faq-icon">+</span></button>
@@ -976,7 +1178,7 @@
                 </div>
                 <div class="faq-item">
                     <button class="faq-question">What if it doesn't work for me? <span class="faq-icon">+</span></button>
-                    <div class="faq-answer"><p>We offer a 100% money-back guarantee. If AfterSol doesn't relieve your sunburn pain, email us and we'll refund every penny — no questions asked.</p></div>
+                    <div class="faq-answer"><p>We offer a 100% money-back guarantee. If AfterSol doesn't relieve your sunburn pain, email us and we'll refund every penny &mdash; no questions asked.</p></div>
                 </div>
             </div>
         </div>
@@ -984,13 +1186,13 @@
 
     <!-- FINAL CTA -->
     <section class="final-cta" id="order">
-        <div class="container">
-            <h2 class="section-title">Don't Suffer Tonight</h2>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="final-cta">Get Relief Tonight — $44</a>
-            <p class="subtext" style="color: #ffcc00; margin-top: 16px;">In Stock — Ships within 24-48 hours</p>
-            <div class="trust-signals" style="margin-top: 16px;">
-                <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> 100% Money-Back Guarantee</span>
-                <span class="trust-item" style="color: #aaa;"><span class="trust-icon">&#10003;</span> Free Shipping</span>
+        <div class="container reveal">
+            <h2 class="section-heading">Don't Suffer Tonight</h2>
+            <p class="final-cta-sub">Two-step emergency relief. Works in 30 minutes.</p>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="final-cta">Get Relief Tonight &mdash; $44</a>
+            <div class="trust-signals final-trust">
+                <span class="trust-item"><span class="trust-icon">&#10003;</span> Money-Back Guarantee</span>
+                <span class="trust-item"><span class="trust-icon">&#10003;</span> Free Shipping</span>
             </div>
         </div>
     </section>
@@ -1002,9 +1204,24 @@
     </footer>
 
     <script>
-        // Track CTA clicks with delay to ensure events send before navigation
+        // ─── Smart Nav: hide on scroll down, show on scroll up ───
+        (function() {
+            var nav = document.getElementById('nav');
+            var lastY = 0;
+            var threshold = 80;
+            window.addEventListener('scroll', function() {
+                var y = window.scrollY;
+                if (y > threshold && y > lastY) {
+                    nav.classList.add('nav--hidden');
+                } else {
+                    nav.classList.remove('nav--hidden');
+                }
+                lastY = y;
+            });
+        })();
+
+        // ─── Track CTA clicks ───
         function trackCheckoutClick(buttonLocation, targetUrl) {
-            // Meta Pixel - fire FIRST (most important for ad attribution)
             if (typeof fbq === 'function') {
                 fbq('track', 'InitiateCheckout', {
                     content_name: 'AfterSol Emergency Kit',
@@ -1013,7 +1230,6 @@
                     currency: 'USD'
                 });
             }
-            // Google Analytics - GA4 ecommerce format
             if (typeof gtag === 'function') {
                 gtag('event', 'begin_checkout', {
                     currency: 'USD',
@@ -1026,13 +1242,11 @@
                     }]
                 });
             }
-            // Small delay to ensure tracking completes, then redirect
             setTimeout(function() {
                 window.location.href = targetUrl;
             }, 150);
         }
 
-        // Add click tracking to all CTA buttons
         document.querySelectorAll('a[href*="buy.stripe.com"]').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1041,21 +1255,21 @@
             });
         });
 
-        // Fade-in on scroll
-        var observer = new IntersectionObserver(function(entries) {
+        // ─── Scroll reveal ───
+        var revealObserver = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
+                    revealObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-        document.querySelectorAll('.fade-in').forEach(function(el) {
-            observer.observe(el);
+        document.querySelectorAll('.reveal').forEach(function(el) {
+            revealObserver.observe(el);
         });
 
-        // Track scroll depth milestones
+        // ─── Scroll depth tracking ───
         var scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
         window.addEventListener('scroll', function() {
             var scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
@@ -1072,7 +1286,7 @@
             });
         });
 
-        // Lazy load YouTube video with tracking
+        // ─── Video lazy load ───
         var videoEl = document.getElementById('video-placeholder');
         if (videoEl) {
             videoEl.addEventListener('click', function() {
@@ -1093,7 +1307,7 @@
             });
         }
 
-        // FAQ accordion
+        // ─── FAQ accordion ───
         document.querySelectorAll('.faq-question').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var item = btn.parentElement;
