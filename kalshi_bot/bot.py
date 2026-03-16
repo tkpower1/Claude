@@ -178,19 +178,22 @@ class KalshiBot:
             return  # API error – don't corrupt the tracker
 
         positions = self.client.get_portfolio_positions()
+        non_zero = [p for p in positions if p.get("position", 0) != 0]
+        zero_net  = [p for p in positions if p.get("position", 0) == 0]
         # total_cost is in cents; sum absolute values (long YES or long NO both positive cost)
         positions_cost = sum(
             abs(p.get("total_cost", 0)) / 100.0
-            for p in positions
-            if p.get("position", 0) != 0
+            for p in non_zero
         )
         true_total = cash + positions_cost
+        logger.info(
+            "Portfolio sync: cash=$%.2f  non-zero positions=%d (cost=$%.2f)  "
+            "netted-zero=%d  true_total=$%.2f  internal=$%.2f",
+            cash, len(non_zero), positions_cost, len(zero_net),
+            true_total, self.budget.total,
+        )
 
         if abs(true_total - self.budget.total) > 1.0:
-            logger.info(
-                "Portfolio sync: cash=$%.2f positions=$%.2f true_total=$%.2f (internal was $%.2f)",
-                cash, positions_cost, true_total, self.budget.total,
-            )
             self.budget.total = true_total
 
         # Also clamp available so it never exceeds actual cash on hand.
