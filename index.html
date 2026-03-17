@@ -30,7 +30,7 @@
     <title>AfterSol - Emergency Sunburn Relief Kit</title>
     <meta name="description" content="Stop sunburn pain in 30 minutes. AfterSol's two-step emergency relief system uses clinical-grade cooling sheets so you can actually sleep through the night.">
     <meta property="og:title" content="Got Sunburned? Tonight Is Going to Be Miserable.">
-    <meta property="og:description" content="Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night. Two-step emergency relief system — $44.">
+    <meta property="og:description" content="Unless you have AfterSol. Stop the burn in 30 minutes. Sleep through the night. Two-step emergency relief system — starting at $10.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://i.imgur.com/wiCkThC.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -598,6 +598,155 @@
             line-height: 1.6;
         }
 
+        /* ─── SKU PICKER ─── */
+        .sku-picker {
+            background: var(--color-bg);
+        }
+
+        .sku-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .sku-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .sku-card {
+            position: relative;
+            background: #ffffff;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 36px 28px 28px;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: center;
+        }
+
+        .sku-card:hover {
+            border-color: rgba(196, 85, 43, 0.3);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+        }
+
+        .sku-card.sku-active {
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 40px rgba(196, 85, 43, 0.12);
+        }
+
+        .sku-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: var(--radius-pill);
+            white-space: nowrap;
+        }
+
+        .sku-name {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            color: var(--color-dark);
+            margin-bottom: 8px;
+        }
+
+        .sku-price {
+            font-family: var(--font-serif);
+            font-size: 40px;
+            color: var(--color-dark);
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .sku-per {
+            font-size: 13px;
+            color: var(--color-text-light);
+            margin-bottom: 20px;
+        }
+
+        .sku-details {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .sku-details li {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sku-details li:last-child { border-bottom: none; }
+
+        .sku-check {
+            color: var(--color-success);
+            font-weight: 700;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .sku-select-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: var(--radius-pill);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all var(--transition);
+            cursor: pointer;
+            border: 1.5px solid var(--color-dark);
+            background: transparent;
+            color: var(--color-dark);
+        }
+
+        .sku-card.sku-active .sku-select-btn {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+        }
+
+        .sku-card.sku-active .sku-select-btn:hover {
+            background: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+        }
+
+        .sku-select-btn:hover {
+            background: var(--color-dark);
+            color: #fff;
+        }
+
+        .sku-cta {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .sku-grid {
+                grid-template-columns: 1fr;
+                max-width: 360px;
+            }
+
+            .sku-card { padding: 32px 24px 24px; }
+            .sku-price { font-size: 32px; }
+        }
+
         /* ─── SOCIAL PROOF ─── */
         .social-proof {
             background: var(--color-bg-warm);
@@ -970,7 +1119,7 @@
     <!-- NAV -->
     <nav class="nav" id="nav">
         <a href="#" class="nav-brand">After<span>Sol</span></a>
-        <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-nav" data-location="nav">Order Now</a>
+        <a href="#order" class="btn-nav" data-location="nav">Order Now</a>
     </nav>
 
     <!-- HERO -->
@@ -994,7 +1143,7 @@
                 </div>
             </div>
             <p class="hero-ba-caption">One night with AfterSol</p>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="hero">Get Relief Tonight &mdash; $44</a>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="hero">Get Relief Tonight &mdash; $35</a>
             <div class="trust-signals" style="margin-top: 24px;">
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> Money-Back Guarantee</span>
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> Free Shipping</span>
@@ -1030,7 +1179,7 @@
                         AfterSol is a <strong>two-step emergency relief system</strong> designed for exactly this moment.<br><br>
                         Not a lotion. Not a spray. A clinical-grade cooling system that actually works.
                     </p>
-                    <a href="#order" class="btn-outline">Learn More</a>
+                    <a href="#order" class="btn-outline">See All Kits</a>
                 </div>
                 <div class="video-container reveal reveal-delay-1" id="video-placeholder">
                     <img src="https://img.youtube.com/vi/naahPzd8CY0/hqdefault.jpg" alt="Watch AfterSol demo video">
@@ -1062,7 +1211,7 @@
                 </div>
             </div>
             <div class="how-cta reveal">
-                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="how-it-works">Get Your Kit &mdash; $44</a>
+                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="how-it-works">Get Your Kit &mdash; $35</a>
                 <p class="urgency-text"><span class="urgency-dot"></span> In Stock &mdash; Ships within 24-48 hours</p>
             </div>
         </div>
@@ -1076,16 +1225,69 @@
                     <p class="section-label">What's Included</p>
                     <h2 class="section-heading">The AfterSol Emergency Relief Kit</h2>
                     <ul class="features-list">
-                        <li><span class="check-circle">&#10003;</span> 4 Hydrogel Cooling Sheets (immediate relief)</li>
-                        <li><span class="check-circle">&#10003;</span> 4 Recovery Fiber Sheets (overnight comfort)</li>
-                        <li><span class="check-circle">&#10003;</span> 4 complete treatments per kit</li>
+                        <li><span class="check-circle">&#10003;</span> Hydrogel Cooling Sheets (immediate relief)</li>
+                        <li><span class="check-circle">&#10003;</span> Recovery Fiber Sheets (overnight comfort)</li>
                         <li><span class="check-circle">&#10003;</span> Works on arms, legs, shoulders, back</li>
+                        <li><span class="check-circle">&#10003;</span> Available in 2, 4, or 8-sheet packs</li>
                     </ul>
                 </div>
                 <div class="wyg-price reveal reveal-delay-1">
-                    <p class="price-tag">$44</p>
-                    <p class="price-sub">That's $11 per treatment to actually sleep through a sunburn.</p>
+                    <p class="price-tag" id="wyg-price-display">$35</p>
+                    <p class="price-sub" id="wyg-price-sub">That's $4.38 per treatment to actually sleep through a sunburn.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHOOSE YOUR KIT -->
+    <section class="sku-picker" id="order">
+        <div class="container">
+            <div class="sku-header reveal">
+                <p class="section-label">Choose Your Kit</p>
+                <h2 class="section-heading">Pick the Right Size for You</h2>
+            </div>
+            <div class="sku-grid reveal">
+                <!-- 2-Pack -->
+                <div class="sku-card" data-sku="2pack" data-price="10" data-url="https://buy.stripe.com/PLACEHOLDER_2PACK">
+                    <p class="sku-name">Try It</p>
+                    <p class="sku-price">$10</p>
+                    <p class="sku-per">$10.00 / treatment</p>
+                    <ul class="sku-details">
+                        <li><span class="sku-check">&#10003;</span> 1 Hydrogel Cooling Sheet</li>
+                        <li><span class="sku-check">&#10003;</span> 1 Recovery Fiber Sheet</li>
+                        <li><span class="sku-check">&#10003;</span> 1 complete treatment</li>
+                    </ul>
+                    <button class="sku-select-btn">Select</button>
+                </div>
+                <!-- 4-Pack -->
+                <div class="sku-card" data-sku="4pack" data-price="25" data-url="https://buy.stripe.com/PLACEHOLDER_4PACK">
+                    <p class="sku-name">Weekend</p>
+                    <p class="sku-price">$25</p>
+                    <p class="sku-per">$12.50 / treatment</p>
+                    <ul class="sku-details">
+                        <li><span class="sku-check">&#10003;</span> 2 Hydrogel Cooling Sheets</li>
+                        <li><span class="sku-check">&#10003;</span> 2 Recovery Fiber Sheets</li>
+                        <li><span class="sku-check">&#10003;</span> 2 complete treatments</li>
+                    </ul>
+                    <button class="sku-select-btn">Select</button>
+                </div>
+                <!-- 8-Pack -->
+                <div class="sku-card sku-active" data-sku="8pack" data-price="35" data-url="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00">
+                    <span class="sku-badge">Best Value</span>
+                    <p class="sku-name">Full Kit</p>
+                    <p class="sku-price">$35</p>
+                    <p class="sku-per">$4.38 / treatment</p>
+                    <ul class="sku-details">
+                        <li><span class="sku-check">&#10003;</span> 4 Hydrogel Cooling Sheets</li>
+                        <li><span class="sku-check">&#10003;</span> 4 Recovery Fiber Sheets</li>
+                        <li><span class="sku-check">&#10003;</span> 4 complete treatments</li>
+                    </ul>
+                    <button class="sku-select-btn">Selected</button>
+                </div>
+            </div>
+            <div class="sku-cta reveal">
+                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="sku-picker">Order Now &mdash; $35</a>
+                <p class="urgency-text"><span class="urgency-dot"></span> In Stock &mdash; Ships within 24-48 hours</p>
             </div>
         </div>
     </section>
@@ -1185,11 +1387,11 @@
     </section>
 
     <!-- FINAL CTA -->
-    <section class="final-cta" id="order">
+    <section class="final-cta">
         <div class="container reveal">
             <h2 class="section-heading">Don't Suffer Tonight</h2>
             <p class="final-cta-sub">Two-step emergency relief. Works in 30 minutes.</p>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary" data-location="final-cta">Get Relief Tonight &mdash; $44</a>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="final-cta">Get Relief Tonight &mdash; $35</a>
             <div class="trust-signals final-trust">
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> Money-Back Guarantee</span>
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> Free Shipping</span>
@@ -1220,24 +1422,84 @@
             });
         })();
 
+        // ─── SKU Config ───
+        var SKU_CONFIG = {
+            '2pack': { name: 'AfterSol 2-Pack', price: 10, url: 'https://buy.stripe.com/PLACEHOLDER_2PACK', itemId: 'aftersol-2pack', perTreatment: '$10.00' },
+            '4pack': { name: 'AfterSol 4-Pack', price: 25, url: 'https://buy.stripe.com/PLACEHOLDER_4PACK', itemId: 'aftersol-4pack', perTreatment: '$12.50' },
+            '8pack': { name: 'AfterSol 8-Pack', price: 35, url: 'https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00', itemId: 'aftersol-8pack', perTreatment: '$4.38' }
+        };
+        var selectedSku = '8pack';
+
+        function getSelectedSku() { return SKU_CONFIG[selectedSku]; }
+
+        function updateAllCtaButtons() {
+            var sku = getSelectedSku();
+            document.querySelectorAll('.js-cta-btn').forEach(function(btn) {
+                btn.href = sku.url;
+                var loc = btn.getAttribute('data-location') || '';
+                if (loc === 'hero') {
+                    btn.textContent = 'Get Relief Tonight \u2014 $' + sku.price;
+                } else if (loc === 'how-it-works') {
+                    btn.textContent = 'Get Your Kit \u2014 $' + sku.price;
+                } else if (loc === 'sku-picker') {
+                    btn.textContent = 'Order Now \u2014 $' + sku.price;
+                } else if (loc === 'final-cta') {
+                    btn.textContent = 'Get Relief Tonight \u2014 $' + sku.price;
+                }
+            });
+            // Update what-you-get price display
+            var priceDisplay = document.getElementById('wyg-price-display');
+            var priceSub = document.getElementById('wyg-price-sub');
+            if (priceDisplay) priceDisplay.textContent = '$' + sku.price;
+            if (priceSub) priceSub.textContent = 'That\u2019s ' + sku.perTreatment + ' per treatment to actually sleep through a sunburn.';
+        }
+
+        // ─── SKU Picker ───
+        document.querySelectorAll('.sku-card').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var skuId = card.getAttribute('data-sku');
+                if (!skuId || !SKU_CONFIG[skuId]) return;
+                selectedSku = skuId;
+                // Update active card
+                document.querySelectorAll('.sku-card').forEach(function(c) {
+                    c.classList.remove('sku-active');
+                    var btn = c.querySelector('.sku-select-btn');
+                    if (btn) btn.textContent = 'Select';
+                });
+                card.classList.add('sku-active');
+                var activeBtn = card.querySelector('.sku-select-btn');
+                if (activeBtn) activeBtn.textContent = 'Selected';
+                // Update all CTA buttons
+                updateAllCtaButtons();
+                // Track selection
+                if (typeof gtag === 'function') {
+                    gtag('event', 'select_item', {
+                        item_list_name: 'SKU Picker',
+                        items: [{ item_id: SKU_CONFIG[skuId].itemId, item_name: SKU_CONFIG[skuId].name, price: SKU_CONFIG[skuId].price }]
+                    });
+                }
+            });
+        });
+
         // ─── Track CTA clicks ───
         function trackCheckoutClick(buttonLocation, targetUrl) {
+            var sku = getSelectedSku();
             if (typeof fbq === 'function') {
                 fbq('track', 'InitiateCheckout', {
-                    content_name: 'AfterSol Emergency Kit',
+                    content_name: sku.name,
                     content_category: 'Sunburn Relief',
-                    value: 44.00,
+                    value: sku.price,
                     currency: 'USD'
                 });
             }
             if (typeof gtag === 'function') {
                 gtag('event', 'begin_checkout', {
                     currency: 'USD',
-                    value: 44.00,
+                    value: sku.price,
                     items: [{
-                        item_id: 'aftersol-kit',
-                        item_name: 'AfterSol Emergency Kit',
-                        price: 44.00,
+                        item_id: sku.itemId,
+                        item_name: sku.name,
+                        price: sku.price,
                         quantity: 1
                     }]
                 });
@@ -1247,7 +1509,7 @@
             }, 150);
         }
 
-        document.querySelectorAll('a[href*="buy.stripe.com"]').forEach(function(btn) {
+        document.querySelectorAll('.js-cta-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 var location = btn.getAttribute('data-location') || 'unknown';
