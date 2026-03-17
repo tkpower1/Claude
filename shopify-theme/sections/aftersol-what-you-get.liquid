@@ -6,7 +6,7 @@
 <section class="aftersol-section aftersol-what-you-get">
   <div class="aftersol-container">
     <p class="aftersol-section-subtitle">{{ section.settings.subtitle | default: "What's Included" }}</p>
-    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'The AfterSol Emergency Relief Kit' }}</h2>
+    <h2 class="aftersol-section-title">{{ section.settings.title | default: 'Every AfterSol Kit Includes' }}</h2>
 
     <ul class="aftersol-features-list">
       {% for block in section.blocks %}
@@ -15,15 +15,21 @@
           {{ block.settings.feature_text }}
         </li>
       {% else %}
-        <li><span class="aftersol-check">&#10003;</span> 4 Hydrogel Cooling Sheets (immediate relief)</li>
-        <li><span class="aftersol-check">&#10003;</span> 4 Recovery Fiber Sheets (overnight comfort)</li>
-        <li><span class="aftersol-check">&#10003;</span> 4 complete treatments per kit</li>
+        <li><span class="aftersol-check">&#10003;</span> Hydrogel Cooling Sheets (immediate relief)</li>
+        <li><span class="aftersol-check">&#10003;</span> Recovery Fiber Sheets (overnight comfort)</li>
         <li><span class="aftersol-check">&#10003;</span> Works on arms, legs, shoulders, back</li>
+        <li><span class="aftersol-check">&#10003;</span> Available in 2-pack, 4-pack, and 8-pack sizes</li>
       {% endfor %}
     </ul>
 
-    <p class="aftersol-price-highlight">{{ section.settings.price | default: '$44' }}</p>
-    <p class="aftersol-price-subtext">{{ section.settings.price_subtext | default: "That's $11 per treatment to actually sleep through a sunburn." }}</p>
+    <p class="aftersol-price-highlight">{{ section.settings.price | default: 'Starting at $10' }}</p>
+    <p class="aftersol-price-subtext">{{ section.settings.price_subtext | default: "As low as $4.38 per treatment with the Full Kit." }}</p>
+
+    <div style="text-align: center; margin-top: 32px;">
+      <a href="{{ section.settings.button_link | default: '/collections/aftersol' }}" class="aftersol-btn-primary">
+        {{ section.settings.button_text | default: 'Shop All Kits' }}
+      </a>
+    </div>
   </div>
 </section>
 
@@ -41,19 +47,30 @@
       "type": "text",
       "id": "title",
       "label": "Title",
-      "default": "The AfterSol Emergency Relief Kit"
+      "default": "Every AfterSol Kit Includes"
     },
     {
       "type": "text",
       "id": "price",
       "label": "Price Display",
-      "default": "$44"
+      "default": "Starting at $10"
     },
     {
       "type": "text",
       "id": "price_subtext",
       "label": "Price Subtext",
-      "default": "That's $11 per treatment to actually sleep through a sunburn."
+      "default": "As low as $4.38 per treatment with the Full Kit."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop All Kits"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
     }
   ],
   "blocks": [
@@ -65,7 +82,7 @@
           "type": "text",
           "id": "feature_text",
           "label": "Feature Text",
-          "default": "4 Hydrogel Cooling Sheets (immediate relief)"
+          "default": "Hydrogel Cooling Sheets (immediate relief)"
         }
       ]
     }
@@ -77,25 +94,25 @@
         {
           "type": "feature",
           "settings": {
-            "feature_text": "4 Hydrogel Cooling Sheets (immediate relief)"
+            "feature_text": "Hydrogel Cooling Sheets (immediate relief)"
           }
         },
         {
           "type": "feature",
           "settings": {
-            "feature_text": "4 Recovery Fiber Sheets (overnight comfort)"
-          }
-        },
-        {
-          "type": "feature",
-          "settings": {
-            "feature_text": "4 complete treatments per kit"
+            "feature_text": "Recovery Fiber Sheets (overnight comfort)"
           }
         },
         {
           "type": "feature",
           "settings": {
             "feature_text": "Works on arms, legs, shoulders, back"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Available in 2-pack, 4-pack, and 8-pack sizes"
           }
         }
       ]

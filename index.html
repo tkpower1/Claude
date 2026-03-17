@@ -1143,7 +1143,7 @@
                 </div>
             </div>
             <p class="hero-ba-caption">One night with AfterSol</p>
-            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="hero">Get Relief Tonight &mdash; $35</a>
+            <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="hero">Get Relief Tonight &mdash; Starting at $10</a>
             <div class="trust-signals" style="margin-top: 24px;">
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> Money-Back Guarantee</span>
                 <span class="trust-item"><span class="trust-icon">&#10003;</span> Free Shipping</span>
@@ -1211,7 +1211,7 @@
                 </div>
             </div>
             <div class="how-cta reveal">
-                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="how-it-works">Get Your Kit &mdash; $35</a>
+                <a href="https://buy.stripe.com/fZudRa5D2bQ6cQQ5kp7EQ00" class="btn-primary js-cta-btn" data-location="how-it-works">Get Your Kit &mdash; Starting at $10</a>
                 <p class="urgency-text"><span class="urgency-dot"></span> In Stock &mdash; Ships within 24-48 hours</p>
             </div>
         </div>
@@ -1438,9 +1438,9 @@
                 btn.href = sku.url;
                 var loc = btn.getAttribute('data-location') || '';
                 if (loc === 'hero') {
-                    btn.textContent = 'Get Relief Tonight \u2014 $' + sku.price;
+                    btn.textContent = 'Get Relief Tonight \u2014 Starting at $10';
                 } else if (loc === 'how-it-works') {
-                    btn.textContent = 'Get Your Kit \u2014 $' + sku.price;
+                    btn.textContent = 'Get Your Kit \u2014 Starting at $10';
                 } else if (loc === 'sku-picker') {
                     btn.textContent = 'Order Now \u2014 $' + sku.price;
                 } else if (loc === 'final-cta') {

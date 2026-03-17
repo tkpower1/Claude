@@ -605,6 +605,111 @@
 }
 
 /* ============================================
+   PRODUCT CARDS SECTION
+   ============================================ */
+.aftersol-product-cards {
+  background: var(--aftersol-off-white);
+  padding: 64px 32px;
+}
+
+.aftersol-product-cards .aftersol-section-title,
+.aftersol-product-cards .aftersol-section-subtitle {
+  text-align: center;
+}
+
+.aftersol-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  margin: 40px auto 0;
+}
+
+.aftersol-product-card {
+  background: var(--aftersol-white);
+  border: 2px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.aftersol-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+}
+
+.aftersol-product-card--featured {
+  border-color: var(--aftersol-primary);
+  box-shadow: 0 8px 32px rgba(232, 93, 42, 0.12);
+}
+
+.aftersol-product-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--aftersol-primary);
+  color: var(--aftersol-white);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 18px;
+  border-radius: 100px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.aftersol-product-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--aftersol-dark);
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.aftersol-product-contents {
+  color: var(--aftersol-gray);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.aftersol-product-price {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--aftersol-dark);
+  letter-spacing: -1px;
+  margin-bottom: 4px;
+}
+
+.aftersol-product-per-treatment {
+  color: var(--aftersol-gray-light);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.aftersol-product-savings {
+  color: var(--aftersol-success);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.aftersol-product-savings s {
+  color: var(--aftersol-gray-light);
+  font-weight: 400;
+}
+
+.aftersol-product-btn {
+  display: block;
+  margin-top: 20px;
+  padding: 14px 24px;
+  font-size: 15px;
+}
+
+/* ============================================
    FINAL CTA SECTION
    ============================================ */
 .aftersol-final-cta {
@@ -741,5 +846,15 @@
 
   .aftersol-reviews-grid {
     grid-template-columns: 1fr;
+  }
+
+  .aftersol-cards-grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    gap: 20px;
+  }
+
+  .aftersol-product-card {
+    padding: 28px 20px;
   }
 }
