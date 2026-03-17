@@ -30,8 +30,8 @@
 
     <p class="aftersol-ba-caption">{{ section.settings.caption | default: 'One night with AfterSol' }}</p>
 
-    <a href="{{ section.settings.button_link | default: '/products/aftersol-kit' }}" class="aftersol-btn-primary">
-      {{ section.settings.button_text | default: 'Get Relief Tonight — $44' }}
+    <a href="{{ section.settings.button_link | default: '/collections/aftersol' }}" class="aftersol-btn-primary">
+      {{ section.settings.button_text | default: 'Get Relief Tonight — Starting at $10' }}
     </a>
 
     {% if section.settings.show_urgency %}
@@ -93,7 +93,7 @@
       "type": "text",
       "id": "button_text",
       "label": "Button Text",
-      "default": "Get Relief Tonight — $44"
+      "default": "Get Relief Tonight — Starting at $10"
     },
     {
       "type": "url",
