@@ -123,14 +123,18 @@ Click on each section in the customizer to configure:
 
 You need to create **3 separate products** in Shopify — one for each kit size.
 
-### Product 1: AfterSol Try It (2-Pack)
+### Product 1: AfterSol 2-Pack — Try It
 
 1. Go to **Products** > **Add product**
 2. Fill in:
-   - **Title**: AfterSol Try It — 2-Pack
+   - **Title**: AfterSol 2-Pack — Try It
    - **Price**: $10.00
    - **SKU**: `aftersol-2pack`
-   - **Images**: Upload product photos
+   - **Images**: Upload product photos showing the AfterSol sheets/packaging.
+     Use photos of the actual hydrogel and recovery sheets — NOT unrelated skincare products.
+     Recommended: search [Unsplash "sheet mask"](https://unsplash.com/s/photos/sheet-mask) or
+     [Pexels "cooling patch"](https://www.pexels.com/search/cooling%20patch/) for placeholder images.
+     You can also reuse the social proof photos listed in Step 10 below.
    - **Description**:
 
 ```
@@ -147,14 +151,18 @@ Stop sunburn pain in 30 minutes. Sleep through the night. Works on arms, legs, s
 
 3. Save
 
-### Product 2: AfterSol Weekend Pack (4-Pack)
+### Product 2: AfterSol 4-Pack — Weekend Pack
 
 1. Go to **Products** > **Add product**
 2. Fill in:
-   - **Title**: AfterSol Weekend Pack — 4-Pack
+   - **Title**: AfterSol 4-Pack — Weekend Pack
    - **Price**: $25.00
    - **SKU**: `aftersol-4pack`
-   - **Images**: Upload product photos
+   - **Images**: Upload product photos showing the AfterSol sheets/packaging.
+     Use photos of the actual hydrogel and recovery sheets — NOT unrelated skincare products.
+     Recommended: search [Unsplash "sheet mask"](https://unsplash.com/s/photos/sheet-mask) or
+     [Pexels "cooling patch"](https://www.pexels.com/search/cooling%20patch/) for placeholder images.
+     You can also reuse the social proof photos listed in Step 10 below.
    - **Description**:
 
 ```
@@ -171,15 +179,19 @@ $12.50 per treatment. Stop sunburn pain in 30 minutes. Sleep through the night.
 
 3. Save
 
-### Product 3: AfterSol Full Kit — 8-Pack (Best Value)
+### Product 3: AfterSol 8-Pack — Full Kit (Best Value)
 
 1. Go to **Products** > **Add product**
 2. Fill in:
-   - **Title**: AfterSol Full Kit — 8-Pack
+   - **Title**: AfterSol 8-Pack — Full Kit
    - **Price**: $35.00 (was $44)
    - **Compare at price**: $44.00
    - **SKU**: `aftersol-8pack`
-   - **Images**: Upload product photos
+   - **Images**: Upload product photos showing the AfterSol sheets/packaging.
+     Use photos of the actual hydrogel and recovery sheets — NOT unrelated skincare products.
+     Recommended: search [Unsplash "sheet mask"](https://unsplash.com/s/photos/sheet-mask) or
+     [Pexels "cooling patch"](https://www.pexels.com/search/cooling%20patch/) for placeholder images.
+     You can also reuse the social proof photos listed in Step 10 below.
    - **Description**:
 
 ```
@@ -208,10 +220,10 @@ Just $4.38 per treatment — save $9 vs. buying individually. Works on arms, leg
    - **Description**: Sunburn relief kits — stop the pain in 30 minutes, sleep through the night.
    - **Collection type**: Manual
 4. Under **Products**, add all 3 AfterSol products:
-   - AfterSol Try It — 2-Pack
-   - AfterSol Weekend Pack — 4-Pack
-   - AfterSol Full Kit — 8-Pack
-5. **Sort order**: Set to "Manually" and drag to order: 2-Pack, 4-Pack, 8-Pack
+   - AfterSol 2-Pack — Try It
+   - AfterSol 4-Pack — Weekend Pack
+   - AfterSol 8-Pack — Full Kit
+5. **Sort order**: Set to **"Alphabetically, A-Z"** — the product names are prefixed with pack size so they automatically sort in the correct order: 2-Pack → 4-Pack → 8-Pack. Alternatively, use "Price, low to high" or "Manually" and drag to this order.
 6. Upload a collection image
 7. Save
 
@@ -240,9 +252,9 @@ After creating your products and collection, update all CTA button links:
 2. Click each section that has a button
 3. Set **Button Link** to your collection: `shopify://collections/aftersol`
 4. For the **Product Cards** section, set each card's link to its specific product:
-   - Card 1: `shopify://products/aftersol-try-it-2-pack`
-   - Card 2: `shopify://products/aftersol-weekend-pack-4-pack`
-   - Card 3: `shopify://products/aftersol-full-kit-8-pack`
+   - Card 1: `shopify://products/aftersol-2-pack-try-it`
+   - Card 2: `shopify://products/aftersol-4-pack-weekend-pack`
+   - Card 3: `shopify://products/aftersol-8-pack-full-kit`
 5. Save
 
 ---
