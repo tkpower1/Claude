@@ -285,6 +285,43 @@ Just click the section and click **Remove section**.
 
 ---
 
+## Step 11: Add Meta Pixel Purchase Event to Checkout
+
+The Purchase event must fire on the **order confirmation (thank-you) page** after payment completes.
+
+1. Go to **Shopify Admin** > **Settings** > **Checkout**
+2. Scroll to **Order status page** > **Additional scripts**
+3. Paste this code:
+
+```liquid
+{% if first_time_accessed %}
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1173019421439022');
+  fbq('track', 'Purchase', {
+    value: {{ total_price | money_without_currency | remove: ',' }},
+    currency: '{{ shop.currency }}',
+    content_ids: [{% for line_item in line_items %}'{{ line_item.product_id }}'{% unless forloop.last %},{% endunless %}{% endfor %}],
+    content_type: 'product',
+    num_items: {{ line_items.size }}
+  });
+</script>
+{% endif %}
+```
+
+4. Click **Save**
+
+> **Note:** `first_time_accessed` ensures the Purchase event only fires once, even if the customer refreshes the thank-you page.
+
+---
+
 ## Image URLs (For Reference)
 
 If you haven't uploaded images yet, these URLs are pre-configured:

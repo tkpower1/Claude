@@ -1481,6 +1481,20 @@
             });
         });
 
+        // ─── Purchase event (fires when returning from Stripe checkout) ───
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.has('checkout_session') || params.has('session_id')) {
+                if (typeof fbq === 'function') {
+                    fbq('track', 'Purchase', {
+                        content_name: 'AfterSol Kit',
+                        content_category: 'Sunburn Relief',
+                        currency: 'USD'
+                    });
+                }
+            }
+        })();
+
         // ─── Track CTA clicks ───
         function trackCheckoutClick(buttonLocation, targetUrl) {
             var sku = getSelectedSku();

@@ -307,6 +307,34 @@
       });
     </script>
     <!-- End Meta Pixel: Ecommerce Events -->
+
+    <!-- Meta Pixel: Purchase Event
+         IMPORTANT: This code goes in Shopify Admin > Settings > Checkout > Order status page > Additional scripts
+         (NOT in theme.liquid — the checkout/thank-you page has its own layout)
+
+         Paste this in the "Additional scripts" box:
+
+         {% if first_time_accessed %}
+         <script>
+           !function(f,b,e,v,n,t,s)
+           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+           n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+           if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+           n.queue=[];t=b.createElement(e);t.async=!0;
+           t.src=v;s=b.getElementsByTagName(e)[0];
+           s.parentNode.insertBefore(t,s)}(window, document,'script',
+           'https://connect.facebook.net/en_US/fbevents.js');
+           fbq('init', '1173019421439022');
+           fbq('track', 'Purchase', {
+             value: {{ total_price | money_without_currency | remove: ',' }},
+             currency: '{{ shop.currency }}',
+             content_ids: [{% for line_item in line_items %}'{{ line_item.product_id }}'{% unless forloop.last %},{% endunless %}{% endfor %}],
+             content_type: 'product',
+             num_items: {{ line_items.size }}
+           });
+         </script>
+         {% endif %}
+    -->
   </head>
 
   <body class="gradient">
