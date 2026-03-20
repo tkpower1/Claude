@@ -6,6 +6,7 @@ This guide walks you through setting up your AfterSol Shopify store using the cu
 
 | File | Description |
 |------|-------------|
+| `templates/collection.json` | Collection page with quick-add buttons |
 | `assets/aftersol-custom.css` | All custom styles |
 | `sections/aftersol-hero.liquid` | Hero with before/after images |
 | `sections/aftersol-problem.liquid` | Problem section |
@@ -42,6 +43,20 @@ This guide walks you through setting up your AfterSol Shopify store using the cu
 ```
 
 4. Click **Save**
+
+---
+
+## Step 1b: Add the Collection Template
+
+This enables "Add to Cart" buttons on the collection/catalog page.
+
+1. In **Edit code**, find the **Templates** folder
+2. Click **Add a new template**
+3. Select **collection** and format **JSON**
+4. Replace the default contents with the code from `templates/collection.json`
+5. Click **Save**
+
+> This enables quick-add buttons so customers can add products to their cart directly from the collection page without visiting each product page.
 
 ---
 
