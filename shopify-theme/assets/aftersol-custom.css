@@ -707,6 +707,18 @@
   margin-top: 20px;
   padding: 14px 24px;
   font-size: 15px;
+  width: 100%;
+}
+
+.aftersol-product-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.aftersol-add-to-cart-form {
+  margin-top: 0;
 }
 
 /* ============================================

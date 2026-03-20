@@ -7,6 +7,7 @@ This guide walks you through setting up your AfterSol Shopify store using the cu
 | File | Description |
 |------|-------------|
 | `templates/collection.json` | Collection page with quick-add buttons |
+| `templates/cart.json` | Cart page template |
 | `assets/aftersol-custom.css` | All custom styles |
 | `sections/aftersol-hero.liquid` | Hero with before/after images |
 | `sections/aftersol-problem.liquid` | Problem section |
@@ -46,17 +47,21 @@ This guide walks you through setting up your AfterSol Shopify store using the cu
 
 ---
 
-## Step 1b: Add the Collection Template
+## Step 1b: Add the Templates
 
-This enables "Add to Cart" buttons on the collection/catalog page.
+### Collection Template (enables quick-add buttons on catalog page)
 
 1. In **Edit code**, find the **Templates** folder
-2. Click **Add a new template**
-3. Select **collection** and format **JSON**
-4. Replace the default contents with the code from `templates/collection.json`
-5. Click **Save**
+2. Open `collection.json` (or click **Add a new template** > **collection** > **JSON** if it doesn't exist)
+3. Replace the default contents with the code from `templates/collection.json`
+4. Click **Save**
 
-> This enables quick-add buttons so customers can add products to their cart directly from the collection page without visiting each product page.
+### Cart Template (ensures the cart page works properly)
+
+1. In **Edit code**, find the **Templates** folder
+2. Open `cart.json` (or click **Add a new template** > **cart** > **JSON** if it doesn't exist)
+3. Replace the default contents with the code from `templates/cart.json`
+4. Click **Save**
 
 ---
 
@@ -120,7 +125,7 @@ Click on each section in the customizer to configure:
 - **Headline**: "Got Sunburned?<br>Tonight Is Going to Be Miserable."
 - **Before Image**: Upload your sunburn image
 - **After Image**: Upload your healed skin image
-- **Button Link**: Set to your collection (e.g., `/collections/aftersol`)
+- **Button Link**: Set to `#order` to scroll to Product Cards, or link to your collection
 - **Urgency Text**: Update stock count as needed
 
 ### AfterSol Solution
@@ -242,7 +247,7 @@ Just $4.38 per treatment — save $9 vs. buying individually. Works on arms, leg
 6. Upload a collection image
 7. Save
 
-The collection will be accessible at `/collections/aftersol` — this is where all CTA buttons link by default.
+The collection will be accessible at `/collections/aftersol`. CTA buttons on the homepage default to scrolling to the Product Cards section (`#order`).
 
 ---
 
@@ -259,18 +264,26 @@ For each of the 3 products:
 
 ---
 
-## Step 8: Update Button Links
+## Step 8: Connect Products to Add-to-Cart Buttons
 
-After creating your products and collection, update all CTA button links:
+This is the most important step — it connects real Shopify products to the "Add to Cart" buttons.
 
 1. Go to **Themes** > **Customize**
-2. Click each section that has a button
-3. Set **Button Link** to your collection: `shopify://collections/aftersol`
-4. For the **Product Cards** section, set each card's link to its specific product:
-   - Card 1: `shopify://products/aftersol-2-pack-try-it`
-   - Card 2: `shopify://products/aftersol-4-pack-weekend-pack`
-   - Card 3: `shopify://products/aftersol-8-pack-full-kit`
-5. Save
+2. Click the **AfterSol Product Cards** section
+3. Click on each product card block:
+   - **Card 1**: Under "Shopify Product", select **AfterSol 2-Pack — Try It**
+   - **Card 2**: Under "Shopify Product", select **AfterSol 4-Pack — Weekend Pack**
+   - **Card 3**: Under "Shopify Product", select **AfterSol 8-Pack — Full Kit**
+4. Save
+
+> When a Shopify Product is selected, the "Add to Cart" button becomes a real form that adds the product to the cart. Without this, the button is just a link.
+
+### Update Navigation
+
+5. Go to **Shopify Admin** > **Online Store** > **Navigation**
+6. Click on your **Main menu**
+7. Change the **Catalog** link to point to your AfterSol collection (or `/collections/all` to show all products)
+8. Save
 
 ---
 
@@ -379,6 +392,20 @@ If you haven't uploaded images yet, these URLs are pre-configured:
 - Clear your browser cache
 - Make sure section names match exactly
 - Check for typos in the CSS include
+
+### "Add to Cart" buttons don't work?
+- Make sure you selected a **Shopify Product** in each product card block (Step 8)
+- Without a product selected, the button is just a link, not a real add-to-cart form
+- Verify your products are published and available for sale
+
+### Cart page shows wrong content?
+- Replace `templates/cart.json` with the code from this repo's `templates/cart.json`
+- Clear browser cache and reload
+
+### Catalog page shows "No products found" or wrong collection?
+- Go to **Online Store** > **Navigation** > **Main menu**
+- Change the "Catalog" link to point to your AfterSol collection or `/collections/all`
+- Make sure your products are added to a collection
 
 ### FAQ accordion not working?
 - JavaScript is included in the FAQ section file
