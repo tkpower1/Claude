@@ -124,12 +124,15 @@ def make_call(phone_number, business_name):
         "record": True,
         "max_duration": 3,  # max 3 minutes
         "temperature": 0.7,
-        "transfer_phone_number": CALLBACK_PHONE,
         "metadata": {
             "business_name": business_name,
             "campaign": "stella_maris_auction_2026",
         },
     }
+
+    # Don't set transfer number if it's the same as the number being called
+    if CALLBACK_PHONE and CALLBACK_PHONE != phone_number:
+        payload["transfer_phone_number"] = CALLBACK_PHONE
 
     resp = requests.post(
         f"{BLAND_BASE_URL}/calls",
